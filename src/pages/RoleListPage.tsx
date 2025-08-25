@@ -2,11 +2,10 @@ import React, { useState, useRef, useLayoutEffect, useEffect } from 'react';
 import Header from '../components/Header';
 import Breadcrumb from '../components/Breadcrumb';
 import ToolCard from '../components/ToolCard';
-import { roleCombos } from '../data/roleCombos';
-import { dummyJobSituations } from '../data/dummyData';
+import { roleCombos } from '../data/roleCombos'; // 향후 API로 대체 예정
 import { getImageMapping } from '../utils/imageMapping';
 import { apiService } from '../services';
-import type { JobSituation } from '../types';
+import type { JobSituation, AITool } from '../types';
 
 const roleTabs = [
   { id: 'it', name: 'IT/기술' },
@@ -17,12 +16,36 @@ const roleTabs = [
   { id: 'manage', name: '경영/운영' }
 ];
 
+// 카테고리 슬러그 변환 함수
+function getCategorySlug(categoryName: string): string {
+  const categoryMap: Record<string, string> = {
+    '챗봇': 'chat',
+    '이미지 생성': 'image',
+    '비디오 생성': 'video',
+    '오디오 생성': 'audio',
+    '텍스트 생성': 'text',
+    '코드 생성': 'code',
+    '생산성': 'product',
+    '프레젠테이션': 'product',
+    'AI 글쓰기 도우미': 'text',
+    '논문 검색 AI': 'text',
+    '디자인 AI': 'product',
+    '프로토타이핑': 'product',
+    '영상 생성 AI': 'video',
+    '영상 편집 AI': 'video',
+    '시장 분석': 'product',
+    '협업 도구': 'product',
+    '자동화': 'product',
+    '3D': '3d'
+  };
+  return categoryMap[categoryName] || 'product';
+}
+
 const RoleListPage: React.FC = () => {
   const [activeRole, setActiveRole] = useState('it');
   const [jobSituations, setJobSituations] = useState<JobSituation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [useApiData, setUseApiData] = useState(false);
   const [expandedSituations, setExpandedSituations] = useState<Set<number>>(new Set());
   const [situationSlides, setSituationSlides] = useState<Record<number, number>>({});
   const activeRoleName = roleTabs.find(tab => tab.id === activeRole)?.name || '';
@@ -33,21 +56,20 @@ const RoleListPage: React.FC = () => {
       try {
         setLoading(true);
         setError(null);
+        
         const apiJobSituations = await apiService.getJobSituations();
-
-        if (apiJobSituations && apiJobSituations.length > 0) {
+        
+        if (apiJobSituations && Array.isArray(apiJobSituations) && apiJobSituations.length > 0) {
           setJobSituations(apiJobSituations);
-          setUseApiData(true);
         } else {
-          setJobSituations(dummyJobSituations);
-          setUseApiData(false);
+          setError('직업별 추천 데이터가 없습니다.');
+          setJobSituations([]);
         }
       } catch (error) {
+        console.error('직업별 추천 조회 실패:', error);
         const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.';
-        setError(`API 호출에 실패했습니다: ${errorMessage}`);
-        setJobSituations(dummyJobSituations);
-        setUseApiData(false);
-        setTimeout(() => setError(null), 5000);
+        setError(`직업별 추천을 불러오는데 실패했습니다: ${errorMessage}`);
+        setJobSituations([]);
       } finally {
         setLoading(false);
       }
@@ -55,6 +77,11 @@ const RoleListPage: React.FC = () => {
 
     fetchJobSituations();
   }, []);
+
+  // 재시도 함수
+  const handleRetry = () => {
+    window.location.reload();
+  };
 
   // 상황별 추천 조합 슬라이더 상태
   const combos = roleCombos[activeRoleName] || [];
@@ -76,7 +103,7 @@ const RoleListPage: React.FC = () => {
   const [containerRight, setContainerRight] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // ✅ 권장 방식: ResizeObserver + 안전 여백 클램프
+  // ResizeObserver + 안전 여백 클램프
   useLayoutEffect(() => {
     function updatePos() {
       if (!containerRef.current) return;
@@ -85,21 +112,15 @@ const RoleListPage: React.FC = () => {
       setContainerRight(window.innerWidth - rect.right);
     }
 
-    // 최초
     updatePos();
-
-    // 창 리사이즈
     window.addEventListener('resize', updatePos);
 
-    // 컨테이너 자체 레이아웃 변화 관찰 (API 데이터 들어올 때 등)
     let ro: ResizeObserver | null = null;
     if ('ResizeObserver' in window) {
       ro = new ResizeObserver(() => updatePos());
       if (containerRef.current) ro.observe(containerRef.current);
     } else {
-      // 폴백: 약간 늦게 한 번 더 측정 (아주 구형 브라우저용)
       const t = setTimeout(updatePos, 50);
-      // cleanup에 포함
       return () => {
         window.removeEventListener('resize', updatePos);
         clearTimeout(t);
@@ -114,8 +135,17 @@ const RoleListPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-lg">로딩 중...</div>
+      <div className="min-h-screen bg-white">
+        <Header tabs={roleTabs} activeTab={activeRole} onTabChange={setActiveRole} />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <Breadcrumb items={breadcrumbItems} />
+          <div className="flex items-center justify-center pt-20">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+              <p className="text-gray-600">직업별 추천을 불러오는 중...</p>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -141,31 +171,44 @@ const RoleListPage: React.FC = () => {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Breadcrumb items={breadcrumbItems} />
         <div className="mb-8">
-          <h1 className="font-semibold mb-2" style={{ color: '#000000', fontSize: '32px', fontFamily: 'Pretendard' }}>{activeRoleName}</h1>
+          <h1 className="font-semibold mb-2" style={{ color: '#000000', fontSize: '32px', fontFamily: 'Pretendard' }}>
+            {activeRoleName}
+          </h1>
         </div>
 
         {error && (
-          <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-            <div className="flex">
+          <div className="mb-6 p-6 bg-red-50 border border-red-200 rounded-lg">
+            <div className="flex items-start">
               <div className="flex-shrink-0">
-                <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                 </svg>
               </div>
               <div className="ml-3">
-                <p className="text-sm text-yellow-800">{error}</p>
+                <h3 className="text-sm font-medium text-red-800">데이터 로드 실패</h3>
+                <div className="mt-2 text-sm text-red-700">
+                  <p>{error}</p>
+                </div>
+                <div className="mt-3">
+                  <button
+                    onClick={handleRetry}
+                    className="bg-red-100 hover:bg-red-200 text-red-800 text-sm font-medium px-3 py-1 rounded-md transition-colors"
+                  >
+                    다시 시도
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         )}
 
-        {/* 상황별 추천 조합 배너 */}
+        {/* 상황별 추천 조합 배너 (향후 API로 대체 예정) */}
         {combos.length > 0 && (
           <div
             className="w-screen relative left-1/2 -translate-x-1/2 mb-10"
             style={{ background: '#F6F0FF', borderRadius: 0, minHeight: 220, padding: 0 }}
           >
-            {/* 왼쪽 화살표 (클램프 적용 + zIndex 상향) */}
+            {/* 왼쪽 화살표 */}
             {combos.length > 1 && (
               <button
                 onClick={handlePrev}
@@ -309,7 +352,7 @@ const RoleListPage: React.FC = () => {
               </div>
             </div>
 
-            {/* 오른쪽 화살표 (클램프 적용 + zIndex 상향) */}
+            {/* 오른쪽 화살표 */}
             {combos.length > 1 && (
               <button
                 onClick={handleNext}
@@ -342,96 +385,69 @@ const RoleListPage: React.FC = () => {
         <section>
           <h2 className="text-2xl font-bold text-black mb-8">상황별 추천</h2>
 
-          {filteredSituations.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-gray-500">이 직업 분야에 해당하는 상황별 추천이 없습니다.</p>
-              <p className="text-sm text-gray-400 mt-2">현재 탭: "{activeRoleName}"</p>
-              <p className="text-sm text-gray-400">API 데이터: {useApiData ? 'Connected' : 'Not Connected'}</p>
-              <div className="mt-4 text-xs text-gray-300">
-                <p>사용 가능한 카테고리들:</p>
-                <ul className="list-disc list-inside">
+          {!loading && filteredSituations.length === 0 ? (
+            <div className="text-center py-12 bg-gray-50 rounded-lg">
+              <div className="text-6xl mb-4">🔍</div>
+              <h3 className="text-xl font-semibold text-gray-800 mb-2">추천 정보가 없습니다</h3>
+              <p className="text-gray-600 mb-4">
+                "{activeRoleName}" 분야에 대한 상황별 추천이 아직 준비되지 않았습니다.
+              </p>
+              <div className="text-sm text-gray-500 mb-4">
+                현재 이용 가능한 직업 분야:
+                <div className="mt-2 flex flex-wrap justify-center gap-2">
                   {[...new Set(jobSituations.map(s => s.category))].map(cat => (
-                    <li key={cat}>"{cat}"</li>
+                    <span key={cat} className="px-2 py-1 bg-gray-200 text-gray-700 rounded-full text-xs">
+                      {cat}
+                    </span>
                   ))}
-                </ul>
+                </div>
               </div>
+              <button
+                onClick={handleRetry}
+                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium"
+              >
+                새로고침
+              </button>
             </div>
           ) : (
             filteredSituations.map((situation, situationIdx) => {
-              // 타입 안전성을 위해 any로 캐스팅
+              // API 데이터 처리
               const situationData = situation as any;
               
-              let tools: any[] = [];
-              let title = '';
-              let description = '';
-              let icon = '💡';
+              let tools: AITool[] = [];
+              let title = situationData.title || '제목 없음';
+              let description = situationData.description || '';
               
-              // API 데이터인 경우 (recommendations 속성이 있는 경우)
-              if ('recommendations' in situationData) {
-                const recommendations = situationData.recommendations;
-                if (recommendations && Array.isArray(recommendations) && recommendations.length > 0) {
-                  tools = recommendations.map((rec: any, index: number) => {
-                    const toolData = rec.tool || rec; // rec.tool이 없을 경우 rec 자체를 사용
-                    const categorySlug = getCategorySlug(toolData.category?.name || toolData.categoryName || '생산성');
-                    const imageMapping = getImageMapping(toolData.serviceName || toolData.name || 'Unknown Tool', categorySlug);
-                    
-                    return {
-                      id: (toolData.id || index).toString(),
-                      name: toolData.serviceName || toolData.name || 'Unknown Tool',
-                      category: categorySlug,
-                      description: rec.recommendationText || toolData.description || '추천 도구입니다.',
-                      features: [],
-                      rating: toolData.overallRating || toolData.rating || 0,
-                      tags: [],
-                      url: toolData.websiteUrl || toolData.url || '',
-                      releaseDate: '',
-                      company: '',
-                      pricing: 'freemium' as const,
-                      categoryLabel: toolData.category?.name || toolData.categoryName || '생산성',
-                      logoUrl: toolData.logoUrl || imageMapping.logo,
-                      serviceImageUrl: imageMapping.serviceImage,
-                      priceImageUrl: imageMapping.priceImage,
-                      searchbarLogoUrl: imageMapping.searchbarLogo
-                    };
-                  });
-                } else {
-                  // 빈 recommendations인 경우 더미 데이터 생성
-                  tools = [
-                    {
-                      id: '1',
-                      name: 'Gamma',
-                      category: 'product',
-                      description: 'PPT 제작, 슬라이드 제작',
-                      features: [],
-                      rating: 4.5,
-                      tags: [],
-                      url: '',
-                      releaseDate: '',
-                      company: '',
-                      pricing: 'freemium' as const,
-                      categoryLabel: '프레젠테이션',
-                      logoUrl: '/images/Logo/Logo_FINAL.svg',
-                      serviceImageUrl: '',
-                      priceImageUrl: '',
-                      searchbarLogoUrl: ''
-                    }
-                  ];
-                }
-                title = situationData.title || '제목 없음';
-                description = situationData.description || '';
-                icon = '💡';
-              }
-              // 더미 데이터인 경우 (tools 속성이 있는 경우)
-              else if ('tools' in situationData) {
-                tools = situationData.tools || [];
-                title = situationData.title || '제목 없음';
-                description = situationData.description || '';
-                icon = situationData.icon || '💡';
-              }
-              else {
-                title = situationData.title || '제목 없음';
-                description = situationData.description || '';
-                icon = '💡';
+              // recommendations 배열에서 도구들 추출
+              if (situationData.recommendations && Array.isArray(situationData.recommendations)) {
+                tools = situationData.recommendations.map((rec: any, index: number) => {
+                  const toolData = rec.tool || rec;
+                  const categorySlug = getCategorySlug(toolData.category?.name || toolData.categoryName || '생산성');
+                  const imageMapping = getImageMapping(toolData.serviceName || toolData.name || 'Unknown Tool', categorySlug);
+                  
+                  return {
+                    id: (toolData.id || index).toString(),
+                    name: toolData.serviceName || toolData.name || 'Unknown Tool',
+                    category: categorySlug,
+                    description: rec.recommendationText || toolData.description || '추천 도구입니다.',
+                    features: [],
+                    rating: toolData.overallRating || toolData.rating || 0,
+                    tags: [],
+                    url: toolData.websiteUrl || toolData.url || '',
+                    releaseDate: '',
+                    company: '',
+                    pricing: 'freemium' as const,
+                    featured: false,
+                    roles: [],
+                    userCount: 0,
+                    aiRating: toolData.overallRating || toolData.rating || 0,
+                    categoryLabel: toolData.category?.name || toolData.categoryName || '생산성',
+                    logoUrl: toolData.logoUrl || imageMapping.logo,
+                    serviceImageUrl: imageMapping.serviceImage,
+                    priceImageUrl: imageMapping.priceImage,
+                    searchbarLogoUrl: imageMapping.searchbarLogo
+                  };
+                });
               }
               
               const showArrows = tools.length > 3;
@@ -454,10 +470,11 @@ const RoleListPage: React.FC = () => {
                     </div>
                   )}
                   
-                  {/* 도구 카드들이 없을 때 임시 메시지 */}
                   {tools.length === 0 ? (
-                    <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                      <p className="text-yellow-800">이 상황에 대한 도구가 없습니다.</p>
+                    <div className="p-6 bg-gray-50 border border-gray-200 rounded-lg text-center">
+                      <div className="text-4xl mb-2">🤖</div>
+                      <p className="text-gray-600">이 상황에 대한 AI 도구 추천이 아직 준비되지 않았습니다.</p>
+                      <p className="text-sm text-gray-500 mt-1">곧 업데이트될 예정입니다!</p>
                     </div>
                   ) : (
                     <div className="grid grid-cols-3 gap-6 w-full">
@@ -564,27 +581,3 @@ const RoleListPage: React.FC = () => {
 };
 
 export default RoleListPage;
-
-function getCategorySlug(categoryName: string): string {
-  const categoryMap: Record<string, string> = {
-    '챗봇': 'chat',
-    '이미지 생성': 'image',
-    '비디오 생성': 'video',
-    '오디오 생성': 'audio',
-    '텍스트 생성': 'text',
-    '코드 생성': 'code',
-    '생산성': 'product',
-    '프레젠테이션': 'product',
-    'AI 글쓰기 도우미': 'text',
-    '논문 검색 AI': 'text',
-    '디자인 AI': 'product',
-    '프로토타이핑': 'product',
-    '영상 생성 AI': 'video',
-    '영상 편집 AI': 'video',
-    '시장 분석': 'product',
-    '협업 도구': 'product',
-    '자동화': 'product',
-    '3D': '3d'
-  };
-  return categoryMap[categoryName] || 'product';
-}

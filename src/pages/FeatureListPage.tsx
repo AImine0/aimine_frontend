@@ -4,69 +4,34 @@ import Breadcrumb from '../components/Breadcrumb';
 import KeywordFilter from '../components/KeywordFilter';
 import FilterBar from '../components/FilterBar';
 import ToolCard from '../components/ToolCard';
-import { keywordTags } from '../data/dummyData';
 import { apiService } from '../services';
-import { dummyAIToolListItems, transformToAITool } from '../data/dummyData';
 import type { FilterType, AITool } from '../types';
 
-// ─────────────────────────────────────────────────────────────
-// 유틸: 카테고리 정규화 (API/더미/라벨 모두 대응)
-// ─────────────────────────────────────────────────────────────
-function normalizeCategory(tool: AITool): string {
-  // 가능한 여러 위치에서 카테고리 정보 꺼내오기
-  const raw =
-    (tool as any).category ??
-    (tool as any).categorySlug ??
-    (tool as any).categoryLabel ??
-    (tool as any).categoryName ??
-    (tool as any).category?.name ??
-    '';
+// 카테고리 매핑 (탭 → API category 파라미터)
+const TAB_TO_CATEGORY: Record<string, string> = {
+  chatbot: 'chatbot',
+  writing: 'text',
+  image: 'image', 
+  video: 'video',
+  audio: 'audio',
+  code: 'code',
+  productivity: 'productivity',
+  '3d': '3d'
+};
 
-  const v = String(raw).trim().toLowerCase();
+// 정렬 타입 매핑 (UI → API)
+const SORT_TYPE_MAP: Record<string, string> = {
+  popular: 'rating',
+  new: 'latest',
+  rating: 'rating'
+};
 
-  // 한글 라벨 → 슬러그 맵
-  const koToSlug: Record<string, string> = {
-    '챗봇': 'chat',
-    '텍스트': 'text',
-    '이미지': 'image',
-    '비디오': 'video',
-    '오디오': 'audio',
-    '오디오/음악': 'audio',
-    '음악': 'audio',
-    '코드': 'code',
-    '생산성': 'product',
-    '프레젠테이션': 'product',
-    '3d': '3d',
-  };
-
-  if (koToSlug[v]) return koToSlug[v];
-
-  // 영문/기존 값 정규화
-  if (['chat', 'chatbot'].includes(v)) return 'chat';
-  if (['text', 'writing', 'writer'].includes(v)) return 'text';
-  if (['image', 'images', 'img', 'design'].includes(v)) return 'image';
-  if (['video', 'videos', 'movie'].includes(v)) return 'video';
-  if (['audio', 'music', 'sound'].includes(v)) return 'audio';
-  if (['code', 'coding', 'developer'].includes(v)) return 'code';
-  if (['product', 'productivity', 'productivity/office', 'office', 'tool'].includes(v)) return 'product';
-  if (['3d', '3-d', 'three', 'three-d'].includes(v)) return '3d';
-
-  // 모르면 생산성으로 폴백 (혹은 빈 문자열 반환도 가능)
-  return 'product';
-}
-
-// ─────────────────────────────────────────────────────────────
-// 탭 id → 허용 카테고리 슬러그 집합 매핑
-// ─────────────────────────────────────────────────────────────
-const TAB_CATEGORY_ALLOW: Record<string, Set<string>> = {
-  chatbot: new Set(['chat']),
-  writing: new Set(['text']),
-  image: new Set(['image']),
-  video: new Set(['video']),
-  audio: new Set(['audio']),
-  code: new Set(['code']),
-  productivity: new Set(['product']),
-  '3d': new Set(['3d']),
+// 가격 타입 매핑 (UI → API)
+const PRICING_TYPE_MAP: Record<FilterType, string | undefined> = {
+  all: undefined,
+  free: 'FREE',
+  paid: 'PAID', 
+  freemium: 'FREEMIUM'
 };
 
 const FeatureListPage: React.FC = () => {
@@ -75,27 +40,95 @@ const FeatureListPage: React.FC = () => {
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
   const [sortType, setSortType] = useState('popular');
   const [tools, setTools] = useState<AITool[]>([]);
+  const [keywords, setKeywords] = useState<string[]>(['전체']);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // API에서 AI 툴 목록 가져오기 (API 명세서: ToolListResponse)
+  // 키워드 목록 가져오기
+  useEffect(() => {
+    const fetchKeywords = async () => {
+      try {
+        const response = await apiService.getKeywords();
+        if (response.keywords && Array.isArray(response.keywords)) {
+          const keywordList = response.keywords.map((k: any) => k.keyword);
+          setKeywords(['전체', ...keywordList]);
+        }
+      } catch (error) {
+        console.error('키워드 조회 실패:', error);
+        // 키워드 로드 실패시 기본값 유지
+        setKeywords(['전체']);
+      }
+    };
+
+    fetchKeywords();
+  }, []);
+
+  // AI 서비스 목록 가져오기 (탭, 키워드, 필터, 정렬에 따라)
   useEffect(() => {
     const fetchTools = async () => {
       try {
         setLoading(true);
-        const apiTools = await apiService.getAllServices();
-        setTools(apiTools);
+        setError(null);
+
+        // API 파라미터 구성
+        const params: any = {
+          category: TAB_TO_CATEGORY[activeTab],
+          sort: SORT_TYPE_MAP[sortType],
+          pricing: PRICING_TYPE_MAP[activeFilter],
+          size: 100 // 충분히 큰 수로 설정
+        };
+
+        // 키워드가 '전체'가 아닌 경우 검색으로 처리
+        if (!activeKeywords.includes('전체') && activeKeywords.length > 0) {
+          // 키워드 필터링은 검색 API 사용
+          const searchResponse = await apiService.search({
+            q: activeKeywords.join(' '),
+            category: TAB_TO_CATEGORY[activeTab],
+            pricing: PRICING_TYPE_MAP[activeFilter],
+            sort: SORT_TYPE_MAP[sortType]
+          });
+
+          // 검색 결과를 AITool 형식으로 변환
+          const searchTools: AITool[] = searchResponse.tools.map(tool => ({
+            id: tool.id.toString(),
+            name: tool.service_name,
+            category: activeTab,
+            description: tool.description,
+            features: tool.keywords || [],
+            rating: tool.overall_rating,
+            tags: tool.keywords || [],
+            url: '', // API에서 제공되지 않음
+            releaseDate: '',
+            company: 'Unknown',
+            pricing: (tool.pricing_type?.toLowerCase() || 'free') as 'free' | 'paid' | 'freemium',
+            featured: false,
+            categoryLabel: tool.category_name,
+            roles: [],
+            userCount: 0,
+            aiRating: tool.overall_rating,
+            logoUrl: tool.logo_url,
+            serviceImageUrl: tool.logo_url,
+            priceImageUrl: tool.logo_url,
+            searchbarLogoUrl: tool.logo_url
+          }));
+
+          setTools(searchTools);
+        } else {
+          // 일반 서비스 목록 조회
+          const apiTools = await apiService.getAllServices(params);
+          setTools(apiTools);
+        }
       } catch (error) {
-        console.warn('API 호출 실패, 더미 데이터 사용:', error);
-        setError('API 호출에 실패했습니다. 더미 데이터를 표시합니다.');
-        setTools(dummyAIToolListItems.map(transformToAITool));
+        console.error('AI 서비스 조회 실패:', error);
+        setError('AI 서비스를 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.');
+        setTools([]);
       } finally {
         setLoading(false);
       }
     };
 
     fetchTools();
-  }, []);
+  }, [activeTab, activeKeywords, activeFilter, sortType]);
 
   const handleKeywordToggle = (keyword: string) => {
     setActiveKeywords(prev => {
@@ -108,54 +141,19 @@ const FeatureListPage: React.FC = () => {
   };
 
   const handleKeywordReset = () => setActiveKeywords(['전체']);
-  const handleTabChange = (tab: string) => setActiveTab(tab);
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    // 탭 변경 시 키워드 초기화
+    setActiveKeywords(['전체']);
+  };
 
-  // ─────────────────────────────────────────────────────────────
-  // 탭 필터 (정규화된 카테고리 기준)
-  // ─────────────────────────────────────────────────────────────
-  const tabFilteredTools = tools.filter(tool => {
-    const cat = normalizeCategory(tool);
-    const allow = TAB_CATEGORY_ALLOW[activeTab];
-    if (!allow) return true; // 혹시 정의 안 된 탭 id면 전체 노출
-    return allow.has(cat);
-  });
+  // BEST 1,2,3는 상위 3개
+  const featuredTools = tools.slice(0, 3);
 
-  // 키워드 필터
-  const keywordFilteredTools = tabFilteredTools.filter(tool => {
-    if (activeKeywords.includes('전체')) return true;
-    const tags = (tool as any).tags ?? [];
-    return Array.isArray(tags) && tags.some((k: string) => activeKeywords.includes(k));
-  });
-
-  // 가격 필터
-  const filteredTools = keywordFilteredTools.filter(tool => {
-    if (activeFilter === 'all') return true;
-    return tool.pricing === activeFilter;
-  });
-
-  // 정렬 (필요 시 확장)
-  const sortedTools = [...filteredTools].sort((a, b) => {
-    if (sortType === 'popular') {
-      // 인기 정렬 기준이 없으면 rating으로 대체
-      const ar = (a as any).rating ?? 0;
-      const br = (b as any).rating ?? 0;
-      return br - ar;
-    }
-    if (sortType === 'new') {
-      const ad = new Date((a as any).releaseDate || 0).getTime();
-      const bd = new Date((b as any).releaseDate || 0).getTime();
-      return bd - ad;
-    }
-    return 0;
-  });
-
-  // BEST 1,2,3는 필터링+정렬된 데이터 기준 상위 3개
-  const featuredTools = sortedTools.slice(0, 3);
-
-  // 가격별 개수도 keyword+tab 필터에서 계산
-  const filteredFreeCount = keywordFilteredTools.filter(tool => tool.pricing === 'free').length;
-  const filteredPaidCount = keywordFilteredTools.filter(tool => tool.pricing === 'paid').length;
-  const filteredFreemiumCount = keywordFilteredTools.filter(tool => tool.pricing === 'freemium').length;
+  // 가격별 개수 계산
+  const filteredFreeCount = tools.filter(tool => tool.pricing === 'free').length;
+  const filteredPaidCount = tools.filter(tool => tool.pricing === 'paid').length;
+  const filteredFreemiumCount = tools.filter(tool => tool.pricing === 'freemium').length;
 
   const getTabTitle = (tab: string) => {
     const tabNames: { [key: string]: string } = {
@@ -189,12 +187,15 @@ const FeatureListPage: React.FC = () => {
 
   // BEST 제외한 나머지
   const featuredIds = featuredTools.map(tool => tool.id);
-  const restTools = sortedTools.filter(tool => !featuredIds.includes(tool.id));
+  const restTools = tools.filter(tool => !featuredIds.includes(tool.id));
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-lg">로딩 중...</div>
+      <div className="min-h-screen bg-white">
+        <Header tabs={featureTabs} activeTab={activeTab} onTabChange={handleTabChange} />
+        <div className="flex items-center justify-center pt-20">
+          <div className="text-lg text-gray-600">AI 서비스를 불러오는 중...</div>
+        </div>
       </div>
     );
   }
@@ -212,29 +213,40 @@ const FeatureListPage: React.FC = () => {
         </div>
 
         {error && (
-          <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
             <div className="flex">
               <div className="flex-shrink-0">
-                <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                 </svg>
               </div>
               <div className="ml-3">
-                <p className="text-sm text-yellow-800">{error}</p>
+                <h3 className="text-sm font-medium text-red-800">오류 발생</h3>
+                <div className="mt-2 text-sm text-red-700">
+                  <p>{error}</p>
+                </div>
+                <div className="mt-3">
+                  <button
+                    onClick={() => window.location.reload()}
+                    className="bg-red-100 hover:bg-red-200 text-red-800 text-sm font-medium px-3 py-1 rounded-md transition-colors"
+                  >
+                    다시 시도
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         )}
 
         <KeywordFilter
-          keywords={keywordTags}
+          keywords={keywords}
           activeKeywords={activeKeywords}
           onKeywordToggle={handleKeywordToggle}
           onReset={handleKeywordReset}
         />
 
         <FilterBar
-          totalCount={sortedTools.length}
+          totalCount={tools.length}
           freeCount={filteredFreeCount}
           paidCount={filteredPaidCount}
           freemiumCount={filteredFreemiumCount}
@@ -246,23 +258,38 @@ const FeatureListPage: React.FC = () => {
           onSortChange={setSortType}
         />
 
-        {/* BEST 1,2,3 */}
-        <section className="mb-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredTools.map((tool, index) => (
-              <ToolCard key={tool.id} tool={tool} rank={index + 1} />
-            ))}
+        {tools.length === 0 && !loading && !error && (
+          <div className="text-center py-12">
+            <div className="text-gray-500 text-lg mb-2">검색 결과가 없습니다</div>
+            <div className="text-gray-400 text-sm">
+              다른 키워드나 필터를 시도해보세요.
+            </div>
           </div>
-        </section>
+        )}
 
-        {/* 전체 리스트 */}
-        <section>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {restTools.map((tool) => (
-              <ToolCard key={tool.id} tool={tool} />
-            ))}
-          </div>
-        </section>
+        {tools.length > 0 && (
+          <>
+            {/* BEST 1,2,3 */}
+            <section className="mb-12">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {featuredTools.map((tool, index) => (
+                  <ToolCard key={tool.id} tool={tool} rank={index + 1} />
+                ))}
+              </div>
+            </section>
+
+            {/* 전체 리스트 */}
+            {restTools.length > 0 && (
+              <section>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {restTools.map((tool) => (
+                    <ToolCard key={tool.id} tool={tool} />
+                  ))}
+                </div>
+              </section>
+            )}
+          </>
+        )}
       </main>
     </div>
   );
