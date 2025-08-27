@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import GoogleLogin from './GoogleLogin';
 import { apiService } from '../services';
-import type { UserProfileResponse } from '../types';
 
 interface Tab {
   id: string;
@@ -19,41 +20,20 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { isAuthenticated, user, logout } = useAuth();
   
-  // 상태 관리
+  // 상태 관리 (인증 관련 제거)
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState<UserProfileResponse | null>(null);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [searchSuggestions, setSearchSuggestions] = useState<string[]>([]);
   const [showSearchSuggestions, setShowSearchSuggestions] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   
   // Refs
   const searchRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
-
-  // 인증 상태 확인
-  useEffect(() => {
-    const checkAuthStatus = async () => {
-      const authenticated = apiService.isAuthenticated();
-      setIsAuthenticated(authenticated);
-      
-      if (authenticated) {
-        try {
-          const userProfile = await apiService.getUserProfile();
-          setUser(userProfile);
-        } catch (error) {
-          console.error('사용자 정보 조회 실패:', error);
-          // 토큰이 유효하지 않으면 로그아웃 처리
-          handleLogout();
-        }
-      }
-    };
-
-    checkAuthStatus();
-  }, []);
 
   // 외부 클릭 감지 (메뉴 닫기)
   useEffect(() => {
@@ -98,25 +78,32 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
     }
   };
 
-  // 로그인 처리 (임시 - 실제로는 Google OAuth)
+  // 로그인 처리
   const handleLogin = () => {
-    // 향후 Google OAuth 구현 예정
-    alert('Google OAuth 로그인 기능은 향후 구현 예정입니다.');
+    setShowLoginModal(true);
+  };
+
+  // 로그인 성공 처리
+  const handleLoginSuccess = () => {
+    setShowLoginModal(false);
+    // 필요시 특정 페이지로 리다이렉트
+  };
+
+  // 로그인 오류 처리
+  const handleLoginError = (error: string) => {
+    console.error('로그인 오류:', error);
+    // 오류 처리 로직
   };
 
   // 로그아웃 처리
   const handleLogout = async () => {
     try {
-      await apiService.logout();
-      setIsAuthenticated(false);
-      setUser(null);
+      await logout();
       setShowUserMenu(false);
       navigate('/');
     } catch (error) {
       console.error('로그아웃 실패:', error);
-      // 에러가 발생해도 로컬 상태는 초기화
-      setIsAuthenticated(false);
-      setUser(null);
+      alert('로그아웃 중 오류가 발생했습니다.');
     }
   };
 
@@ -132,7 +119,7 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
 
   // 현재 페이지 확인
   const isSearchPage = location.pathname === '/search';
-  const isBookmarkPage = location.pathname === '/bookmarks';
+  const isMyPage = location.pathname === '/mypage';
 
   return (
     <header className="bg-white sticky top-0 z-40 shadow-sm" style={{ fontFamily: 'Pretendard' }}>
@@ -165,12 +152,12 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
               </Link>
               {isAuthenticated && (
                 <Link 
-                  to="/bookmarks" 
+                  to="/mypage" 
                   className={`px-3 py-2 text-sm font-medium transition-colors hover:text-purple-600 ${
-                    isBookmarkPage ? 'text-purple-600' : 'text-gray-700'
+                    location.pathname === '/mypage' ? 'text-purple-600' : 'text-gray-700'
                   }`}
                 >
-                  저장목록
+                  마이페이지
                 </Link>
               )}
             </nav>
@@ -269,14 +256,14 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
                     </div>
                     
                     <Link
-                      to="/bookmarks"
+                      to="/mypage"
                       className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                       onClick={() => setShowUserMenu(false)}
                     >
                       <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
-                      저장목록
+                      마이페이지
                     </Link>
                     
                     <button
@@ -335,11 +322,11 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
             </Link>
             {isAuthenticated && (
               <Link
-                to="/bookmarks"
+                to="/mypage"
                 className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-purple-600"
                 onClick={() => setShowMobileMenu(false)}
               >
-                저장목록
+                마이페이지
               </Link>
             )}
           </div>
