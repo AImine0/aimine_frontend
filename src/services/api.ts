@@ -251,7 +251,12 @@ class ApiService {
         throw new Error('Invalid response structure');
       }
       
-      return response.data.map(tool => {
+      const actualData = response.data.data || response.data;
+      if (!Array.isArray(actualData)) {
+        console.error('데이터가 배열이 아닙니다:', actualData);
+        return [];
+      }
+      return actualData.map(tool => {
         const categorySlug = getCategorySlug(tool.category?.name || '생산성');
         const imageMapping = getImageMapping(tool.serviceName, categorySlug);
         
