@@ -1,7 +1,5 @@
-// [Google 로그인] OAuth 인증 처리 - Google 계정으로 로그인
-
+// src/components/GoogleLogin.tsx
 import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
 
 interface GoogleLoginProps {
   onSuccess?: () => void;
@@ -16,89 +14,26 @@ const GoogleLogin: React.FC<GoogleLoginProps> = ({
   className = '',
   children
 }) => {
-  const { login } = useAuth();
   const [loading, setLoading] = useState(false);
 
-  // 실제 Google OAuth 구현을 위한 준비
+  // 백엔드 OAuth URL로 리다이렉트
   const handleGoogleLogin = async () => {
     if (loading) return;
 
     try {
       setLoading(true);
-
-      // TODO: 실제 Google OAuth 구현
-      // 현재는 데모용 로직
-      const confirmLogin = window.confirm(
-        '데모 모드입니다.\n\n실제 Google OAuth는 백엔드 설정이 필요합니다.\n\n데모 로그인을 진행하시겠습니까?'
-      );
-
-      if (!confirmLogin) {
-        setLoading(false);
-        return;
-      }
-
-      // 데모용 가짜 Google 토큰
-      const demoGoogleToken = 'demo_google_token_' + Date.now();
       
-      const success = await login(demoGoogleToken);
+      // 백엔드의 OAuth2 인증 URL로 리다이렉트
+      // 성공 시 /auth/callback으로 토큰과 함께 돌아옴
+      window.location.href = 'http://localhost:8080/oauth2/authorization/google';
       
-      if (success) {
-        onSuccess?.();
-      } else {
-        const errorMsg = '로그인에 실패했습니다. 다시 시도해주세요.';
-        onError?.(errorMsg);
-        alert(errorMsg);
-      }
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.';
       console.error('Google 로그인 오류:', error);
       onError?.(errorMsg);
-      alert(`로그인 오류: ${errorMsg}`);
-    } finally {
       setLoading(false);
     }
   };
-
-  // 실제 Google OAuth SDK를 사용할 때의 준비 코드
-  // useEffect(() => {
-  //   // Google OAuth SDK 로드
-  //   const loadGoogleSDK = () => {
-  //     if (window.google) return;
-      
-  //     const script = document.createElement('script');
-  //     script.src = 'https://accounts.google.com/gsi/client';
-  //     script.async = true;
-  //     script.defer = true;
-  //     document.head.appendChild(script);
-      
-  //     script.onload = () => {
-  //       window.google.accounts.id.initialize({
-  //         client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID,
-  //         callback: handleCredentialResponse
-  //       });
-  //     };
-  //   };
-
-  //   loadGoogleSDK();
-  // }, []);
-
-  // const handleCredentialResponse = async (response: any) => {
-  //   try {
-  //     setLoading(true);
-  //     const success = await login(response.credential);
-      
-  //     if (success) {
-  //       onSuccess?.();
-  //     } else {
-  //       throw new Error('로그인 처리 실패');
-  //     }
-  //   } catch (error) {
-  //     const errorMsg = error instanceof Error ? error.message : '로그인에 실패했습니다.';
-  //     onError?.(errorMsg);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   return (
     <button
