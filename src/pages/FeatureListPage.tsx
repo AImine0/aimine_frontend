@@ -115,8 +115,24 @@ const FeatureListPage: React.FC = () => {
           setTools(searchTools);
         } else {
           // 일반 서비스 목록 조회
-          const apiTools = await apiService.getAllServices(params);
-          setTools(apiTools);
+          console.log('API 호출 전, params:', params);
+          console.log('apiService.getAllServices 함수 타입:', typeof apiService.getAllServices);
+          
+          const apiResponse = await apiService.getAllServices(params);
+          
+          console.log('API 응답 타입:', typeof apiResponse);
+          console.log('API 응답 내용:', apiResponse);
+          console.log('배열인가?', Array.isArray(apiResponse));
+          
+          if (Array.isArray(apiResponse)) {
+            console.log('배열 길이:', apiResponse.length);
+            console.log('첫 번째 요소:', apiResponse[0]);
+            setTools(apiResponse);
+          } else {
+            console.error('응답이 배열이 아닙니다:', apiResponse);
+            console.error('실제 타입:', Object.prototype.toString.call(apiResponse));
+            setError('데이터 형식 오류가 발생했습니다.');
+          }
         }
       } catch (error) {
         console.error('AI 서비스 조회 실패:', error);

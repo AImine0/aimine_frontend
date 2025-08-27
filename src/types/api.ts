@@ -1,408 +1,459 @@
-// ================================
-// 공통 타입
-// ================================
-export interface ApiResponse<T = any> {
-  success: boolean;
-  message?: string;
-  data: T;
-}
+// src/services/api.ts
+import type { 
+  // 공통 API 타입들
+  ApiResponse, 
+  AIToolDetail, 
+  Category, 
+  JobSituation,
+  AITool,
+  // 새로운 API 타입들
+  AuthGoogleLoginResponse,
+  UserProfileResponse,
+  BookmarkCreateRequest,
+  BookmarkListResponse,
+  ReviewCreateRequest,
+  ReviewListResponse,
+  SearchResponse,
+  ServiceListResponse,
+  ServiceDetailResponse,
+  SearchParams,
+  ServiceListParams
+} from '../types';
+import { getImageMapping } from '../utils/imageMapping';
 
-export interface ErrorResponse {
-  success: false;
-  message: string;
-  error?: string;
-}
+const API_BASE_URL = 'http://localhost:8080';
 
-// ================================
-// 인증/사용자 관리
-// ================================
-export interface AuthGoogleLoginRequest {
-  google_token: string;
-}
+// 로컬 스토리지에서 토큰 관리
+const TOKEN_KEY = 'access_token';
 
-export interface AuthGoogleLoginResponse {
-  success: boolean;
-  message: string;
-  access_token: string;
-  user: {
-    id: number;
-    google_id: string;
-    email: string;
-    name: string;
+const getAuthToken = (): string | null => {
+  return localStorage.getItem(TOKEN_KEY);
+};
+
+const setAuthToken = (token: string): void => {
+  localStorage.setItem(TOKEN_KEY, token);
+};
+
+const removeAuthToken = (): void => {
+  localStorage.removeItem(TOKEN_KEY);
+};
+
+// 카테고리 이름을 slug로 변환하는 함수
+const getCategorySlug = (categoryName: string): string => {
+  const categoryMap: Record<string, string> = {
+    '챗봇': 'chatbot',
+    '텍스트': 'text',
+    '이미지': 'image',
+    '비디오': 'video',
+    '오디오': 'audio',
+    '코드': 'code',
+    '3D': '3d',
+    '교육': 'education',
+    '비즈니스': 'business',
+    '창의성': 'creativity',
+    '생산성': 'productivity'
   };
-}
+  
+  return categoryMap[categoryName] || 'chatbot';
+};
 
-export interface AuthLogoutResponse {
-  success: boolean;
-  message: string;
-}
-
-export interface UserProfileResponse {
-  id: number;
-  google_id: string;
-  email: string;
-  name: string;
-  role: string;
-  created_at: string;
-}
-
-// ================================
-// 북마크 관리
-// ================================
-export interface BookmarkCreateRequest {
-  ai_service_id: number;
-}
-
-export interface BookmarkCreateResponse {
-  success: boolean;
-  message: string;
-  bookmark: {
-    user_id: number;
-    tool_id: number;
-  };
-}
-
-export interface BookmarkDeleteResponse {
-  success: boolean;
-  message: string;
-}
-
-export interface BookmarkListResponse {
-  bookmarks: Array<{
-    id: number;
-    ai_service_id: number;
-    service_name: string;
-    service_summary: string;
-    logo_url: string;
-    category_display_name: string;
-    pricing_type: string;
-  }>;
-  total_count: number;
-}
-
-// ================================
-// 리뷰/평점 관리
-// ================================
-export interface ReviewCreateRequest {
-  tool_id: number;
-  rating: number;
-  content: string;
-}
-
-export interface ReviewListResponse {
-  reviews: Array<{
-    id: number;
-    user_nickname: string;
-    rating: number;
-    content: string;
-    created_at: string;
-    updated_at: string;
-  }>;
-  total_count: number;
-  average_rating: number;
-}
-
-export interface ReviewDeleteResponse {
-  success: boolean;
-  message: string;
-}
-
-// ================================
-// 키워드 관리
-// ================================
-export interface KeywordListResponse {
-  keywords: Array<{
-    id: number;
-    keyword: string;
-    type: 'FEATURE' | 'FUNCTION' | 'INDUSTRY' | 'USE_CASE';
-    tool_count: number;
-  }>;
-  total_count: number;
-}
-
-export interface KeywordServiceListResponse {
-  keyword: {
-    id: number;
-    keyword: string;
-    type: 'FEATURE' | 'FUNCTION' | 'INDUSTRY' | 'USE_CASE';
-  };
-  tools: Array<{
-    id: number;
-    service_name: string;
-    description: string;
-    logo_url: string;
-    category_name: string;
-    pricing_type: 'FREEMIUM' | 'FREE' | 'PAID';
-    overall_rating: number;
-    bookmark_count: number;
-  }>;
-  total_count: number;
-}
-
-export interface KeywordByTypeResponse {
-  keywords: Array<{
-    id: number;
-    keyword: string;
-    type: 'FEATURE' | 'FUNCTION' | 'INDUSTRY' | 'USE_CASE';
-    tool_count: number;
-  }>;
-  total_count: number;
-}
-
-// ================================
-// 검색 및 필터링
-// ================================
-export interface SearchResponse {
-  query: string;
-  total_count: number;
-  tools: Array<{
-    id: number;
-    service_name: string;
-    description: string;
-    logo_url: string;
-    category_name: string;
-    pricing_type: string;
-    overall_rating: number;
-    keywords: string[];
-  }>;
-  suggested_keywords: string[];
-}
-
-// ================================
-// AI 서비스 관리
-// ================================
-export interface ServiceListResponse {
-  success: boolean;
-  data: Array<{
-    id: number;
-    serviceName: string;
-    description: string;
-    websiteUrl: string;
-    logoUrl: string;
-    launchDate: string;
-    category: {
-      id: number;
-      name: string;
-    };
-    tag: string;
-    pricingType: string;
-    overallRating: number;
-    keywords: string[];
-  }>;
-}
-
-export interface ServiceDetailResponse {
-  success: boolean;
-  data: {
-    id: number;
-    serviceName: string;
-    description: string;
-    websiteUrl: string;
-    logoUrl: string;
-    launchDate: string;
-    category: {
-      id: number;
-      name: string;
-    };
-    pricingType: string;
-    overallRating: number;
-    keywords: Array<{
-      id: number;
-      keyword: string;
-      type: string;
-    }>;
-    reviews: Array<{
-      id: number;
-      user: {
-        nickname: string;
+class ApiService {
+  private async request<T>(
+    endpoint: string, 
+    options?: RequestInit,
+    requireAuth: boolean = false
+  ): Promise<T> {
+    try {
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        ...(options?.headers as Record<string, string>),
       };
-      rating: number;
-      content: string;
-      createdAt: string;
-    }>;
-  };
-}
 
-// ================================
-// AI 조합 추천
-// ================================
-export interface AiCombinationListResponse {
-  combinations: Array<{
-    id: number;
-    title: string;
-    description: string;
-    category: string;
-    is_featured: boolean;
-    ai_services: Array<{
-      id: number;
-      name: string;
-      purpose: string;
-    }>;
-  }>;
-  total_count: number;
-}
+      // 인증이 필요한 경우 Authorization 헤더 추가
+      if (requireAuth) {
+        const token = getAuthToken();
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+        }
+      }
 
-export interface AiCombinationDetailResponse {
-  id: number;
-  title: string;
-  description: string;
-  category: string;
-  is_featured: boolean;
-  ai_services: Array<{
-    id: number;
-    name: string;
-    logo_url: string;
-    purpose: string;
-    tag: string;
-  }>;
-}
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        ...options,
+        headers,
+      });
 
-// ================================
-// 기존 호환성을 위한 타입들 (점진적 마이그레이션용)
-// ================================
-export interface AiService {
-  id: number;
-  name: string;
-  description: string;
-  serviceUrl: string;
-  category: string;
-  mainFunction: string;
-  feature1?: string;
-  feature2?: string;
-  link: string;
-  createdAt: string;
-  updatedAt: string;
-}
+      if (!response.ok) {
+        if (response.status === 401) {
+          // 토큰이 만료된 경우 제거
+          removeAuthToken();
+          throw new Error('인증이 필요합니다');
+        }
+        throw new Error(`API Error: ${response.status} ${response.statusText}`);
+      }
 
-export interface ApiStats {
-  totalServices: number;
-  totalCategories: number;
-}
+      return await response.json();
+    } catch (error) {
+      console.error('API request failed:', error);
+      throw error;
+    }
+  }
 
-// ================================
-// 검색 및 필터링 파라미터
-// ================================
-export interface SearchParams {
-  q?: string;
-  category?: string;
-  pricing?: string;
-  sort?: 'rating' | 'latest' | 'popular';
-  page?: number;
-  size?: number;
-}
+  // ================================
+  // 인증/사용자 관리
+  // ================================
+  
+  async loginWithGoogle(googleToken: string): Promise<AuthGoogleLoginResponse> {
+    const response = await this.request<AuthGoogleLoginResponse>('/auth/google-login', {
+      method: 'POST',
+      body: JSON.stringify({ google_token: googleToken })
+    });
+    
+    // 토큰 저장
+    setAuthToken(response.access_token);
+    
+    return response;
+  }
 
-export interface ServiceListParams {
-  page?: number;
-  size?: number;
-  category?: string;
-  search?: string;
-  sort?: 'rating' | 'latest' | 'popular';
-  pricing?: 'FREE' | 'FREEMIUM' | 'PAID';
-}
+  async logout(): Promise<void> {
+    await this.request('/auth/logout', {
+      method: 'POST'
+    }, true);
+    
+    // 로컬 토큰 제거
+    removeAuthToken();
+  }
 
-// ================================
-// UI 관련 타입들 (기존 호환성)
-// ================================
-export interface Category {
-  id: number;
-  name: string;
-  slug: string;
-}
+  async getUserProfile(): Promise<UserProfileResponse> {
+    return this.request<UserProfileResponse>('/auth/me', {
+      method: 'GET'
+    }, true);
+  }
 
-export interface AITool {
-  id: string;
-  name: string;
-  category: string;
-  description: string;
-  features: string[];
-  rating: number;
-  tags: string[];
-  url: string;
-  releaseDate: string;
-  company: string;
-  pricing: 'free' | 'paid' | 'freemium';
-  featured: boolean;
-  categoryLabel: string;
-  roles: string[];
-  userCount: number;
-  aiRating: number;
-  logoUrl: string;
-  serviceImageUrl: string;
-  priceImageUrl: string;
-  searchbarLogoUrl: string;
-}
+  // ================================
+  // 북마크 관리
+  // ================================
+  
+  async addBookmark(aiServiceId: number): Promise<void> {
+    const request: BookmarkCreateRequest = { ai_service_id: aiServiceId };
+    await this.request('/bookmarks', {
+      method: 'POST',
+      body: JSON.stringify(request)
+    }, true);
+  }
 
-export interface AIToolListItem {
-  id: number;
-  serviceName: string;
-  description: string;
-  websiteUrl: string;
-  category?: {
-    id: number;
-    name: string;
-    slug: string;
-  };
-  pricingType?: string;
-  overallRating: number;
-  keywords?: string[];
-  launchDate: string;
-  viewCount?: number;
-}
+  async removeBookmark(serviceId: number): Promise<void> {
+    await this.request(`/bookmarks/${serviceId}`, {
+      method: 'DELETE'
+    }, true);
+  }
 
-export interface AIToolDetail {
-  id: number;
-  serviceName: string;
-  description: string;
-  websiteUrl: string;
-  logoUrl: string;
-  launchDate: string;
-  category: {
-    id: number;
-    name: string;
-    slug?: string;
-  };
-  pricingType: string;
-  pricingInfo?: string;
-  pricingLink?: string;
-  overallRating: number;
-  viewCount?: number;
-  bookmarkCount?: number;
-  keywords: string[];
-  videos?: any[];
-  reviews: Array<{
-    id: number;
-    user: {
-      nickname: string;
-    };
-    rating: number;
-    content: string;
-    createdAt: string;
-    updatedAt?: string;
-  }>;
-  serviceImageUrl: string;
-  priceImageUrl: string;
-  searchbarLogoUrl: string;
-}
+  async getBookmarks(): Promise<BookmarkListResponse> {
+    return this.request<BookmarkListResponse>('/bookmarks', {
+      method: 'GET'
+    }, true);
+  }
 
-export interface JobSituation {
-  id: number;
-  title: string;
-  description: string;
-  recommendations?: Array<{
-    tool: {
-      id: number;
-      serviceName: string;
-      category?: {
-        name: string;
+  // ================================
+  // 리뷰/평점 관리
+  // ================================
+  
+  async createReview(toolId: number, rating: number, content: string): Promise<ReviewListResponse> {
+    const request: ReviewCreateRequest = { tool_id: toolId, rating, content };
+    return this.request<ReviewListResponse>('/reviews', {
+      method: 'POST',
+      body: JSON.stringify(request)
+    }, true);
+  }
+
+  async getReviews(): Promise<ReviewListResponse> {
+    return this.request<ReviewListResponse>('/reviews', {
+      method: 'GET'
+    });
+  }
+
+  async deleteReview(reviewId: number): Promise<void> {
+    await this.request(`/reviews/${reviewId}`, {
+      method: 'DELETE'
+    }, true);
+  }
+
+  // ================================
+  // 키워드 관리
+  // ================================
+  
+  async getKeywords(): Promise<any> {
+    return this.request('/keywords', {
+      method: 'GET'
+    });
+  }
+
+  async getKeywordServices(keywordId: number): Promise<any> {
+    return this.request(`/keywords/${keywordId}/aiservices`, {
+      method: 'GET'
+    });
+  }
+
+  async getKeywordsByType(type: string): Promise<any> {
+    return this.request(`/keywords?type=${type}`, {
+      method: 'GET'
+    });
+  }
+
+  // ================================
+  // 검색 및 필터링
+  // ================================
+  
+  async search(params: SearchParams): Promise<SearchResponse> {
+    const queryParams = new URLSearchParams();
+    
+    // undefined가 아닌 값들만 추가
+    if (params.q) queryParams.append('q', params.q);
+    if (params.category) queryParams.append('category', params.category);
+    if (params.pricing) queryParams.append('pricing', params.pricing);
+    if (params.sort) queryParams.append('sort', params.sort);
+    if (params.page) queryParams.append('page', params.page.toString());
+    if (params.size) queryParams.append('size', params.size.toString());
+
+    return this.request<SearchResponse>(`/search?${queryParams.toString()}`, {
+      method: 'GET'
+    });
+  }
+
+  // ================================
+  // AI 서비스 관리 (수정된 부분)
+  // ================================
+  
+  async getAllServices(params?: {
+    page?: number;
+    size?: number;
+    category?: string;
+    search?: string;
+    sort?: string;
+    pricing?: string;
+  }): Promise<AITool[]> {
+    try {
+      const queryParams = new URLSearchParams();
+      
+      if (params) {
+        Object.entries(params).forEach(([key, value]) => {
+          if (value !== undefined) {
+            queryParams.append(key, value.toString());
+          }
+        });
+      }
+
+      const queryString = queryParams.toString();
+      const endpoint = queryString ? `/ai-services?${queryString}` : '/ai-services';
+      
+      console.log('API 호출 엔드포인트:', endpoint);
+      
+      // API 응답은 이중 래핑되어 있음: { success, data: { success, data: [...] } }
+      const response = await this.request<ApiResponse<ServiceListResponse>>(endpoint);
+      
+      console.log('API 전체 응답:', response);
+      
+      if (!response.success || !response.data) {
+        throw new Error('Invalid response structure');
+      }
+      
+      // 실제 데이터 배열 추출
+      const serviceData = response.data.data;
+      console.log('실제 서비스 데이터:', serviceData);
+      
+      if (!Array.isArray(serviceData)) {
+        throw new Error('데이터가 배열이 아닙니다: ' + typeof serviceData);
+      }
+      
+      return serviceData.map(tool => {
+        const categorySlug = getCategorySlug(tool.category?.name || '생산성');
+        const imageMapping = getImageMapping(tool.serviceName, categorySlug);
+        
+        return {
+          id: tool.id.toString(),
+          name: tool.serviceName,
+          category: categorySlug,
+          description: tool.description,
+          features: tool.keywords || [],
+          rating: tool.overallRating,
+          tags: tool.keywords || [],
+          url: tool.websiteUrl || '',
+          releaseDate: tool.launchDate,
+          company: 'Unknown',
+          pricing: (tool.pricingType?.toLowerCase() || 'free') as 'free' | 'paid' | 'freemium',
+          featured: false,
+          categoryLabel: tool.category?.name || '챗봇',
+          roles: [],
+          userCount: 0,
+          aiRating: tool.overallRating,
+          logoUrl: imageMapping.logo,
+          serviceImageUrl: imageMapping.serviceImage,
+          priceImageUrl: imageMapping.priceImage,
+          searchbarLogoUrl: imageMapping.searchbarLogo
+        };
+      });
+    } catch (error) {
+      console.error('AI 서비스 조회 실패:', error);
+      throw error;
+    }
+  }
+
+  async getServiceById(id: string): Promise<AIToolDetail | null> {
+    try {
+      const response = await this.request<ServiceDetailResponse>(`/ai-services/${id}`);
+      
+      if (!response.success || !response.data) {
+        console.error('Invalid response structure:', response);
+        return null;
+      }
+      
+      const toolData = response.data;
+      const categorySlug = getCategorySlug(toolData.category?.name || '생산성');
+      const imageMapping = getImageMapping(toolData.serviceName, categorySlug);
+      
+      const toolDetail: AIToolDetail = {
+        id: toolData.id,
+        serviceName: toolData.serviceName,
+        description: toolData.description,
+        websiteUrl: toolData.websiteUrl,
+        logoUrl: imageMapping.logo,
+        launchDate: toolData.launchDate,
+        category: toolData.category || {
+          id: 1,
+          name: '챗봇',
+          slug: 'chatbot'
+        },
+        pricingType: toolData.pricingType || 'FREE',
+        pricingInfo: '',
+        pricingLink: '',
+        overallRating: toolData.overallRating || 0,
+        viewCount: 0,
+        bookmarkCount: 0,
+        keywords: toolData.keywords?.map(k => k.keyword) || [],
+        videos: [],
+        reviews: toolData.reviews?.map(r => ({
+          id: r.id,
+          user: r.user,
+          rating: r.rating,
+          content: r.content,
+          createdAt: r.createdAt,
+          updatedAt: r.createdAt
+        })) || [],
+        serviceImageUrl: imageMapping.serviceImage,
+        priceImageUrl: imageMapping.priceImage,
+        searchbarLogoUrl: imageMapping.searchbarLogo
       };
-      logoUrl?: string;
-    };
-  }>;
+      
+      return toolDetail;
+      
+    } catch (error) {
+      console.error('서비스 상세 조회 실패:', error);
+      throw error;
+    }
+  }
+
+  // ================================
+  // AI 조합 추천
+  // ================================
+  
+  async getAICombinations(params?: {
+    category?: string;
+    featured?: boolean;
+  }): Promise<any> {
+    const queryParams = new URLSearchParams();
+    
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined) {
+          queryParams.append(key, value.toString());
+        }
+      });
+    }
+
+    const queryString = queryParams.toString();
+    const endpoint = queryString ? `/ai-combinations?${queryString}` : '/ai-combinations';
+    
+    return this.request(endpoint, {
+      method: 'GET'
+    });
+  }
+
+  async getAICombinationById(id: string): Promise<any> {
+    return this.request(`/ai-combinations/${id}`, {
+      method: 'GET'
+    });
+  }
+
+  // ================================
+  // 기존 카테고리 및 직업 상황 (유지)
+  // ================================
+  
+  async getCategories(): Promise<Category[]> {
+    try {
+      const response = await this.request<ApiResponse<Category[]>>('/categories');
+      return response.data;
+    } catch (error) {
+      console.error('카테고리 조회 실패:', error);
+      throw error;
+    }
+  }
+
+  async getJobSituations(): Promise<JobSituation[]> {
+    try {
+      console.log('📄 API 호출 시작: /job-situations');
+      
+      const response = await this.request<JobSituation[]>('/job-situations');
+      
+      console.log('📦 API 응답:', response);
+      
+      if (!Array.isArray(response)) {
+        console.warn('⚠️ 예상치 못한 응답 형태:', response);
+        throw new Error('예상치 못한 API 응답 형태입니다');
+      }
+      
+      if (response.length === 0) {
+        console.warn('⚠️ API에서 빈 배열 반환');
+        throw new Error('API에서 데이터가 없습니다');
+      }
+      
+      console.log('✅ 유효한 응답 확인, 데이터 처리 시작');
+      
+      return response.map(jobSituation => {
+        if (jobSituation.recommendations && Array.isArray(jobSituation.recommendations)) {
+          return {
+            ...jobSituation,
+            recommendations: jobSituation.recommendations.map(rec => ({
+              ...rec,
+              tool: {
+                ...rec.tool,
+                logoUrl: getImageMapping(rec.tool.serviceName, getCategorySlug(rec.tool.category?.name || '생산성')).logo
+              }
+            }))
+          };
+        }
+        
+        return jobSituation;
+      });
+    } catch (error) {
+      console.warn('⚠️ API 호출 실패:', error);
+      throw error;
+    }
+  }
+
+  // ================================
+  // 유틸리티 메서드
+  // ================================
+  
+  isAuthenticated(): boolean {
+    return getAuthToken() !== null;
+  }
+  
+  getToken(): string | null {
+    return getAuthToken();
+  }
 }
 
-// ================================
-// 유틸리티 타입들
-// ================================
-export type PricingType = 'FREE' | 'FREEMIUM' | 'PAID';
-export type KeywordType = 'FEATURE' | 'FUNCTION' | 'INDUSTRY' | 'USE_CASE';
-export type SortType = 'rating' | 'latest' | 'popular';
+// 싱글톤 인스턴스 생성 및 내보내기
+export const apiService = new ApiService();
+
+// 토큰 관리 함수들도 내보내기
+export { getAuthToken, setAuthToken, removeAuthToken };
