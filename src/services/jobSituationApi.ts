@@ -1,7 +1,7 @@
 // src/services/jobSituationApi.ts
 import type { ApiResponse, JobSituation } from '../types';
 
-const API_BASE_URL = 'http://localhost:8080/api';
+const API_BASE_URL = 'http://localhost:8080'; // /api 제거
 
 class JobSituationApiService {
   private async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
@@ -46,4 +46,4 @@ class JobSituationApiService {
   }
 }
 
-export const jobSituationApiService = new JobSituationApiService(); 
+export const jobSituationApiService = new JobSituationApiService();

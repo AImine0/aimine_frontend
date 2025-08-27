@@ -6,16 +6,22 @@ export { toolApiService } from './toolApi';
 export { categoryApiService } from './categoryApi';
 export { jobSituationApiService } from './jobSituationApi';
 
-// API 기본 설정
+// API 기본 설정 - URL 수정
 export const API_CONFIG = {
-  BASE_URL: 'http://localhost:8080/api',
+  BASE_URL: 'http://localhost:8080', // /api 제거
   TIMEOUT: 10000,
   RETRY_ATTEMPTS: 3,
 } as const;
 
-// API 엔드포인트 상수 (API 명세서에 명시된 것만)
+// API 엔드포인트 상수 - 백엔드와 일치하도록 수정
 export const API_ENDPOINTS = {
-  TOOLS: '/tools',                    // ToolListResponse, ToolDetailResponse
-  CATEGORIES: '/categories',          // CategoryListResponse
-  JOB_SITUATIONS: '/job-situations',  // JobSituationListResponse
-} as const; 
+  AI_SERVICES: '/ai-services',        // 백엔드 실제 엔드포인트
+  CATEGORIES: '/categories',          
+  JOB_SITUATIONS: '/job-situations',  
+  BOOKMARKS: '/bookmarks',
+  REVIEWS: '/reviews',
+  KEYWORDS: '/keywords',
+  SEARCH: '/search',
+  AUTH: '/auth',
+  AI_COMBINATIONS: '/ai-combinations'
+} as const;
