@@ -181,17 +181,18 @@ class ApiService {
     }
   }
 
-  // ================================
-  // 북마크 관리
-  // ================================
-  
+
   async addBookmark(aiServiceId: number): Promise<BookmarkCreateResponse> {
     try {
       console.log('북마크 추가 요청:', aiServiceId);
       
-      const request: BookmarkCreateRequest = { ai_service_id: aiServiceId };
+      // 백엔드 DTO와 일치하는 필드명 사용
+      const request: BookmarkCreateRequest = { 
+        aiServiceId: aiServiceId  // ai_service_id -> aiServiceId
+      };
       
-      // 백엔드가 ApiResponse로 래핑하여 응답하므로 구조에 맞게 처리
+      console.log('요청 본문:', JSON.stringify(request));
+      
       const response = await this.request<ApiResponse<BookmarkCreateResponse>>('/bookmarks?userId=1', {
         method: 'POST',
         body: JSON.stringify(request)
@@ -201,19 +202,34 @@ class ApiService {
         throw new Error(response.message || '북마크 추가 실패');
       }
       
-      console.log('북마크 추가 완료');
+      console.log('북마크 추가 완료:', response.data);
       return response.data;
     } catch (error) {
       console.error('북마크 추가 실패:', error);
+      
+      // 400 Bad Request 오류 처리
+      if (error instanceof Error && error.message.includes('400')) {
+        throw new Error('잘못된 요청입니다. 데이터를 확인해주세요.');
+      }
+      
+      // 네트워크/CORS 오류 처리
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        throw new Error('서버에 연결할 수 없습니다. 네트워크를 확인해주세요.');
+      }
+      
+      // 401 인증 오류 처리
+      if (error instanceof Error && error.message.includes('401')) {
+        throw new Error('로그인이 필요합니다.');
+      }
+      
       throw error;
     }
   }
-
+  
   async removeBookmark(serviceId: number): Promise<BookmarkDeleteResponse> {
     try {
       console.log('북마크 제거 요청:', serviceId);
       
-      // 백엔드가 ApiResponse로 래핑하여 응답하므로 구조에 맞게 처리
       const response = await this.request<ApiResponse<BookmarkDeleteResponse>>(`/bookmarks/${serviceId}?userId=1`, {
         method: 'DELETE'
       }, true);
@@ -226,15 +242,27 @@ class ApiService {
       return response.data;
     } catch (error) {
       console.error('북마크 제거 실패:', error);
+      
+      if (error instanceof Error && error.message.includes('400')) {
+        throw new Error('잘못된 요청입니다. 서비스 ID를 확인해주세요.');
+      }
+      
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        throw new Error('서버에 연결할 수 없습니다.');
+      }
+      
+      if (error instanceof Error && error.message.includes('401')) {
+        throw new Error('로그인이 필요합니다.');
+      }
+      
       throw error;
     }
   }
-
+  
   async getBookmarks(): Promise<BookmarkListResponse> {
     try {
       console.log('북마크 목록 조회 시작');
       
-      // 백엔드가 ApiResponse로 래핑하여 응답하므로 구조에 맞게 처리
       const response = await this.request<ApiResponse<BookmarkListResponse>>('/bookmarks?userId=1', {
         method: 'GET'
       }, true);
@@ -247,10 +275,19 @@ class ApiService {
       return response.data;
     } catch (error) {
       console.error('북마크 목록 조회 실패:', error);
+      
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        throw new Error('서버에 연결할 수 없습니다.');
+      }
+      
+      if (error instanceof Error && error.message.includes('401')) {
+        throw new Error('로그인이 필요합니다.');
+      }
+      
       throw error;
     }
   }
-
+  
   async checkBookmarkStatus(serviceId: number): Promise<boolean> {
     try {
       console.log('북마크 상태 확인:', serviceId);
@@ -260,13 +297,17 @@ class ApiService {
       }, true);
       
       if (!response.success) {
-        throw new Error(response.message || '북마크 상태 확인 실패');
+        console.warn('북마크 상태 확인 실패:', response.message);
+        return false;
       }
       
+      console.log('북마크 상태 확인 완료:', response.data);
       return response.data;
     } catch (error) {
       console.error('북마크 상태 확인 실패:', error);
-      throw error;
+      
+      // 북마크 상태 확인은 실패해도 기본값 반환
+      return false;
     }
   }
 

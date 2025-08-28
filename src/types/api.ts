@@ -50,7 +50,7 @@ export interface UserProfileResponse {
 // 북마크 관리
 // ================================
 export interface BookmarkCreateRequest {
-  ai_service_id: number;
+  aiServiceId: number;
 }
 
 export interface BookmarkCreateResponse {
