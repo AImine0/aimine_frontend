@@ -89,6 +89,25 @@ export interface ReviewCreateRequest {
   content: string;
 }
 
+export interface ReviewCreateResponse {
+  success: boolean;
+  message: string;
+  review: {
+    id: number;
+    user_id: number;
+    ai_service_id: number;
+    rating: number;
+    content: string;
+    created_at: string;
+  };
+}
+
+export interface ReviewDeleteResponse {
+  success: boolean;
+  message: string;
+}
+
+// 누락된 ReviewListResponse 타입 추가
 export interface ReviewListResponse {
   reviews: Array<{
     id: number;
@@ -100,11 +119,6 @@ export interface ReviewListResponse {
   }>;
   total_count: number;
   average_rating: number;
-}
-
-export interface ReviewDeleteResponse {
-  success: boolean;
-  message: string;
 }
 
 // ================================
@@ -224,6 +238,19 @@ export interface ServiceDetailResponse {
 }
 
 // ================================
+// 카테고리 관리
+// ================================
+export interface CategoryListResponse {
+  categories: Array<{
+    id: number;
+    name: string;
+    displayName: string;
+    serviceCount: number;
+  }>;
+  totalCount: number;
+}
+
+// ================================
 // AI 조합 추천
 // ================================
 export interface AiCombinationListResponse {
@@ -258,7 +285,7 @@ export interface AiCombinationDetailResponse {
 }
 
 // ================================
-// 기존 호환성을 위한 타입들 (점진적 마이그레이션용)
+// 기존 호환성을 위한 타입들
 // ================================
 export interface AiService {
   id: number;
@@ -307,6 +334,11 @@ export interface Category {
   id: number;
   name: string;
   slug: string;
+  description?: string;
+  icon?: string;
+  parentId?: number | null;
+  toolCount?: number;
+  children?: Category[];
 }
 
 export interface AITool {
