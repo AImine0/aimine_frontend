@@ -116,7 +116,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
     },
     {
       key: 'freemium' as FilterType,
-      label: '부분유료',
+      label: '부분무료',
       count: freemiumCount,
       color: '#1976D2'
     },
