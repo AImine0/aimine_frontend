@@ -135,9 +135,9 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
             {/* 데스크톱 네비게이션 */}
             <nav className="hidden md:flex items-center space-x-6 ml-8">
               <Link 
-                to="/" 
+                to="/features" 
                 className={`px-3 py-2 text-sm font-medium transition-colors hover:text-purple-600 ${
-                  location.pathname === '/' ? 'text-purple-600' : 'text-gray-700'
+                  location.pathname.startsWith('/features') ? 'text-purple-600' : 'text-gray-700'
                 }`}
               >
                 기능별
@@ -307,7 +307,7 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
         <div className="md:hidden border-t border-gray-200">
           <div className="px-4 py-4 space-y-2">
             <Link
-              to="/"
+              to="/features"
               className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-purple-600"
               onClick={() => setShowMobileMenu(false)}
             >

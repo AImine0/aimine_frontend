@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import FeatureListPage from './pages/FeatureListPage';
+import HomePage from './pages/HomePage';
 import RoleListPage from './pages/RoleListPage';
 import ToolDetailPage from './pages/ToolDetailPage';
 import SearchPage from './pages/SearchPage';
@@ -16,7 +17,8 @@ const App: React.FC = () => {
       <BrowserRouter>
         <Routes>
           {/* 공개 페이지들 */}
-          <Route path="/" element={<FeatureListPage />} />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/features" element={<FeatureListPage />} />
           <Route path="/role" element={<RoleListPage />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/tool/:id" element={<ToolDetailPage />} />
