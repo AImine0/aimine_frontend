@@ -752,42 +752,40 @@ class ApiService {
   
   async getJobSituations(): Promise<JobSituation[]> {
     try {
-      console.log('직업 상황 조회 시작: /job-situations');
+      console.log('직업 상황 조회 시작 (AI 조합 추천 API 사용)');
       
-      const response = await this.request<JobSituation[]>('/job-situations');
+      // AI 조합 추천 API 호출
+      const response = await this.request<ApiResponse<AiCombinationListResponse>>('/ai-combinations');
       
-      console.log('직업 상황 응답:', response);
-      
-      if (!Array.isArray(response)) {
-        console.warn('예상치 못한 응답 형태:', response);
-        throw new Error('예상치 못한 API 응답 형태입니다');
+      if (!response.success || !response.data) {
+        throw new Error('AI 조합 추천 조회 응답 구조 오류');
       }
       
-      if (response.length === 0) {
-        console.warn('API에서 빈 배열 반환');
-        throw new Error('API에서 데이터가 없습니다');
-      }
+      console.log('AI 조합 추천 조회 완료, 조합 수:', response.data.combinations.length);
       
-      console.log('유효한 응답 확인, 데이터 처리 시작');
+      // AiCombinationListResponse를 JobSituation[] 형태로 변환
+      // Java DTO는 camelCase를 사용하므로 isFeatured, aiServices 등을 사용
+      const jobSituations: JobSituation[] = response.data.combinations.map((combo) => ({
+        id: combo.id,
+        title: combo.title,
+        description: combo.description,
+        recommendations: combo.aiServices.map((service) => ({
+          tool: {
+            id: service.id,
+            serviceName: service.name,
+            category: {
+              name: combo.category || '생산성'
+            },
+            logoUrl: getImageMapping(service.name, getCategorySlug(combo.category || '생산성')).logo
+          }
+        }))
+      }));
       
-      return response.map(jobSituation => {
-        if (jobSituation.recommendations && Array.isArray(jobSituation.recommendations)) {
-          return {
-            ...jobSituation,
-            recommendations: jobSituation.recommendations.map(rec => ({
-              ...rec,
-              tool: {
-                ...rec.tool,
-                logoUrl: getImageMapping(rec.tool.serviceName, getCategorySlug(rec.tool.category?.name || '생산성')).logo
-              }
-            }))
-          };
-        }
-        
-        return jobSituation;
-      });
+      console.log('직업 상황 데이터 변환 완료, 항목 수:', jobSituations.length);
+      return jobSituations;
+      
     } catch (error) {
-      console.warn('직업 상황 조회 실패:', error);
+      console.error('직업 상황 조회 실패:', error);
       throw error;
     }
   }

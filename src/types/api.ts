@@ -251,7 +251,7 @@ export interface CategoryListResponse {
 }
 
 // ================================
-// AI 조합 추천
+// AI 조합 추천 (Java DTO 구조에 맞게 camelCase로 수정)
 // ================================
 export interface AiCombinationListResponse {
   combinations: Array<{
@@ -259,14 +259,14 @@ export interface AiCombinationListResponse {
     title: string;
     description: string;
     category: string;
-    is_featured: boolean;
-    ai_services: Array<{
+    isFeatured: boolean;        // snake_case에서 camelCase로 변경
+    aiServices: Array<{         // snake_case에서 camelCase로 변경
       id: number;
       name: string;
       purpose: string;
     }>;
   }>;
-  total_count: number;
+  totalCount: number;           // snake_case에서 camelCase로 변경
 }
 
 export interface AiCombinationDetailResponse {
@@ -274,11 +274,11 @@ export interface AiCombinationDetailResponse {
   title: string;
   description: string;
   category: string;
-  is_featured: boolean;
-  ai_services: Array<{
+  isFeatured: boolean;          // snake_case에서 camelCase로 변경
+  aiServices: Array<{           // snake_case에서 camelCase로 변경
     id: number;
     name: string;
-    logo_url: string;
+    logoUrl: string;            // snake_case에서 camelCase로 변경
     purpose: string;
     tag: string;
   }>;
