@@ -80,7 +80,7 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
 
   // 로그인 처리
   const handleLogin = () => {
-    setShowLoginModal(true);
+    window.location.href = 'http://localhost:8080/oauth2/authorization/google';
   };
 
   // 로그인 성공 처리
