@@ -10,12 +10,12 @@ import { handleImageError } from '../utils/imageMapping';
 
 interface BookmarkedTool {
   id: number;
-  ai_service_id: number;
-  service_name: string;
-  service_summary: string;
-  logo_url: string;
-  category_display_name: string;
-  pricing_type: string;
+  aiServiceId: number;           // camelCase로 변경
+  serviceName: string;           // camelCase로 변경
+  serviceSummary: string;        // camelCase로 변경
+  logoUrl: string;               // camelCase로 변경
+  categoryDisplayName: string;   // camelCase로 변경
+  pricingType: string;           // camelCase로 변경
 }
 
 const MyPage: React.FC = () => {
@@ -44,7 +44,7 @@ const MyPage: React.FC = () => {
         // 사용자 정보와 북마크 데이터 병렬로 로드
         const [userProfile, bookmarksResponse] = await Promise.all([
           apiService.getUserProfile(),
-          apiService.getBookmarks()
+          apiService.getBookmarksFixed() // 수정된 메서드 사용
         ]);
 
         setUser(userProfile);
@@ -75,9 +75,9 @@ const MyPage: React.FC = () => {
       
       await apiService.removeBookmark(serviceId);
       
-      // 북마크 목록에서 제거
+      // 북마크 목록에서 제거 (camelCase 필드 사용)
       setBookmarkedTools(prev => 
-        prev.filter(tool => tool.ai_service_id !== serviceId)
+        prev.filter(tool => tool.aiServiceId !== serviceId)
       );
       
     } catch (error) {
@@ -224,8 +224,8 @@ const MyPage: React.FC = () => {
                       <div className="flex-shrink-0">
                         <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
                           <img 
-                            src={tool.logo_url} 
-                            alt={`${tool.service_name} 로고`}
+                            src={tool.logoUrl} 
+                            alt={`${tool.serviceName} 로고`}
                             className="w-full h-full object-contain p-1"
                             onError={(e) => handleImageError(e, '/images/Logo/Logo_FINAL.svg')}
                           />
@@ -243,9 +243,9 @@ const MyPage: React.FC = () => {
                                  fontSize: '12px',
                                  fontFamily: 'Pretendard'
                                }}>
-                            {tool.category_display_name}
+                            {tool.categoryDisplayName}
                           </span>
-                          {getPricingBadge(tool.pricing_type)}
+                          {getPricingBadge(tool.pricingType)}
                         </div>
                       </div>
                     </div>
@@ -254,12 +254,12 @@ const MyPage: React.FC = () => {
                     <div className="flex items-start gap-2 flex-shrink-0">
                       {/* 북마크 제거 버튼 */}
                       <button
-                        onClick={() => handleRemoveBookmark(tool.ai_service_id)}
-                        disabled={removingBookmarks.has(tool.ai_service_id)}
+                        onClick={() => handleRemoveBookmark(tool.aiServiceId)} // camelCase 사용
+                        disabled={removingBookmarks.has(tool.aiServiceId)}
                         className="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 bg-red-50 text-red-500 hover:bg-red-100 disabled:opacity-50 disabled:cursor-not-allowed"
                         title="저장 해제"
                       >
-                        {removingBookmarks.has(tool.ai_service_id) ? (
+                        {removingBookmarks.has(tool.aiServiceId) ? (
                           <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
                         ) : (
                           <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -270,7 +270,7 @@ const MyPage: React.FC = () => {
 
                       {/* 상세 페이지 링크 */}
                       <button 
-                        onClick={() => navigate(`/tool/${tool.ai_service_id}`)}
+                        onClick={() => navigate(`/tool/${tool.aiServiceId}`)} // camelCase 사용
                         className="flex items-center justify-center transition-all duration-200 group-hover:bg-purple-100" 
                         style={{ 
                           backgroundColor: '#E9DFFB', 
@@ -289,15 +289,15 @@ const MyPage: React.FC = () => {
                   {/* 중간: 제목과 설명 */}
                   <div className="mb-4">
                     <button
-                      onClick={() => navigate(`/tool/${tool.ai_service_id}`)}
+                      onClick={() => navigate(`/tool/${tool.aiServiceId}`)} // camelCase 사용
                       className="hover:text-purple-600 transition-colors text-left w-full"
                     >
                       <h3 className="font-semibold mb-2 line-clamp-1" style={{ color: '#000000', fontSize: '20px', fontFamily: 'Pretendard' }}>
-                        {tool.service_name}
+                        {tool.serviceName} {/* camelCase 사용 */}
                       </h3>
                     </button>
                     <p className="text-gray-600 leading-relaxed line-clamp-2" style={{ fontSize: '14px', fontFamily: 'Pretendard' }}>
-                      {tool.service_summary}
+                      {tool.serviceSummary} {/* camelCase 사용 */}
                     </p>
                   </div>
                 </div>

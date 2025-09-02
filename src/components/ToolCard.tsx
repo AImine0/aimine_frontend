@@ -1,7 +1,7 @@
 // [AI 툴 카드 컴포넌트] 개별 AI 도구 정보 표시 - 이름, 설명, BEST 뱃지, 북마크, 평점, 링크 버튼
-// src/components/ToolCard.tsx
+
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import type { AITool } from '../types';
 import { handleImageError } from '../utils/imageMapping';
 import { apiService } from '../services';
@@ -16,56 +16,135 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [bookmarkLoading, setBookmarkLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [statusCheckAttempts, setStatusCheckAttempts] = useState(0);
+  const location = useLocation();
 
-  // 인증 상태 및 북마크 상태 확인
+  // 인증 상태 및 북마크 상태 확인 (페이지 변경 시마다 실행)
   useEffect(() => {
     const checkAuthAndBookmark = async () => {
+      console.log('🔄 ToolCard 상태 확인 시작:', { toolId: tool.id, attempts: statusCheckAttempts });
+      
       const authenticated = apiService.isAuthenticated();
       setIsAuthenticated(authenticated);
 
-      if (authenticated) {
+      if (authenticated && tool.id) {
         try {
-          const bookmarks = await apiService.getBookmarks();
-          const isBookmarkedTool = bookmarks.bookmarks.some(
-            bookmark => bookmark.ai_service_id.toString() === tool.id
-          );
-          setIsBookmarked(isBookmarkedTool);
+          const numericId = parseInt(tool.id);
+          if (!isNaN(numericId)) {
+            console.log('🔍 북마크 상태 확인 중:', numericId);
+            const bookmarkStatus = await apiService.checkBookmarkStatus(numericId);
+            setIsBookmarked(bookmarkStatus);
+            console.log('✅ 북마크 상태 설정 완료:', bookmarkStatus);
+          }
         } catch (error) {
-          console.warn('북마크 상태 조회 실패:', error);
+          console.warn('⚠️ 북마크 상태 확인 실패:', error);
+          
+          // 첫 번째 시도에서 실패한 경우 잠시 후 재시도
+          if (statusCheckAttempts < 2) {
+            console.log('🔄 북마크 상태 재확인 시도');
+            setTimeout(() => {
+              setStatusCheckAttempts(prev => prev + 1);
+            }, 1000);
+          }
         }
+      } else {
+        setIsBookmarked(false);
       }
     };
 
     checkAuthAndBookmark();
-  }, [tool.id]);
+  }, [tool.id, statusCheckAttempts, location.pathname]);
 
   // 북마크 토글 핸들러
   const handleBookmarkToggle = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     
+    console.log('🔄 북마크 토글 시작:', { 
+      toolId: tool.id, 
+      isAuthenticated, 
+      currentBookmarkState: isBookmarked 
+    });
+    
     if (!isAuthenticated) {
       alert('로그인이 필요한 기능입니다.');
       return;
     }
 
-    if (bookmarkLoading) return;
+    if (bookmarkLoading) {
+      console.log('⏳ 이미 처리 중...');
+      return;
+    }
+
+    const numericId = parseInt(tool.id);
+    if (isNaN(numericId)) {
+      console.error('❌ 유효하지 않은 tool.id:', tool.id);
+      alert('도구 ID가 올바르지 않습니다.');
+      return;
+    }
 
     try {
       setBookmarkLoading(true);
       
-      if (isBookmarked) {
-        await apiService.removeBookmark(parseInt(tool.id));
-        setIsBookmarked(false);
-      } else {
-        await apiService.addBookmark(parseInt(tool.id));
-        setIsBookmarked(true);
+      // 현재 실제 서버 상태를 다시 한 번 확인
+      console.log('🔍 서버에서 현재 북마크 상태 재확인');
+      const currentServerState = await apiService.checkBookmarkStatus(numericId);
+      console.log('📊 서버 상태 vs 로컬 상태:', { 
+        server: currentServerState, 
+        local: isBookmarked 
+      });
+      
+      // 서버 상태와 로컬 상태가 다른 경우 동기화
+      if (currentServerState !== isBookmarked) {
+        console.log('🔄 상태 동기화 중...');
+        setIsBookmarked(currentServerState);
       }
+      
+      // 실제 서버 상태에 따라 액션 결정
+      if (currentServerState) {
+        console.log('🗑️ 북마크 제거 시도');
+        await apiService.removeBookmark(numericId);
+        setIsBookmarked(false);
+        console.log('✅ 북마크 제거 완료');
+      } else {
+        console.log('➕ 북마크 추가 시도');
+        await apiService.addBookmark(numericId);
+        setIsBookmarked(true);
+        console.log('✅ 북마크 추가 완료');
+      }
+      
     } catch (error) {
-      console.error('북마크 처리 실패:', error);
-      alert('북마크 처리 중 오류가 발생했습니다.');
+      console.error('❌ 북마크 처리 실패:', error);
+      
+      let errorMessage = '북마크 처리 중 오류가 발생했습니다.';
+      
+      if (error instanceof Error) {
+        if (error.message.includes('이미 북마크')) {
+          errorMessage = '이미 북마크된 서비스입니다.';
+          setIsBookmarked(true);
+        } else if (error.message.includes('존재하지 않는') || error.message.includes('북마크가 없')) {
+          errorMessage = '북마크가 존재하지 않습니다.';
+          setIsBookmarked(false);
+        } else if (error.message.includes('로그인')) {
+          errorMessage = '로그인이 필요합니다.';
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
+      alert(errorMessage);
+      
+      // 에러 발생 후 상태 재확인
+      try {
+        const updatedState = await apiService.checkBookmarkStatus(numericId);
+        setIsBookmarked(updatedState);
+      } catch (recheckError) {
+        console.warn('상태 재확인 실패:', recheckError);
+      }
+      
     } finally {
       setBookmarkLoading(false);
+      console.log('🏁 북마크 토글 완료');
     }
   };
 

@@ -47,18 +47,18 @@ export interface UserProfileResponse {
 }
 
 // ================================
-// 북마크 관리
+// 북마크 관리 (백엔드 camelCase 응답에 맞춰 수정)
 // ================================
 export interface BookmarkCreateRequest {
-  aiServiceId: number;
+  aiServiceId: number;  // camelCase로 통일
 }
 
 export interface BookmarkCreateResponse {
   success: boolean;
   message: string;
   bookmark: {
-    user_id: number;
-    tool_id: number;
+    userId: number;    // camelCase
+    toolId: number;    // camelCase
   };
 }
 
@@ -70,14 +70,14 @@ export interface BookmarkDeleteResponse {
 export interface BookmarkListResponse {
   bookmarks: Array<{
     id: number;
-    ai_service_id: number;
-    service_name: string;
-    service_summary: string;
-    logo_url: string;
-    category_display_name: string;
-    pricing_type: string;
+    aiServiceId: number;           // camelCase로 변경
+    serviceName: string;           // camelCase로 변경  
+    serviceSummary: string;        // camelCase로 변경
+    logoUrl: string;               // camelCase로 변경
+    categoryDisplayName: string;   // camelCase로 변경
+    pricingType: string;           // camelCase로 변경
   }>;
-  total_count: number;
+  totalCount: number;              // camelCase로 변경
 }
 
 // ================================
@@ -107,7 +107,6 @@ export interface ReviewDeleteResponse {
   message: string;
 }
 
-// 누락된 ReviewListResponse 타입 추가
 export interface ReviewListResponse {
   reviews: Array<{
     id: number;
@@ -251,7 +250,7 @@ export interface CategoryListResponse {
 }
 
 // ================================
-// AI 조합 추천 (Java DTO 구조에 맞게 camelCase로 수정)
+// AI 조합 추천
 // ================================
 export interface AiCombinationListResponse {
   combinations: Array<{
@@ -259,14 +258,14 @@ export interface AiCombinationListResponse {
     title: string;
     description: string;
     category: string;
-    isFeatured: boolean;        // snake_case에서 camelCase로 변경
-    aiServices: Array<{         // snake_case에서 camelCase로 변경
+    isFeatured: boolean;        // camelCase
+    aiServices: Array<{         // camelCase
       id: number;
       name: string;
       purpose: string;
     }>;
   }>;
-  totalCount: number;           // snake_case에서 camelCase로 변경
+  totalCount: number;           // camelCase
 }
 
 export interface AiCombinationDetailResponse {
@@ -274,36 +273,14 @@ export interface AiCombinationDetailResponse {
   title: string;
   description: string;
   category: string;
-  isFeatured: boolean;          // snake_case에서 camelCase로 변경
-  aiServices: Array<{           // snake_case에서 camelCase로 변경
+  isFeatured: boolean;          // camelCase
+  aiServices: Array<{           // camelCase
     id: number;
     name: string;
-    logoUrl: string;            // snake_case에서 camelCase로 변경
+    logoUrl: string;            // camelCase
     purpose: string;
     tag: string;
   }>;
-}
-
-// ================================
-// 기존 호환성을 위한 타입들
-// ================================
-export interface AiService {
-  id: number;
-  name: string;
-  description: string;
-  serviceUrl: string;
-  category: string;
-  mainFunction: string;
-  feature1?: string;
-  feature2?: string;
-  link: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface ApiStats {
-  totalServices: number;
-  totalCategories: number;
 }
 
 // ================================
@@ -435,6 +412,7 @@ export interface JobSituation {
 // ================================
 // 유틸리티 타입들
 // ================================
+export type FilterType = 'all' | 'free' | 'paid' | 'freemium';
+export type SortType = 'name' | 'rating' | 'newest' | 'popular';
 export type PricingType = 'FREE' | 'FREEMIUM' | 'PAID';
 export type KeywordType = 'FEATURE' | 'FUNCTION' | 'INDUSTRY' | 'USE_CASE';
-export type SortType = 'rating' | 'latest' | 'popular';

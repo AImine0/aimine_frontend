@@ -55,11 +55,10 @@ const ToolDetailPage: React.FC = () => {
         // 북마크 상태 확인 (로그인한 경우에만)
         if (apiService.isAuthenticated()) {
           try {
-            const bookmarks = await apiService.getBookmarks();
-            const isBookmarkedTool = bookmarks.bookmarks.some(
-              bookmark => bookmark.ai_service_id.toString() === id
-            );
+            console.log('🔍 상세페이지 북마크 상태 확인');
+            const isBookmarkedTool = await apiService.checkBookmarkStatus(parseInt(id));
             setIsBookmarked(isBookmarkedTool);
+            console.log('✅ 상세페이지 북마크 상태:', isBookmarkedTool);
           } catch (error) {
             console.warn('북마크 상태 조회 실패:', error);
           }
