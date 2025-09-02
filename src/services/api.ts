@@ -6,13 +6,13 @@ import type {
   Category, 
   JobSituation,
   AITool,
-  // 새로운 API 타입들
+  // 새로운 API 타입들 - camelCase로 수정된 버전들
   AuthGoogleLoginResponse,
   UserProfileResponse,
   BookmarkCreateRequest,
   BookmarkListResponse,
   ReviewCreateRequest,
-  ReviewListResponse, // <- 이 줄이 빠져있었습니다!
+  ReviewListResponse,
   SearchResponse,
   ServiceListResponse,
   ServiceDetailResponse,
@@ -29,7 +29,7 @@ import type {
   KeywordByTypeResponse,
   AiCombinationListResponse,
   AiCombinationDetailResponse
-} from '../types/api';
+} from '../types/api'; // api.ts에서 임포트
 import { getImageMapping } from '../utils/imageMapping';
 
 const API_BASE_URL = 'http://localhost:8080';
@@ -181,14 +181,15 @@ class ApiService {
     }
   }
 
+  // 북마크 관련 api
 
   async addBookmark(aiServiceId: number): Promise<BookmarkCreateResponse> {
     try {
       console.log('북마크 추가 요청:', aiServiceId);
       
-      // 백엔드 DTO와 일치하는 필드명 사용
+      // 백엔드가 camelCase를 기대하므로 수정
       const request: BookmarkCreateRequest = { 
-        aiServiceId: aiServiceId  // ai_service_id -> aiServiceId
+        aiServiceId: aiServiceId  // 이미 camelCase로 올바름
       };
       
       console.log('요청 본문:', JSON.stringify(request));
@@ -225,7 +226,7 @@ class ApiService {
       throw error;
     }
   }
-  
+
   async removeBookmark(serviceId: number): Promise<BookmarkDeleteResponse> {
     try {
       console.log('북마크 제거 요청:', serviceId);
@@ -258,7 +259,7 @@ class ApiService {
       throw error;
     }
   }
-  
+
   async getBookmarks(): Promise<BookmarkListResponse> {
     try {
       console.log('북마크 목록 조회 시작');
@@ -287,27 +288,95 @@ class ApiService {
       throw error;
     }
   }
-  
-  async checkBookmarkStatus(serviceId: number): Promise<boolean> {
+
+  // 백엔드 응답에 맞춰 수정된 북마크 조회 메서드 (MyPage에서 사용)
+  async getBookmarksFixed(): Promise<BookmarkListResponse> {
     try {
-      console.log('북마크 상태 확인:', serviceId);
+      console.log('북마크 목록 조회 시작 (수정된 메서드)');
       
-      const response = await this.request<ApiResponse<boolean>>(`/bookmarks/status?userId=1&serviceId=${serviceId}`, {
+      const response = await this.request<ApiResponse<BookmarkListResponse>>('/bookmarks?userId=1', {
         method: 'GET'
       }, true);
       
       if (!response.success) {
-        console.warn('북마크 상태 확인 실패:', response.message);
+        throw new Error(response.message || '북마크 목록 조회 실패');
+      }
+      
+      console.log('백엔드 응답 구조:', response);
+      console.log('실제 데이터:', response.data);
+      
+      // 백엔드 응답이 camelCase이므로 그대로 반환
+      return response.data;
+    } catch (error) {
+      console.error('북마크 목록 조회 실패:', error);
+      
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        throw new Error('서버에 연결할 수 없습니다.');
+      }
+      
+      if (error instanceof Error && error.message.includes('401')) {
+        throw new Error('로그인이 필요합니다.');
+      }
+      
+      throw error;
+    }
+  }
+
+  async checkBookmarkStatus(serviceId: number): Promise<boolean> {
+    try {
+      console.log('🔍 북마크 상태 확인 시작:', serviceId);
+      console.log('🔒 인증 확인:', this.isAuthenticated());
+      
+      // 인증되지 않은 경우 false 반환
+      if (!this.isAuthenticated()) {
+        console.log('❌ 인증되지 않음, false 반환');
         return false;
       }
       
-      console.log('북마크 상태 확인 완료:', response.data);
-      return response.data;
-    } catch (error) {
-      console.error('북마크 상태 확인 실패:', error);
+      const url = `/bookmarks/status?userId=1&serviceId=${serviceId}`;
+      console.log('🌐 요청 URL:', `${API_BASE_URL}${url}`);
       
-      // 북마크 상태 확인은 실패해도 기본값 반환
-      return false;
+      const response = await this.request<ApiResponse<boolean>>(url, {
+        method: 'GET'
+      }, true);
+      
+      console.log('📥 북마크 상태 응답:', response);
+      
+      if (!response.success) {
+        console.warn('⚠️ 북마크 상태 확인 API 실패:', response.message);
+        // API 실패 시 북마크 목록에서 직접 확인
+        return await this.checkBookmarkStatusFromList(serviceId);
+      }
+      
+      const isBookmarked = Boolean(response.data);
+      console.log('✅ 북마크 상태:', isBookmarked);
+      return isBookmarked;
+      
+    } catch (error) {
+      console.error('❌ 북마크 상태 확인 실패:', error);
+      
+      // API 에러 발생 시 북마크 목록에서 직접 확인
+      console.log('🔄 북마크 목록에서 상태 확인 시도');
+      return await this.checkBookmarkStatusFromList(serviceId);
+    }
+  }
+
+  // 북마크 목록에서 직접 상태 확인하는 보조 메서드
+  async checkBookmarkStatusFromList(serviceId: number): Promise<boolean> {
+    try {
+      console.log('📋 북마크 목록에서 상태 확인:', serviceId);
+      
+      const bookmarksResponse = await this.getBookmarks();
+      const isBookmarked = bookmarksResponse.bookmarks.some(
+        bookmark => bookmark.aiServiceId === serviceId
+      );
+      
+      console.log('✅ 목록에서 확인한 북마크 상태:', isBookmarked);
+      return isBookmarked;
+      
+    } catch (error) {
+      console.error('❌ 북마크 목록에서 상태 확인 실패:', error);
+      return false; // 실패 시 기본값
     }
   }
 
