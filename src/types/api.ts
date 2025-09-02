@@ -84,7 +84,7 @@ export interface BookmarkListResponse {
 // 리뷰/평점 관리
 // ================================
 export interface ReviewCreateRequest {
-  tool_id: number;
+  toolId: number;
   rating: number;
   content: string;
 }
