@@ -5,7 +5,7 @@ import type {
   AIToolListItem 
 } from '../types';
 
-const API_BASE_URL = 'http://localhost:8080/api';
+const API_BASE_URL = 'http://localhost:8080'; // /api 제거
 
 class ToolApiService {
   private async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
@@ -29,22 +29,22 @@ class ToolApiService {
     }
   }
 
-  // AI 툴 목록 조회 (API 명세서: ToolListResponse)
+  // AI 툴 목록 조회 - 백엔드 엔드포인트에 맞게 수정
   async getToolList(): Promise<AIToolListItem[]> {
-    const response = await this.request<ApiResponse<AIToolListItem[]>>('/tools');
+    const response = await this.request<ApiResponse<AIToolListItem[]>>('/ai-services');
     return response.data;
   }
 
-  // AI 툴 상세 조회 (API 명세서: ToolDetailResponse)
+  // AI 툴 상세 조회 - 백엔드 엔드포인트에 맞게 수정
   async getToolDetail(id: string): Promise<AIToolDetail> {
     try {
-      const response = await this.request<AIToolDetail>(`/tools/${id}`);
+      const response = await this.request<AIToolDetail>(`/ai-services/${id}`);
       return response;
     } catch (error) {
       console.warn('API 호출 실패:', error);
-      throw error; // 에러를 다시 throw하여 컴포넌트에서 처리할 수 있도록 함
+      throw error;
     }
   }
 }
 
-export const toolApiService = new ToolApiService(); 
+export const toolApiService = new ToolApiService();

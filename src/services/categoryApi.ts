@@ -1,7 +1,7 @@
 // src/services/categoryApi.ts
 import type { ApiResponse, Category } from '../types';
 
-const API_BASE_URL = 'http://localhost:8080/api';
+const API_BASE_URL = 'http://localhost:8080'; // /api 제거
 
 class CategoryApiService {
   private async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
@@ -44,4 +44,4 @@ class CategoryApiService {
   }
 }
 
-export const categoryApiService = new CategoryApiService(); 
+export const categoryApiService = new CategoryApiService();
