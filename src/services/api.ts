@@ -388,7 +388,7 @@ class ApiService {
     try {
       console.log('리뷰 작성 요청:', { toolId, rating, content });
       
-      const request: ReviewCreateRequest = { tool_id: toolId, rating, content };
+      const request: ReviewCreateRequest = { toolId: toolId, rating, content };  // tool_id → toolId
       
       // 백엔드가 ApiResponse로 래핑하여 응답하므로 구조에 맞게 처리
       const response = await this.request<ApiResponse<ReviewCreateResponse>>('/reviews?userId=1', {
@@ -412,22 +412,17 @@ class ApiService {
     try {
       console.log('리뷰 목록 조회:', serviceId);
       
-      const queryParams = new URLSearchParams();
-      if (serviceId) queryParams.append('serviceId', serviceId.toString());
+      // 현재 백엔드에는 리뷰 목록 조회 API가 없으므로 임시 응답 반환
+      console.warn('백엔드에 리뷰 목록 조회 API가 구현되지 않았습니다.');
       
-      const endpoint = queryParams.toString() ? `/reviews?${queryParams.toString()}` : '/reviews';
+      // 임시 빈 응답 반환
+      const mockResponse: ReviewListResponse = {
+        reviews: [],
+        total_count: 0,
+        average_rating: 0
+      };
       
-      // 백엔드가 ApiResponse로 래핑하여 응답하므로 구조에 맞게 처리
-      const response = await this.request<ApiResponse<ReviewListResponse>>(endpoint, {
-        method: 'GET'
-      });
-      
-      if (!response.success || !response.data) {
-        throw new Error('리뷰 목록 조회 응답 구조 오류');
-      }
-      
-      console.log('리뷰 목록 조회 완료');
-      return response.data;
+      return mockResponse;
     } catch (error) {
       console.error('리뷰 목록 조회 실패:', error);
       throw error;
