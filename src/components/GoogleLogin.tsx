@@ -20,19 +20,8 @@ const GoogleLogin: React.FC<GoogleLoginProps> = ({
   const handleGoogleLogin = async () => {
     if (loading) return;
 
-    try {
-      setLoading(true);
-      
-      // 백엔드의 OAuth2 인증 URL로 리다이렉트
-      // 성공 시 /auth/callback으로 토큰과 함께 돌아옴
-      window.location.href = 'http://localhost:8080/oauth2/authorization/google';
-      
-    } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.';
-      console.error('Google 로그인 오류:', error);
-      onError?.(errorMsg);
-      setLoading(false);
-    }
+    // 직접 OAuth URL로 리다이렉트
+    window.location.href = 'http://localhost:8080/oauth2/authorization/google';
   };
 
   return (
