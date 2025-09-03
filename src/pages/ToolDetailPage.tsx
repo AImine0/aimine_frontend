@@ -21,7 +21,7 @@ const ToolDetailPage: React.FC = () => {
   const [reviewContent, setReviewContent] = useState('');
   const [reviewSubmitting, setReviewSubmitting] = useState(false);
 
-  // 툴 상세 정보 및 리뷰 조회
+  // ToolDetailPage.tsx에서 리뷰 조회 부분 수정
   useEffect(() => {
     const fetchData = async () => {
       if (!id) return;
@@ -33,7 +33,7 @@ const ToolDetailPage: React.FC = () => {
         // 병렬로 데이터 조회
         const [toolResponse, reviewsResponse] = await Promise.allSettled([
           apiService.getServiceById(id),
-          apiService.getReviews() // 전체 리뷰 조회 후 필터링하거나, 별도 엔드포인트 필요시 수정
+          apiService.getReviews(parseInt(id)) // 특정 서비스의 리뷰만 조회
         ]);
 
         // 툴 상세 정보 처리
@@ -43,22 +43,21 @@ const ToolDetailPage: React.FC = () => {
           throw new Error('AI 서비스를 찾을 수 없습니다.');
         }
 
-        // 리뷰 정보 처리
+        // 리뷰 정보 처리 - 특정 서비스의 리뷰만 조회했으므로 추가 필터링 불필요
         if (reviewsResponse.status === 'fulfilled') {
           setReviews(reviewsResponse.value);
+          console.log('🔍 조회된 리뷰 수:', reviewsResponse.value.reviews.length);
+          console.log('📝 리뷰 내용:', reviewsResponse.value.reviews);
         } else {
           console.warn('리뷰 조회 실패:', reviewsResponse.reason);
-          // 리뷰는 실패해도 페이지는 표시
           setReviews({ reviews: [], total_count: 0, average_rating: 0 });
         }
 
         // 북마크 상태 확인 (로그인한 경우에만)
         if (apiService.isAuthenticated()) {
           try {
-            console.log('🔍 상세페이지 북마크 상태 확인');
             const isBookmarkedTool = await apiService.checkBookmarkStatus(parseInt(id));
             setIsBookmarked(isBookmarkedTool);
-            console.log('✅ 상세페이지 북마크 상태:', isBookmarkedTool);
           } catch (error) {
             console.warn('북마크 상태 조회 실패:', error);
           }
@@ -74,6 +73,9 @@ const ToolDetailPage: React.FC = () => {
 
     fetchData();
   }, [id]);
+
+  // 리뷰 목록 렌더링 부분에서 불필요한 필터링 제거
+  const serviceReviews = reviews?.reviews || []; // 이미 특정 서비스의 리뷰만 조회했으므로 추가 필터링 불필요
 
   // 북마크 토글 핸들러
   const handleBookmarkToggle = async () => {
@@ -102,7 +104,7 @@ const ToolDetailPage: React.FC = () => {
     }
   };
 
-  // 리뷰 작성 핸들러
+  // 리뷰 작성 핸들러 
   const handleReviewSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -118,8 +120,8 @@ const ToolDetailPage: React.FC = () => {
       
       await apiService.createReview(parseInt(id), reviewRating, reviewContent.trim());
       
-      // 리뷰 목록 새로고침
-      const updatedReviews = await apiService.getReviews();
+      // 🔥 수정: 특정 서비스의 리뷰만 새로고침 (serviceId 파라미터 전달)
+      const updatedReviews = await apiService.getReviews(parseInt(id)); // serviceId 전달
       setReviews(updatedReviews);
       
       // 폼 초기화
@@ -136,15 +138,15 @@ const ToolDetailPage: React.FC = () => {
     }
   };
 
-  // 리뷰 삭제 핸들러
+  // 리뷰 삭제 핸들러 
   const handleReviewDelete = async (reviewId: number) => {
     if (!confirm('정말 삭제하시겠습니까?')) return;
 
     try {
       await apiService.deleteReview(reviewId);
       
-      // 리뷰 목록 새로고침
-      const updatedReviews = await apiService.getReviews();
+      // 🔥 수정: 특정 서비스의 리뷰만 새로고침 (serviceId 파라미터 전달)
+      const updatedReviews = await apiService.getReviews(parseInt(id!)); // serviceId 전달
       setReviews(updatedReviews);
       
       alert('리뷰가 삭제되었습니다.');
@@ -202,11 +204,6 @@ const ToolDetailPage: React.FC = () => {
     { label: toolDetail.serviceName }
   ];
 
-  // 현재 서비스의 리뷰만 필터링 (전체 리뷰에서)
-  const serviceReviews = reviews?.reviews.filter(review => 
-    // 리뷰에 tool_id나 service_id 정보가 있다면 필터링, 없다면 전체 표시
-    true // 임시로 전체 표시, 실제로는 서비스별 리뷰 API 필요
-  ) || [];
 
   return (
     <div className="min-h-screen bg-gray-50" style={{ fontFamily: 'Pretendard' }}>
@@ -514,12 +511,12 @@ const ToolDetailPage: React.FC = () => {
                       </div>
                       
                       {/* 현재 사용자의 리뷰인 경우 삭제 버튼 표시 (실제로는 사용자 인증 정보와 비교) */}
-                      {/* <button
+                      { <button
                         onClick={() => handleReviewDelete(review.id)}
                         className="text-red-500 hover:text-red-700 text-sm"
                       >
                         삭제
-                      </button> */}
+                      </button> }
                     </div>
                     <p className="text-gray-700 leading-relaxed">{review.content}</p>
                   </div>

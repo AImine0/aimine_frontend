@@ -388,7 +388,7 @@ class ApiService {
     try {
       console.log('리뷰 작성 요청:', { toolId, rating, content });
       
-      const request: ReviewCreateRequest = { toolId: toolId, rating, content };  // tool_id → toolId
+      const request: ReviewCreateRequest = { toolId: toolId, rating, content };
       
       // 백엔드가 ApiResponse로 래핑하여 응답하므로 구조에 맞게 처리
       const response = await this.request<ApiResponse<ReviewCreateResponse>>('/reviews?userId=1', {
@@ -410,22 +410,36 @@ class ApiService {
 
   async getReviews(serviceId?: number): Promise<ReviewListResponse> {
     try {
-      console.log('리뷰 목록 조회:', serviceId);
+      console.log('리뷰 목록 조회 요청:', serviceId);
       
-      // 현재 백엔드에는 리뷰 목록 조회 API가 없으므로 임시 응답 반환
-      console.warn('백엔드에 리뷰 목록 조회 API가 구현되지 않았습니다.');
+      // serviceId 파라미터에 따라 endpoint 결정
+      const endpoint = serviceId ? `/reviews?serviceId=${serviceId}` : '/reviews';
       
-      // 임시 빈 응답 반환
-      const mockResponse: ReviewListResponse = {
+      // 백엔드가 ApiResponse로 래핑하여 응답하므로 구조에 맞게 처리
+      const response = await this.request<ApiResponse<ReviewListResponse>>(endpoint, {
+        method: 'GET'
+      });
+      
+      if (!response.success) {
+        console.warn('리뷰 목록 조회 API 실패:', response.message);
+        // API 실패 시 빈 응답 반환
+        return {
+          reviews: [],
+          total_count: 0,
+          average_rating: 0
+        };
+      }
+      
+      console.log('리뷰 목록 조회 성공:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('리뷰 목록 조회 실패:', error);
+      // 에러가 발생해도 빈 응답 반환하여 UI가 깨지지 않도록 함
+      return {
         reviews: [],
         total_count: 0,
         average_rating: 0
       };
-      
-      return mockResponse;
-    } catch (error) {
-      console.error('리뷰 목록 조회 실패:', error);
-      throw error;
     }
   }
 
@@ -459,13 +473,14 @@ class ApiService {
       }, true);
       
       if (!response.success) {
-        throw new Error(response.message || '리뷰 상태 확인 실패');
+        console.warn('리뷰 상태 확인 실패:', response.message);
+        return false;
       }
       
-      return response.data;
+      return Boolean(response.data);
     } catch (error) {
       console.error('리뷰 상태 확인 실패:', error);
-      throw error;
+      return false;
     }
   }
 
