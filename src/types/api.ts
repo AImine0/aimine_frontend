@@ -395,8 +395,10 @@ export interface AIToolDetail {
 
 export interface JobSituation {
   id: number;
+  category: string;             
   title: string;
   description: string;
+  sortOrder?: number;
   recommendations?: Array<{
     tool: {
       id: number;
@@ -406,6 +408,8 @@ export interface JobSituation {
       };
       logoUrl?: string;
     };
+    recommendationText?: string;
+    sortOrder?: number;
   }>;
 }
 

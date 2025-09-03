@@ -8,7 +8,7 @@ export { jobSituationApiService } from './jobSituationApi';
 
 // API 기본 설정 - URL 수정
 export const API_CONFIG = {
-  BASE_URL: 'http://localhost:8080', // /api 제거
+  BASE_URL: 'https://aimine.up.railway.app', // /api 제거
   TIMEOUT: 10000,
   RETRY_ATTEMPTS: 3,
 } as const;

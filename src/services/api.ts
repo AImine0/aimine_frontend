@@ -32,7 +32,7 @@ import type {
 } from '../types/api'; // api.ts에서 임포트
 import { getImageMapping } from '../utils/imageMapping';
 
-const API_BASE_URL = 'http://localhost:8080';
+const API_BASE_URL = 'https://aimine.up.railway.app';
 
 // 로컬 스토리지에서 토큰 관리
 const TOKEN_KEY = 'access_token';
