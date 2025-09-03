@@ -1,7 +1,7 @@
 // src/services/jobSituationApi.ts
 import type { ApiResponse, JobSituation } from '../types';
 
-const API_BASE_URL = 'http://localhost:8080'; // /api 제거
+const API_BASE_URL = 'https://aimine.up.railway.app'; // /api 제거
 
 class JobSituationApiService {
   private async request<T>(endpoint: string, options?: RequestInit): Promise<T> {

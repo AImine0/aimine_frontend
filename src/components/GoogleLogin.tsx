@@ -21,7 +21,7 @@ const GoogleLogin: React.FC<GoogleLoginProps> = ({
     if (loading) return;
 
     // 직접 OAuth URL로 리다이렉트
-    window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+    window.location.href = 'https://aimine.up.railway.app/oauth2/authorization/google';
   };
 
   return (
