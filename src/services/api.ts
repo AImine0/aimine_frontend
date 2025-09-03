@@ -194,7 +194,7 @@ class ApiService {
       
       console.log('요청 본문:', JSON.stringify(request));
       
-      const response = await this.request<ApiResponse<BookmarkCreateResponse>>('/bookmarks?userId=1', {
+      const response = await this.request<ApiResponse<BookmarkCreateResponse>>('/bookmarks', {
         method: 'POST',
         body: JSON.stringify(request)
       }, true);
@@ -231,7 +231,7 @@ class ApiService {
     try {
       console.log('북마크 제거 요청:', serviceId);
       
-      const response = await this.request<ApiResponse<BookmarkDeleteResponse>>(`/bookmarks/${serviceId}?userId=1`, {
+      const response = await this.request<ApiResponse<BookmarkDeleteResponse>>(`/bookmarks/${serviceId}`, {
         method: 'DELETE'
       }, true);
       
@@ -264,7 +264,7 @@ class ApiService {
     try {
       console.log('북마크 목록 조회 시작');
       
-      const response = await this.request<ApiResponse<BookmarkListResponse>>('/bookmarks?userId=1', {
+      const response = await this.request<ApiResponse<BookmarkListResponse>>('/bookmarks', {
         method: 'GET'
       }, true);
       
@@ -294,7 +294,7 @@ class ApiService {
     try {
       console.log('북마크 목록 조회 시작 (수정된 메서드)');
       
-      const response = await this.request<ApiResponse<BookmarkListResponse>>('/bookmarks?userId=1', {
+      const response = await this.request<ApiResponse<BookmarkListResponse>>('/bookmarks', {
         method: 'GET'
       }, true);
       
@@ -391,7 +391,7 @@ class ApiService {
       const request: ReviewCreateRequest = { toolId: toolId, rating, content };
       
       // 백엔드가 ApiResponse로 래핑하여 응답하므로 구조에 맞게 처리
-      const response = await this.request<ApiResponse<ReviewCreateResponse>>('/reviews?userId=1', {
+      const response = await this.request<ApiResponse<ReviewCreateResponse>>('/reviews', {
         method: 'POST',
         body: JSON.stringify(request)
       }, true);
@@ -448,7 +448,7 @@ class ApiService {
       console.log('리뷰 삭제 요청:', reviewId);
       
       // 백엔드가 ApiResponse로 래핑하여 응답하므로 구조에 맞게 처리
-      const response = await this.request<ApiResponse<ReviewDeleteResponse>>(`/reviews/${reviewId}?userId=1`, {
+      const response = await this.request<ApiResponse<ReviewDeleteResponse>>(`/reviews/${reviewId}`, {
         method: 'DELETE'
       }, true);
       
@@ -468,7 +468,7 @@ class ApiService {
     try {
       console.log('리뷰 작성 여부 확인:', serviceId);
       
-      const response = await this.request<ApiResponse<boolean>>(`/reviews/status?userId=1&serviceId=${serviceId}`, {
+      const response = await this.request<ApiResponse<boolean>>(`/reviews/status?serviceId=${serviceId}`, {
         method: 'GET'
       }, true);
       
