@@ -843,9 +843,9 @@ class ApiService {
       console.log('AI 조합 추천 조회 완료, 조합 수:', response.data.combinations.length);
       
       // AiCombinationListResponse를 JobSituation[] 형태로 변환
-      // Java DTO는 camelCase를 사용하므로 isFeatured, aiServices 등을 사용
       const jobSituations: JobSituation[] = response.data.combinations.map((combo) => ({
         id: combo.id,
+        category: combo.category || '생산성', // 👈 누락된 category 필드 추가
         title: combo.title,
         description: combo.description,
         recommendations: combo.aiServices.map((service) => ({
