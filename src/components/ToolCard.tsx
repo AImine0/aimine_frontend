@@ -153,7 +153,7 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
     return (
       <span className="inline-flex items-center px-2 py-1 font-bold"
             style={{ 
-              backgroundColor: '#FFE4C4', 
+              backgroundColor: '#F2EEFB', 
               color: '#7E50D1',
               width: '66px',
               height: '32px',
@@ -236,17 +236,17 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
     <div className={`bg-white rounded-xl hover:border-purple-200 hover:shadow-lg transition-all duration-200 group ${className || ''}`} 
          style={{ border: '1px solid #DBCBF9', fontFamily: 'Pretendard', padding: '20px', minHeight: '280px' }}>
       
-      {/* 상단: 로고, 카테고리, 북마크/BEST 뱃지 */}
+      {/* 상단: 로고, 카테고리, BEST 뱃지 */}
       <div className="flex items-start justify-between mb-4">
-        <div className="flex items-start gap-4">
+        <div className="flex flex-col gap-2 items-start">
           {/* 로고 */}
           <div className="flex-shrink-0">
-            <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
+            <div className="w-16 h-16 flex items-center justify-start overflow-hidden">
               {tool.logoUrl ? (
                 <img 
                   src={tool.logoUrl} 
                   alt={`${tool.name} 로고`}
-                  className="w-full h-full object-contain p-1"
+                  className="w-full h-full object-contain"
                   onError={(e) => handleImageError(e, '/images/Logo/Logo_FINAL.svg')}
                 />
               ) : (
@@ -255,46 +255,22 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
             </div>
           </div>
           
-          {/* 카테고리와 가격 */}
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-2">
-              <span className="inline-flex items-center px-3 py-1 rounded-full font-medium" 
-                   style={{ 
-                     backgroundColor: '#E9DFFB',
-                     borderRadius: '20px',
-                     color: '#202020',
-                     fontSize: '12px',
-                     fontFamily: 'Pretendard'
-                   }}>
-                {tool.categoryLabel}
-              </span>
-              {getPricingBadge(tool.pricing)}
-            </div>
-          </div>
+          {/* 카테고리 뱃지 */}
+          <span className="inline-flex items-center px-3 py-1 rounded-full font-medium" 
+                style={{ 
+                  backgroundColor: '#E9DFFB',
+                  borderRadius: '20px',
+                  color: '#202020',
+                  fontSize: '12px',
+                  fontFamily: 'Pretendard',
+                  width: 'fit-content'
+                }}>
+            {tool.categoryLabel}
+          </span>
         </div>
 
-        {/* 오른쪽: 북마크, BEST 뱃지, 링크 버튼 */}
+        {/* 오른쪽: BEST 뱃지, 링크 버튼 */}
         <div className="flex items-start gap-2 flex-shrink-0">
-          {/* 북마크 버튼 */}
-          <button
-            onClick={handleBookmarkToggle}
-            disabled={bookmarkLoading}
-            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
-              isBookmarked 
-                ? 'bg-red-50 text-red-500 hover:bg-red-100' 
-                : 'bg-gray-50 text-gray-400 hover:bg-gray-100 hover:text-red-400'
-            } ${bookmarkLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-            title={isAuthenticated ? (isBookmarked ? '북마크 해제' : '북마크 추가') : '로그인이 필요합니다'}
-          >
-            {bookmarkLoading ? (
-              <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-            ) : (
-              <svg className="w-5 h-5" fill={isBookmarked ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-              </svg>
-            )}
-          </button>
-
           {/* BEST 뱃지 */}
           {rank && rank <= 3 && getBestBadge(rank)}
 
@@ -316,55 +292,18 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
       </div>
 
       {/* 중간: 제목과 설명 */}
-      <div className="mb-4">
+      <div className="mb-4 text-left">
         <Link to={`/tool/${tool.id}`} className="hover:text-purple-600 transition-colors">
-          <h3 className="font-semibold mb-2 line-clamp-1" style={{ color: '#000000', fontSize: '20px', fontFamily: 'Pretendard' }}>
+          <h3 className="font-semibold mb-2 line-clamp-1 text-left" style={{ color: '#000000', fontSize: '20px', fontFamily: 'Pretendard' }}>
             {tool.name}
           </h3>
         </Link>
-        <p className="text-gray-600 leading-relaxed line-clamp-2" style={{ fontSize: '14px', fontFamily: 'Pretendard' }}>
+        <p className="leading-relaxed line-clamp-2 text-left" style={{ fontSize: '14px', fontFamily: 'Pretendard', color: '#202020', fontWeight: '600' }}>
           {tool.description}
         </p>
       </div>
 
-      {/* 하단: 평점, 사용자 수, 주요 기능 */}
-      <div className="space-y-3">
-        {/* 평점과 사용자 수 */}
-        <div className="flex items-center justify-between">
-          {renderStars(tool.rating || tool.aiRating || 0)}
-          
-          {tool.userCount && tool.userCount > 0 && (
-            <div className="flex items-center gap-1 text-gray-500">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
-              </svg>
-              <span className="text-xs font-medium">
-                {tool.userCount >= 1000 ? `${(tool.userCount / 1000).toFixed(1)}k` : tool.userCount}
-              </span>
-            </div>
-          )}
-        </div>
 
-        {/* 주요 기능 태그들 */}
-        {tool.tags && tool.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1">
-            {tool.tags.slice(0, 3).map((tag, index) => (
-              <span 
-                key={index}
-                className="inline-block px-2 py-1 bg-gray-100 text-gray-600 rounded-md text-xs font-medium"
-                style={{ fontFamily: 'Pretendard' }}
-              >
-                {tag}
-              </span>
-            ))}
-            {tool.tags.length > 3 && (
-              <span className="inline-block px-2 py-1 text-gray-400 text-xs">
-                +{tool.tags.length - 3}
-              </span>
-            )}
-          </div>
-        )}
-      </div>
     </div>
   );
 };
