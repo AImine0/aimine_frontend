@@ -562,6 +562,17 @@ class ApiService {
         const categorySlug = getCategorySlug(tool.category?.name || '생산성');
         const imageMapping = getImageMapping(tool.serviceName, categorySlug);
         
+        // DB의 tags 컬럼 내용을 사용 (문자열을 배열로 변환)
+        let tagsArray: string[] = [];
+        
+        if (tool.tags && tool.tags.trim()) {
+          // DB tags 컬럼에 값이 있는 경우
+          tagsArray = [tool.tags.trim()];
+        } else {
+          // DB tags가 없는 경우 카테고리명을 fallback으로 사용
+          tagsArray = [tool.category?.name || '생산성'];
+        }
+        
         return {
           id: tool.id.toString(),
           name: tool.serviceName,
@@ -569,7 +580,8 @@ class ApiService {
           description: tool.description || '',
           features: tool.keywords || [],
           rating: Number(tool.overallRating) || 0,
-          tags: tool.keywords || [],
+          // DB의 tags 컬럼 내용 사용
+          tags: tagsArray,
           url: tool.websiteUrl || '',
           releaseDate: tool.launchDate || '',
           company: 'Unknown',

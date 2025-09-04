@@ -37,7 +37,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // 정렬 옵션들
+  // 정렬 옵션들 - 추천순/최신순만
   const sortOptions: SortOption[] = [
     {
       key: 'popular',
@@ -46,22 +46,10 @@ const FilterBar: React.FC<FilterBarProps> = ({
       description: '인기도 기준'
     },
     {
-      key: 'rating', 
-      label: '평점순',
-      icon: '⭐',
-      description: '별점 높은 순'
-    },
-    {
       key: 'newest',
       label: '최신순',
       icon: '🆕',
       description: '출시일 기준'
-    },
-    {
-      key: 'name',
-      label: '이름순',
-      icon: '🔤',
-      description: '가나다 순'
     }
   ];
 
