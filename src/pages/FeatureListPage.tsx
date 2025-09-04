@@ -19,11 +19,10 @@ const TAB_TO_CATEGORY: Record<string, string> = {
   '3d': '3d'
 };
 
-// 정렬 타입 매핑 (UI → API)
+// 정렬 타입 매핑 (UI → API) - 추천순/최신순만
 const SORT_TYPE_MAP: Record<string, string> = {
-  popular: 'rating',
-  new: 'latest',
-  rating: 'rating'
+  popular: 'rating', // 추천순 → 평점/인기도 기준 정렬
+  newest: 'latest'   // 최신순 → 출시일 기준 정렬  
 };
 
 // 가격 타입 매핑 (UI → API)
@@ -85,7 +84,7 @@ const FeatureListPage: React.FC = () => {
             q: activeKeywords.join(' '),
             category: TAB_TO_CATEGORY[activeTab],
             pricing: PRICING_TYPE_MAP[activeFilter],
-            sort: SORT_TYPE_MAP[sortType]
+            sort: SORT_TYPE_MAP[sortType] as any // 타입 캐스팅으로 해결
           });
 
           // 검색 결과를 AITool 형식으로 변환
@@ -96,7 +95,8 @@ const FeatureListPage: React.FC = () => {
             description: tool.description,
             features: tool.keywords || [],
             rating: tool.overall_rating,
-            tags: tool.keywords || [],
+            // ✅ tags를 문자열로 통일 (keywords 배열을 콤마 구분 문자열로 변환)
+            tags: Array.isArray(tool.keywords) ? tool.keywords.join(', ') : (tool.keywords || ''),
             url: '', // API에서 제공되지 않음
             releaseDate: '',
             company: 'Unknown',
@@ -127,7 +127,17 @@ const FeatureListPage: React.FC = () => {
           if (Array.isArray(apiResponse)) {
             console.log('배열 길이:', apiResponse.length);
             console.log('첫 번째 요소:', apiResponse[0]);
-            setTools(apiResponse);
+            
+            // ✅ AITool 객체 생성 시 tags 처리 수정
+            const processedTools = apiResponse.map(tool => ({
+              ...tool,
+              // tags를 문자열로 통일 (keywords 배열을 콤마 구분 문자열로 변환)
+              tags: Array.isArray(tool.tags) 
+                ? tool.tags.join(', ') 
+                : (typeof tool.tags === 'string' ? tool.tags : tool.categoryLabel || '')
+            }));
+            
+            setTools(processedTools);
           } else {
             console.error('응답이 배열이 아닙니다:', apiResponse);
             console.error('실제 타입:', Object.prototype.toString.call(apiResponse));

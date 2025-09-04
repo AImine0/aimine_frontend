@@ -425,23 +425,26 @@ const RoleListPage: React.FC = () => {
                   const categorySlug = getCategorySlug(toolData.category?.name || toolData.categoryName || '생산성');
                   const imageMapping = getImageMapping(toolData.serviceName || toolData.name || 'Unknown Tool', categorySlug);
                   
+                  // categoryLabel을 미리 계산
+                  const categoryLabel = toolData.categoryName || toolData.category?.name || '생산성';
+                  
                   return {
                     id: (toolData.id || index).toString(),
                     name: toolData.serviceName || toolData.name || 'Unknown Tool',
                     category: categorySlug,
-                    description: rec.recommendationText || toolData.description || '추천 도구입니다.',
+                    description: toolData.description || 'AI 서비스 설명을 불러올 수 없습니다.',
                     features: [],
-                    rating: toolData.overallRating || toolData.rating || 0,
-                    tags: [],
-                    url: toolData.websiteUrl || toolData.url || '',
+                    rating: 0, // ToolCard에 표시하지 않으므로 기본값
+                    tags: toolData.tags || categoryLabel,
+                    url: '', // 기본값 (상세 페이지에서 DB 조회)
                     releaseDate: '',
                     company: '',
                     pricing: 'freemium' as const,
                     featured: false,
                     roles: [],
                     userCount: 0,
-                    aiRating: toolData.overallRating || toolData.rating || 0,
-                    categoryLabel: toolData.category?.name || toolData.categoryName || '생산성',
+                    aiRating: 0,
+                    categoryLabel: categoryLabel,
                     logoUrl: toolData.logoUrl || imageMapping.logo,
                     serviceImageUrl: imageMapping.serviceImage,
                     priceImageUrl: imageMapping.priceImage,
