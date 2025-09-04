@@ -402,7 +402,7 @@ export interface AITool {
   description: string;
   features: string[];
   rating: number;
-  tags: string[];
+  tags: string[] | string;
   url: string;
   releaseDate: string;
   company: string;

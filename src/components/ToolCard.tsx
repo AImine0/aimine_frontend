@@ -167,69 +167,28 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
     );
   };
 
-  // 가격 뱃지
-  const getPricingBadge = (pricing: string) => {
-    const badgeConfig = {
-      free: { text: 'Free', bgColor: '#E8F5E8', textColor: '#2E7D33' },
-      paid: { text: 'Paid', bgColor: '#FFF3E0', textColor: '#F57C00' },
-      freemium: { text: 'Freemium', bgColor: '#E3F2FD', textColor: '#1976D2' }
-    };
-    
-    const config = badgeConfig[pricing as keyof typeof badgeConfig] || badgeConfig.freemium;
-    
-    return (
-      <span 
-        className="inline-flex items-center px-2 py-1 font-medium text-xs rounded-full"
-        style={{ 
-          backgroundColor: config.bgColor,
-          color: config.textColor,
-          fontFamily: 'Pretendard'
-        }}
-      >
-        {config.text}
-      </span>
-    );
-  };
+  // tags에서 첫 번째 태그 추출 (타입 안전하게)
+  const getDisplayTag = () => {
+    if (!tool.tags) {
+      return tool.categoryLabel;
+    }
 
-  // 별점 표시
-  const renderStars = (rating: number) => {
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 >= 0.5;
-    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-
-    return (
-      <div className="flex items-center gap-1">
-        {/* 꽉 찬 별들 */}
-        {Array.from({ length: fullStars }).map((_, i) => (
-          <svg key={`full-${i}`} className="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-          </svg>
-        ))}
-        
-        {/* 반 별 */}
-        {hasHalfStar && (
-          <div className="relative">
-            <svg className="w-4 h-4 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-            </svg>
-            <div className="absolute inset-0 overflow-hidden" style={{ width: '50%' }}>
-              <svg className="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-              </svg>
-            </div>
-          </div>
-        )}
-        
-        {/* 빈 별들 */}
-        {Array.from({ length: emptyStars }).map((_, i) => (
-          <svg key={`empty-${i}`} className="w-4 h-4 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-          </svg>
-        ))}
-        
-        <span className="text-sm font-medium text-gray-700 ml-1">{rating.toFixed(1)}</span>
-      </div>
-    );
+    if (typeof tool.tags === 'string') {
+      // 문자열인 경우 콤마로 split
+      const trimmedTags = tool.tags.trim();
+      if (trimmedTags === '') {
+        return tool.categoryLabel;
+      }
+      const firstTag = trimmedTags.split(',')[0]?.trim();
+      return firstTag || tool.categoryLabel;
+    } 
+    
+    if (Array.isArray(tool.tags) && tool.tags.length > 0) {
+      // 배열인 경우 첫 번째 요소
+      return tool.tags[0];
+    }
+    
+    return tool.categoryLabel;
   };
 
   return (
@@ -255,7 +214,7 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
             </div>
           </div>
           
-          {/* 카테고리 뱃지 */}
+          {/* 카테고리/태그 뱃지 - UI는 그대로, 내용만 태그 사용 */}
           <span className="inline-flex items-center px-3 py-1 rounded-full font-medium" 
                 style={{ 
                   backgroundColor: '#E9DFFB',
@@ -265,7 +224,7 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
                   fontFamily: 'Pretendard',
                   width: 'fit-content'
                 }}>
-            {tool.categoryLabel}
+            {getDisplayTag()}
           </span>
         </div>
 
@@ -302,8 +261,6 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
           {tool.description}
         </p>
       </div>
-
-
     </div>
   );
 };
