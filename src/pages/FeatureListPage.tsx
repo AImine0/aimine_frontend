@@ -129,13 +129,7 @@ const FeatureListPage: React.FC = () => {
             console.log('첫 번째 요소:', apiResponse[0]);
             
             // ✅ AITool 객체 생성 시 tags 처리 수정
-            const processedTools = apiResponse.map(tool => ({
-              ...tool,
-              // tags를 문자열로 통일 (keywords 배열을 콤마 구분 문자열로 변환)
-              tags: Array.isArray(tool.tags) 
-                ? tool.tags.join(', ') 
-                : (typeof tool.tags === 'string' ? tool.tags : tool.categoryLabel || '')
-            }));
+            const processedTools = apiResponse;
             
             setTools(processedTools);
           } else {

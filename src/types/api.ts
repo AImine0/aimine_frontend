@@ -197,7 +197,8 @@ export interface ServiceListResponse {
       id: number;
       name: string;
     };
-    tag: string;
+    tag: string;        
+    tags: string;      
     pricingType: string;
     overallRating: number;
     keywords: string[];

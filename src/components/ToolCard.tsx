@@ -167,28 +167,17 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
     );
   };
 
-  // tags에서 첫 번째 태그 추출 (타입 안전하게)
   const getDisplayTag = () => {
-    if (!tool.tags) {
-      return tool.categoryLabel;
-    }
-
-    if (typeof tool.tags === 'string') {
-      // 문자열인 경우 콤마로 split
-      const trimmedTags = tool.tags.trim();
-      if (trimmedTags === '') {
-        return tool.categoryLabel;
+    // DB의 tags 컬럼 내용을 우선적으로 사용 (배열의 첫 번째 요소)
+    if (tool.tags && Array.isArray(tool.tags) && tool.tags.length > 0) {
+      const firstTag = tool.tags[0];
+      if (firstTag && firstTag.trim() !== '') {
+        return firstTag.trim();
       }
-      const firstTag = trimmedTags.split(',')[0]?.trim();
-      return firstTag || tool.categoryLabel;
-    } 
-    
-    if (Array.isArray(tool.tags) && tool.tags.length > 0) {
-      // 배열인 경우 첫 번째 요소
-      return tool.tags[0];
     }
     
-    return tool.categoryLabel;
+    // tags가 없거나 빈 배열인 경우 categoryLabel을 fallback으로 사용
+    return tool.categoryLabel || '생산성';
   };
 
   return (

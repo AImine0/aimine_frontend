@@ -432,19 +432,23 @@ const RoleListPage: React.FC = () => {
                     id: (toolData.id || index).toString(),
                     name: toolData.serviceName || toolData.name || 'Unknown Tool',
                     category: categorySlug,
-                    description: toolData.description || 'AI 서비스 설명을 불러올 수 없습니다.',
+                    // 의미있는 설명 생성 (조합 목적 활용)
+                    description: rec.recommendationText || 
+                                 `${toolData.serviceName || toolData.name}는 ${title} 상황에서 활용할 수 있는 AI 도구입니다.`,
                     features: [],
-                    rating: 0, // ToolCard에 표시하지 않으므로 기본값
-                    tags: toolData.tags || categoryLabel,
-                    url: '', // 기본값 (상세 페이지에서 DB 조회)
+                    rating: 4.5, // 기본 평점
+                    // AI 서비스의 카테고리를 태그로 사용 (기능별 탭과 일관성)
+                    tags: [toolData.category?.name || categorySlug || '생산성'],
+                    url: '',
                     releaseDate: '',
                     company: '',
                     pricing: 'freemium' as const,
                     featured: false,
                     roles: [],
                     userCount: 0,
-                    aiRating: 0,
-                    categoryLabel: categoryLabel,
+                    aiRating: 4.5,
+                    categoryLabel: toolData.category?.name || categorySlug || '생산성',
+                    // 로고 매핑 개선 - 서비스명으로 정확히 매핑
                     logoUrl: toolData.logoUrl || imageMapping.logo,
                     serviceImageUrl: imageMapping.serviceImage,
                     priceImageUrl: imageMapping.priceImage,
