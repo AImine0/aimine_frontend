@@ -912,17 +912,21 @@ class ApiService {
       // AiCombinationListResponse를 JobSituation[] 형태로 변환
       const jobSituations: JobSituation[] = response.data.combinations.map((combo) => ({
         id: combo.id,
-        category: combo.category || '생산성', // 👈 누락된 category 필드 추가
+        category: combo.category || '생산성',
         title: combo.title,
         description: combo.description,
         recommendations: combo.aiServices.map((service) => ({
           tool: {
             id: service.id,
             serviceName: service.name,
+            description: service.description || '', 
+            tags: service.tags || '',
+            logoUrl: service.logoUrl || '', // 백엔드의 실제 logoUrl 사용
+            websiteUrl: service.websiteUrl || '',
+            overallRating: Number(service.overallRating) || 0,
             category: {
-              name: combo.category || '생산성'
-            },
-            logoUrl: getImageMapping(service.name, getCategorySlug(combo.category || '생산성')).logo
+              name: service.categoryName || combo.category || '생산성'
+            }
           }
         }))
       }));

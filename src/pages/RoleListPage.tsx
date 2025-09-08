@@ -405,36 +405,36 @@ const RoleListPage: React.FC = () => {
             </div>
           ) : (
             filteredSituations.map((situation, situationIdx) => {
-              // ✅ 최소 수정: API 데이터 처리
+              // ✅ API에서 이미 올바르게 변환된 데이터 사용
               const situationData = situation as any;
               
               let tools: AITool[] = [];
               let title = situationData.title || '제목 없음';
               let description = situationData.description || '';
               
-              // recommendations 배열에서 도구들 추출하고 올바른 AITool로 변환
+              // ✅ api.ts에서 이미 변환된 recommendations 데이터를 그대로 사용
               if (situationData.recommendations && Array.isArray(situationData.recommendations)) {
                 tools = situationData.recommendations.map((rec: any, index: number) => {
-                  const toolData = rec.tool || rec;
+                  const toolData = rec.tool;
                   
-                  // ✅ 실제 DB 데이터에 맞게 매핑 수정
-                  const toolName = toolData.serviceName || toolData.name || 'Unknown Tool';
-                  // ✅ 수정: 실제 description 사용
+                  // ✅ api.ts에서 이미 백엔드 데이터를 올바르게 매핑했으므로 그대로 사용
+                  const toolName = toolData.serviceName || 'Unknown Tool';
                   const toolDescription = toolData.description || `${toolName}는 ${title} 상황에서 활용할 수 있는 AI 도구입니다.`;
-                  // ✅ 수정: 실제 tags 사용
                   const toolTags = toolData.tags || toolData.category?.name || 'AI 도구';
                   
-                  // ✅ 수정: 실제 logoUrl 우선 사용
-                  const logoUrl = toolData.logoUrl || getImageMapping(toolName, getCategorySlug(toolData.category?.name || 'chatbot')).logo;
+                  // ✅ 백엔드에서 제공한 logoUrl을 우선 사용, 없을 경우에만 fallback
+                  const logoUrl = toolData.logoUrl && toolData.logoUrl.startsWith('http') 
+                    ? toolData.logoUrl 
+                    : getImageMapping(toolName, getCategorySlug(toolData.category?.name || 'chatbot')).logo;
                   
                   return {
                     id: (toolData.id || index).toString(),
                     name: toolName,
                     category: 'combination',
-                    description: toolDescription, // ✅ 실제 description 사용
+                    description: toolDescription,
                     features: [],
                     rating: Number(toolData.overallRating) || 4.5,
-                    tags: [toolTags], // ✅ 실제 tags 사용 (배열 형태)
+                    tags: [toolTags], // 배열 형태로 통일
                     url: toolData.websiteUrl || '',
                     releaseDate: '',
                     company: '',
@@ -444,7 +444,7 @@ const RoleListPage: React.FC = () => {
                     userCount: 0,
                     aiRating: Number(toolData.overallRating) || 4.5,
                     categoryLabel: toolData.category?.name || 'AI 도구',
-                    logoUrl: logoUrl, // ✅ 실제 logoUrl 사용
+                    logoUrl: logoUrl,
                     serviceImageUrl: logoUrl,
                     priceImageUrl: logoUrl,
                     searchbarLogoUrl: logoUrl

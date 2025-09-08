@@ -263,7 +263,13 @@ export interface AiCombinationListResponse {
     aiServices: Array<{         // camelCase
       id: number;
       name: string;
-      purpose: string;
+      purpose?: string;          // 기존 필드 유지 (optional)
+      description?: string;      // AI 서비스 상세 설명
+      tags?: string;             // DB tags 컬럼 내용
+      logoUrl?: string;          // 로고 이미지 URL
+      websiteUrl?: string;       // 공식 웹사이트 URL  
+      overallRating?: number;    // 평점
+      categoryName?: string;     // 카테고리명
     }>;
   }>;
   totalCount: number;           // camelCase
@@ -404,10 +410,14 @@ export interface JobSituation {
     tool: {
       id: number;
       serviceName: string;
+      description?: string;        
+      tags?: string;              
+      logoUrl?: string;           
+      websiteUrl?: string;        
+      overallRating?: number;     
       category?: {
         name: string;
       };
-      logoUrl?: string;
     };
     recommendationText?: string;
     sortOrder?: number;
