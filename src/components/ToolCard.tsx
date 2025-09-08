@@ -168,15 +168,20 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
   };
 
   const getDisplayTag = () => {
-    // DB의 tags 컬럼 내용을 우선적으로 사용 (배열의 첫 번째 요소)
+    // 1순위: DB의 tags 컬럼 내용 사용 (배열인 경우)
     if (tool.tags && Array.isArray(tool.tags) && tool.tags.length > 0) {
       const firstTag = tool.tags[0];
-      if (firstTag && firstTag.trim() !== '') {
-        return firstTag.trim();
+      if (firstTag && firstTag !== '') {
+        return firstTag;
       }
     }
     
-    // tags가 없거나 빈 배열인 경우 categoryLabel을 fallback으로 사용
+    // 2순위: tags가 문자열인 경우 (API 응답) - 원본 그대로 사용
+    if (typeof tool.tags === 'string' && tool.tags !== '') {
+      return tool.tags;
+    }
+    
+    // 3순위: categoryLabel을 fallback으로 사용 (기존 로직)
     return tool.categoryLabel || '생산성';
   };
 
