@@ -558,16 +558,17 @@ class ApiService {
         return [];
       }
 
+      // api.ts의 getAllServices 함수에서 tags 처리 부분 수정
+
       return serviceList.data.map(tool => {
         const categorySlug = getCategorySlug(tool.category?.name || '생산성');
         const imageMapping = getImageMapping(tool.serviceName, categorySlug);
         
-        // DB의 tags 컬럼 내용을 사용 (문자열을 배열로 변환)
-        let tagsArray: string[] = [];
+        let tagsArray: string[];
         
-        if (tool.tags && tool.tags.trim()) {
-          // DB tags 컬럼에 값이 있는 경우
-          tagsArray = [tool.tags.trim()];
+        if (tool.tags && tool.tags !== '') {
+          // DB tags 컬럼에 값이 있는 경우 - 배열로 변환 (AITool 타입에 맞게)
+          tagsArray = [tool.tags]; // 문자열을 배열로 감싸기
         } else {
           // DB tags가 없는 경우 카테고리명을 fallback으로 사용
           tagsArray = [tool.category?.name || '생산성'];
@@ -580,7 +581,6 @@ class ApiService {
           description: tool.description || '',
           features: tool.keywords || [],
           rating: Number(tool.overallRating) || 0,
-          // DB의 tags 컬럼 내용 사용
           tags: tagsArray,
           url: tool.websiteUrl || '',
           releaseDate: tool.launchDate || '',
