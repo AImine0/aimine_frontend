@@ -325,12 +325,6 @@ const ToolDetailPage: React.FC = () => {
               가격 정보
             </button>
             <button
-              onClick={() => scrollToSection('videos')}
-              className="pb-4 text-gray-500 font-medium hover:text-black text-sm"
-            >
-              관련 영상
-            </button>
-            <button
               onClick={() => scrollToSection('reviews')}
               className="pb-4 text-gray-500 font-medium hover:text-black text-sm"
             >
@@ -372,37 +366,6 @@ const ToolDetailPage: React.FC = () => {
               }}
               onError={(e) => handleImageError(e, '/images/GlassMorphism/Detailpage/Detailpage_Happy.png')}
             />
-          </div>
-        </section>
-        
-        {/* 관련 영상 섹션 */}
-        <section id="videos" className="mb-16">
-          <h2 className="text-2xl font-bold text-black mb-8">관련 영상</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* 기본 영상 카드 */}
-            <div className="flex flex-col">
-              <div className="bg-white rounded-lg overflow-hidden shadow-sm">
-                <div className="aspect-video bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center relative">
-                  <div className="absolute inset-0 bg-black bg-opacity-20"></div>
-                  <div className="text-center z-10">
-                    <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-2">
-                      <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M8 5v14l11-7z"/>
-                      </svg>
-                    </div>
-                  </div>
-                  <div className="absolute bottom-4 left-4 text-white">
-                    <div className="text-xl font-bold">{toolDetail.serviceName}</div>
-                    <div className="text-xl font-bold">시작하기</div>
-                    <div className="text-sm">+ 초보 꿀팁</div>
-                  </div>
-                </div>
-              </div>
-              <div className="mt-3">
-                <h3 className="text-sm font-medium text-gray-900">{toolDetail.serviceName} 마스터하기: 초보자를 위한 완벽 가이드</h3>
-              </div>
-            </div>
           </div>
         </section>
         
