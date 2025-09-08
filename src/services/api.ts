@@ -621,9 +621,9 @@ class ApiService {
         
         let tagsArray: string[];
         
-        if (tool.tags && tool.tags !== '') {
-          // DB tags 컬럼에 값이 있는 경우 - 배열로 변환 (AITool 타입에 맞게)
-          tagsArray = [tool.tags]; // 문자열을 배열로 감싸기
+        if (tool.tags && tool.tags.trim() !== '') {
+          // DB tags 컬럼에 값이 있는 경우 - 해당 값을 배열로 변환
+          tagsArray = [tool.tags.trim()]; // "AI 챗봇" -> ["AI 챗봇"]
         } else {
           // DB tags가 없는 경우 카테고리명을 fallback으로 사용
           tagsArray = [tool.category?.name || '생산성'];

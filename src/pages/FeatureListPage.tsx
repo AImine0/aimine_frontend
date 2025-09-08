@@ -116,20 +116,28 @@ const FeatureListPage: React.FC = () => {
         } else {
           // 일반 서비스 목록 조회
           console.log('API 호출 전, params:', params);
-          console.log('apiService.getAllServices 함수 타입:', typeof apiService.getAllServices);
           
           const apiResponse = await apiService.getAllServices(params);
           
-          console.log('API 응답 타입:', typeof apiResponse);
-          console.log('API 응답 내용:', apiResponse);
+          console.log('API 응답:', apiResponse);
           console.log('배열인가?', Array.isArray(apiResponse));
           
           if (Array.isArray(apiResponse)) {
             console.log('배열 길이:', apiResponse.length);
             console.log('첫 번째 요소:', apiResponse[0]);
             
-            // ✅ AITool 객체 생성 시 tags 처리 수정
+            // ✅ 백엔드에서 제대로 된 데이터가 오므로 그대로 사용
             const processedTools = apiResponse;
+            
+            // 🔍 디버깅: 백엔드에서 온 실제 tags 값 확인
+            if (apiResponse.length > 0) {
+              console.log('=== 백엔드에서 온 실제 tags 값 확인 ===');
+              apiResponse.slice(0, 3).forEach((tool, index) => {
+                console.log(`도구 ${index + 1} (${tool.name}):`);
+                console.log(`  - tags:`, tool.tags);
+                console.log(`  - tags 타입:`, typeof tool.tags);
+              });
+            }
             
             setTools(processedTools);
           } else {

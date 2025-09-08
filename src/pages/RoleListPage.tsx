@@ -419,30 +419,22 @@ const RoleListPage: React.FC = () => {
                   
                   // ✅ 실제 DB 데이터에 맞게 매핑 수정
                   const toolName = toolData.serviceName || toolData.name || 'Unknown Tool';
+                  // ✅ 수정: 실제 description 사용
                   const toolDescription = toolData.description || `${toolName}는 ${title} 상황에서 활용할 수 있는 AI 도구입니다.`;
-                  const toolTags = toolData.tags || toolData.category?.name || 'AI 도구'; // ✅ tags 컬럼 우선 사용
+                  // ✅ 수정: 실제 tags 사용
+                  const toolTags = toolData.tags || toolData.category?.name || 'AI 도구';
                   
-                  // ✅ 로고 이미지 매핑 - DB의 image_path 또는 logoUrl 사용
-                  let logoUrl = '/images/Logo/Logo_FINAL.svg'; // 기본 로고
-                  if (toolData.logoUrl) {
-                    logoUrl = toolData.logoUrl;
-                  } else if (toolData.image_path) {
-                    logoUrl = toolData.image_path;
-                  } else {
-                    // fallback으로 이미지 매핑 사용
-                    const categorySlug = getCategorySlug(toolData.category?.name || 'chatbot');
-                    const imageMapping = getImageMapping(toolName, categorySlug);
-                    logoUrl = imageMapping.logo;
-                  }
+                  // ✅ 수정: 실제 logoUrl 우선 사용
+                  const logoUrl = toolData.logoUrl || getImageMapping(toolName, getCategorySlug(toolData.category?.name || 'chatbot')).logo;
                   
                   return {
                     id: (toolData.id || index).toString(),
                     name: toolName,
                     category: 'combination',
-                    description: toolDescription, // ✅ 실제 description 컬럼 사용
+                    description: toolDescription, // ✅ 실제 description 사용
                     features: [],
                     rating: Number(toolData.overallRating) || 4.5,
-                    tags: [toolTags], // ✅ DB tags 컬럼 내용을 배열로 변환
+                    tags: [toolTags], // ✅ 실제 tags 사용 (배열 형태)
                     url: toolData.websiteUrl || '',
                     releaseDate: '',
                     company: '',
@@ -452,7 +444,7 @@ const RoleListPage: React.FC = () => {
                     userCount: 0,
                     aiRating: Number(toolData.overallRating) || 4.5,
                     categoryLabel: toolData.category?.name || 'AI 도구',
-                    logoUrl: logoUrl, // ✅ 올바른 로고 URL 사용
+                    logoUrl: logoUrl, // ✅ 실제 logoUrl 사용
                     serviceImageUrl: logoUrl,
                     priceImageUrl: logoUrl,
                     searchbarLogoUrl: logoUrl
