@@ -93,7 +93,7 @@ const CATEGORY_IMAGE_PATHS = {
 // AI 서비스명과 이미지 파일명 매핑 (실제 파일 구조에 맞게 수정)
 const SERVICE_IMAGE_MAPPING: Record<string, string> = {
   // Chat/Chatbot 서비스들
-  'ChatGPT': 'ChatGpt.png',
+  'ChatGPT': 'ChatGPT.png',
   'Claude': 'Claude.png',
   'Gemini': 'Gemini.png',
   'Character.AI': 'CharacterAi.png',

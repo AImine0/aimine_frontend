@@ -16,30 +16,24 @@ const roleTabs = [
   { id: 'manage', name: '경영/운영' }
 ];
 
-// 카테고리 슬러그 변환 함수
-function getCategorySlug(categoryName: string): string {
+// ✅ getCategorySlug 함수를 RoleListPage에서 직접 정의
+const getCategorySlug = (categoryName: string): string => {
   const categoryMap: Record<string, string> = {
-    '챗봇': 'chat',
-    '이미지 생성': 'image',
-    '비디오 생성': 'video',
-    '오디오 생성': 'audio',
-    '텍스트 생성': 'text',
-    '코드 생성': 'code',
-    '생산성': 'product',
-    '프레젠테이션': 'product',
-    'AI 글쓰기 도우미': 'text',
-    '논문 검색 AI': 'text',
-    '디자인 AI': 'product',
-    '프로토타이핑': 'product',
-    '영상 생성 AI': 'video',
-    '영상 편집 AI': 'video',
-    '시장 분석': 'product',
-    '협업 도구': 'product',
-    '자동화': 'product',
-    '3D': '3d'
+    '챗봇': 'chatbot',
+    '텍스트': 'text', 
+    '이미지': 'image',
+    '비디오': 'video',
+    '오디오': 'audio',
+    '코드': 'code',
+    '3D': '3d',
+    '교육': 'education',
+    '비즈니스': 'business',
+    '창의성': 'creativity',
+    '생산성': 'productivity'
   };
-  return categoryMap[categoryName] || 'product';
-}
+  
+  return categoryMap[categoryName] || 'chatbot';
+};
 
 const RoleListPage: React.FC = () => {
   const [activeRole, setActiveRole] = useState('it');
@@ -66,7 +60,7 @@ const RoleListPage: React.FC = () => {
           setJobSituations([]);
         }
       } catch (error) {
-        console.error('직업별 추천 조회 실패:', error);
+        console.error('직업별 상황 조회 실패:', error);
         const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.';
         setError(`직업별 추천을 불러오는데 실패했습니다: ${errorMessage}`);
         setJobSituations([]);
@@ -411,48 +405,57 @@ const RoleListPage: React.FC = () => {
             </div>
           ) : (
             filteredSituations.map((situation, situationIdx) => {
-              // API 데이터 처리
+              // ✅ 최소 수정: API 데이터 처리
               const situationData = situation as any;
               
               let tools: AITool[] = [];
               let title = situationData.title || '제목 없음';
               let description = situationData.description || '';
               
-              // recommendations 배열에서 도구들 추출
+              // recommendations 배열에서 도구들 추출하고 올바른 AITool로 변환
               if (situationData.recommendations && Array.isArray(situationData.recommendations)) {
                 tools = situationData.recommendations.map((rec: any, index: number) => {
                   const toolData = rec.tool || rec;
-                  const categorySlug = getCategorySlug(toolData.category?.name || toolData.categoryName || '생산성');
-                  const imageMapping = getImageMapping(toolData.serviceName || toolData.name || 'Unknown Tool', categorySlug);
                   
-                  // categoryLabel을 미리 계산
-                  const categoryLabel = toolData.categoryName || toolData.category?.name || '생산성';
+                  // ✅ 실제 DB 데이터에 맞게 매핑 수정
+                  const toolName = toolData.serviceName || toolData.name || 'Unknown Tool';
+                  const toolDescription = toolData.description || `${toolName}는 ${title} 상황에서 활용할 수 있는 AI 도구입니다.`;
+                  const toolTags = toolData.tags || toolData.category?.name || 'AI 도구'; // ✅ tags 컬럼 우선 사용
+                  
+                  // ✅ 로고 이미지 매핑 - DB의 image_path 또는 logoUrl 사용
+                  let logoUrl = '/images/Logo/Logo_FINAL.svg'; // 기본 로고
+                  if (toolData.logoUrl) {
+                    logoUrl = toolData.logoUrl;
+                  } else if (toolData.image_path) {
+                    logoUrl = toolData.image_path;
+                  } else {
+                    // fallback으로 이미지 매핑 사용
+                    const categorySlug = getCategorySlug(toolData.category?.name || 'chatbot');
+                    const imageMapping = getImageMapping(toolName, categorySlug);
+                    logoUrl = imageMapping.logo;
+                  }
                   
                   return {
                     id: (toolData.id || index).toString(),
-                    name: toolData.serviceName || toolData.name || 'Unknown Tool',
-                    category: categorySlug,
-                    // 의미있는 설명 생성 (조합 목적 활용)
-                    description: rec.recommendationText || 
-                                 `${toolData.serviceName || toolData.name}는 ${title} 상황에서 활용할 수 있는 AI 도구입니다.`,
+                    name: toolName,
+                    category: 'combination',
+                    description: toolDescription, // ✅ 실제 description 컬럼 사용
                     features: [],
-                    rating: 4.5, // 기본 평점
-                    // AI 서비스의 카테고리를 태그로 사용 (기능별 탭과 일관성)
-                    tags: [toolData.category?.name || categorySlug || '생산성'],
-                    url: '',
+                    rating: Number(toolData.overallRating) || 4.5,
+                    tags: [toolTags], // ✅ DB tags 컬럼 내용을 배열로 변환
+                    url: toolData.websiteUrl || '',
                     releaseDate: '',
                     company: '',
                     pricing: 'freemium' as const,
                     featured: false,
                     roles: [],
                     userCount: 0,
-                    aiRating: 4.5,
-                    categoryLabel: toolData.category?.name || categorySlug || '생산성',
-                    // 로고 매핑 개선 - 서비스명으로 정확히 매핑
-                    logoUrl: toolData.logoUrl || imageMapping.logo,
-                    serviceImageUrl: imageMapping.serviceImage,
-                    priceImageUrl: imageMapping.priceImage,
-                    searchbarLogoUrl: imageMapping.searchbarLogo
+                    aiRating: Number(toolData.overallRating) || 4.5,
+                    categoryLabel: toolData.category?.name || 'AI 도구',
+                    logoUrl: logoUrl, // ✅ 올바른 로고 URL 사용
+                    serviceImageUrl: logoUrl,
+                    priceImageUrl: logoUrl,
+                    searchbarLogoUrl: logoUrl
                   };
                 });
               }

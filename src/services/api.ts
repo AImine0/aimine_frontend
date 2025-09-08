@@ -49,23 +49,78 @@ const removeAuthToken = (): void => {
   localStorage.removeItem(TOKEN_KEY);
 };
 
-// 카테고리 이름을 slug로 변환하는 함수
+// 카테고리 이름을 slug로 변환하는 함수 (한글/영문/슬러그 대응)
 const getCategorySlug = (categoryName: string): string => {
-  const categoryMap: Record<string, string> = {
-    '챗봇': 'chatbot',
-    '텍스트': 'text', 
+  if (!categoryName) return 'chat';
+
+  const key = categoryName.trim().toLowerCase();
+
+  // 이미 지원되는 슬러그면 그대로 반환
+  const supportedSlugs = new Set([
+    'chat', 'chatbot', 'image', 'video', 'audio', '3d', 'text',
+    'product', 'productivity', 'education', 'business', 'creativity', 'code'
+  ]);
+  if (supportedSlugs.has(key)) return key === 'chatbot' ? 'chat' : key;
+
+  // 다양한 표현 매핑
+  const aliasMap: Record<string, string> = {
+    // 챗봇 계열
+    '챗봇': 'chat',
+    'chat': 'chat',
+    'chatbot': 'chat',
+    'bot': 'chat',
+
+    // 이미지
     '이미지': 'image',
+    'image': 'image',
+    'images': 'image',
+    '사진': 'image',
+
+    // 비디오
     '비디오': 'video',
+    '영상': 'video',
+    'video': 'video',
+    'videos': 'video',
+
+    // 오디오
     '오디오': 'audio',
+    'audio': 'audio',
+    'voice': 'audio',
+
+    // 코드
     '코드': 'code',
-    '3D': '3d',
-    '교육': 'education',
+    '개발': 'code',
+    '프로그래밍': 'code',
+    'code': 'code',
+    'coding': 'code',
+    'developer': 'code',
+
+    // 3D
+    '3d': '3d',
+    '3d 모델링': '3d',
+    '3d모델링': '3d',
+
+    // 텍스트
+    '텍스트': 'text',
+    '글쓰기': 'text',
+    '문서': 'text',
+    'text': 'text',
+    'writing': 'text',
+
+    // 제품/생산성/비즈니스/교육/창의성
+    '제품': 'product',
+    'product': 'product',
+    '생산성': 'productivity',
+    'productivity': 'productivity',
     '비즈니스': 'business',
+    'business': 'business',
+    '교육': 'education',
+    'education': 'education',
     '창의성': 'creativity',
-    '생산성': 'productivity'
+    'creativity': 'creativity'
   };
-  
-  return categoryMap[categoryName] || 'chatbot';
+
+  return aliasMap[key] || 'chat';
 };
 
 class ApiService {
@@ -558,16 +613,17 @@ class ApiService {
         return [];
       }
 
+      // api.ts의 getAllServices 함수에서 tags 처리 부분 수정
+
       return serviceList.data.map(tool => {
         const categorySlug = getCategorySlug(tool.category?.name || '생산성');
         const imageMapping = getImageMapping(tool.serviceName, categorySlug);
         
-        // DB의 tags 컬럼 내용을 사용 (문자열을 배열로 변환)
-        let tagsArray: string[] = [];
+        let tagsArray: string[];
         
-        if (tool.tags && tool.tags.trim()) {
-          // DB tags 컬럼에 값이 있는 경우
-          tagsArray = [tool.tags.trim()];
+        if (tool.tags && tool.tags !== '') {
+          // DB tags 컬럼에 값이 있는 경우 - 배열로 변환 (AITool 타입에 맞게)
+          tagsArray = [tool.tags]; // 문자열을 배열로 감싸기
         } else {
           // DB tags가 없는 경우 카테고리명을 fallback으로 사용
           tagsArray = [tool.category?.name || '생산성'];
@@ -580,7 +636,6 @@ class ApiService {
           description: tool.description || '',
           features: tool.keywords || [],
           rating: Number(tool.overallRating) || 0,
-          // DB의 tags 컬럼 내용 사용
           tags: tagsArray,
           url: tool.websiteUrl || '',
           releaseDate: tool.launchDate || '',

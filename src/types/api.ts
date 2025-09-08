@@ -414,6 +414,24 @@ export interface JobSituation {
   }>;
 }
 
+
+interface AiCombinationResponse {
+  combinations: Array<{
+    id: number;
+    title: string;
+    description: string;
+    category: string;
+    aiServices: Array<{
+      id: number;
+      name: string;
+      description: string;
+      logoUrl: string;
+      categoryName: string;
+      tags: string;
+    }>;
+  }>;
+}
+
 // ================================
 // 유틸리티 타입들
 // ================================

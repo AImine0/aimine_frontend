@@ -39,7 +39,6 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
         } catch (error) {
           console.warn('⚠️ 북마크 상태 확인 실패:', error);
           
-          // 첫 번째 시도에서 실패한 경우 잠시 후 재시도
           if (statusCheckAttempts < 2) {
             console.log('🔄 북마크 상태 재확인 시도');
             setTimeout(() => {
@@ -167,22 +166,23 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
     );
   };
 
+  // ✅ DB tags 컬럼을 우선적으로 표시하는 함수
   const getDisplayTag = () => {
-    // 1순위: DB의 tags 컬럼 내용 사용 (배열인 경우)
-    if (tool.tags && Array.isArray(tool.tags) && tool.tags.length > 0) {
+    // 1순위: tags가 배열인 경우 첫 번째 요소 사용 (DB tags 컬럼 내용)
+    if (Array.isArray(tool.tags) && tool.tags.length > 0) {
       const firstTag = tool.tags[0];
       if (firstTag && firstTag !== '') {
-        return firstTag;
+        return firstTag; // "AI 챗봇" 같은 전체 텍스트를 그대로 사용
       }
     }
     
-    // 2순위: tags가 문자열인 경우 (API 응답) - 원본 그대로 사용
+    // 2순위: tags가 문자열인 경우 (이전 버전 호환성)
     if (typeof tool.tags === 'string' && tool.tags !== '') {
       return tool.tags;
     }
     
-    // 3순위: categoryLabel을 fallback으로 사용 (기존 로직)
-    return tool.categoryLabel || '생산성';
+    // 3순위: categoryLabel을 fallback으로 사용 (기존 로직 유지)
+    return tool.categoryLabel || 'AI 도구';
   };
 
   return (
@@ -208,7 +208,7 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
             </div>
           </div>
           
-          {/* 카테고리/태그 뱃지 - UI는 그대로, 내용만 태그 사용 */}
+          {/* ✅ DB tags 컬럼 내용 표시 */}
           <span className="inline-flex items-center px-3 py-1 rounded-full font-medium" 
                 style={{ 
                   backgroundColor: '#E9DFFB',
