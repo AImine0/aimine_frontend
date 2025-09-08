@@ -405,28 +405,23 @@ const RoleListPage: React.FC = () => {
             </div>
           ) : (
             filteredSituations.map((situation, situationIdx) => {
-              // ✅ API에서 이미 올바르게 변환된 데이터 사용
+
               const situationData = situation as any;
               
               let tools: AITool[] = [];
               let title = situationData.title || '제목 없음';
               let description = situationData.description || '';
               
-              // ✅ api.ts에서 이미 변환된 recommendations 데이터를 그대로 사용
               if (situationData.recommendations && Array.isArray(situationData.recommendations)) {
                 tools = situationData.recommendations.map((rec: any, index: number) => {
                   const toolData = rec.tool;
                   
-                  // ✅ api.ts에서 이미 백엔드 데이터를 올바르게 매핑했으므로 그대로 사용
                   const toolName = toolData.serviceName || 'Unknown Tool';
                   const toolDescription = toolData.description || `${toolName}는 ${title} 상황에서 활용할 수 있는 AI 도구입니다.`;
                   const toolTags = toolData.tags || toolData.category?.name || 'AI 도구';
-                  
-                  // ✅ 백엔드에서 제공한 logoUrl을 우선 사용, 없을 경우에만 fallback
-                  const logoUrl = toolData.logoUrl && toolData.logoUrl.startsWith('http') 
-                    ? toolData.logoUrl 
-                    : getImageMapping(toolName, getCategorySlug(toolData.category?.name || 'chatbot')).logo;
-                  
+
+                  const logoUrl = toolData.logoUrl || getImageMapping(toolName, getCategorySlug(toolData.category?.name || 'chatbot')).logo;                  
+                                    
                   return {
                     id: (toolData.id || index).toString(),
                     name: toolName,
