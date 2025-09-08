@@ -39,32 +39,37 @@ const FeatureListPage: React.FC = () => {
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
   const [sortType, setSortType] = useState('popular');
   const [tools, setTools] = useState<AITool[]>([]);
+  const [allTools, setAllTools] = useState<AITool[]>([]);
   const [keywords, setKeywords] = useState<string[]>(['전체']);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // 키워드 목록 가져오기
+  // 현재 로드된 '전체 목록'에서 키워드 추출 (카테고리 한정)
   useEffect(() => {
-    const fetchKeywords = async () => {
-      try {
-        const response = await apiService.getKeywords();
-        if (response.keywords && Array.isArray(response.keywords)) {
-          const keywordList = response.keywords.map((k: any) => k.keyword);
-          setKeywords(['전체', ...keywordList]);
+    const buildKeywordsFromTools = (toolList: AITool[]): string[] => {
+      const set = new Set<string>();
+      toolList.forEach((t) => {
+        // features: string[]
+        if (Array.isArray(t.features)) {
+          t.features.filter(Boolean).forEach((f: string) => set.add(f));
         }
-      } catch (error) {
-        console.error('키워드 조회 실패:', error);
-        // 키워드 로드 실패시 기본값 유지
-        setKeywords(['전체']);
-      }
+        // tags: string[] | string
+        const tags: any = (t as any).tags;
+        if (Array.isArray(tags)) {
+          tags.filter(Boolean).forEach((tag: string) => set.add(tag));
+        } else if (typeof tags === 'string' && tags.trim() !== '') {
+          tags.split(',').map(s => s.trim()).filter(Boolean).forEach((tag) => set.add(tag));
+        }
+      });
+      return ['전체', ...Array.from(set).slice(0, 40)];
     };
 
-    fetchKeywords();
-  }, []);
+    setKeywords(buildKeywordsFromTools(allTools));
+  }, [allTools]);
 
-  // AI 서비스 목록 가져오기 (탭, 키워드, 필터, 정렬에 따라)
+  // AI 서비스 목록 가져오기 (탭, 가격 필터, 정렬 변경 시)
   useEffect(() => {
-    const fetchTools = async () => {
+    const fetchAllTools = async () => {
       try {
         setLoading(true);
         setError(null);
@@ -76,87 +81,57 @@ const FeatureListPage: React.FC = () => {
           pricing: PRICING_TYPE_MAP[activeFilter],
           size: 100 // 충분히 큰 수로 설정
         };
-
-        // 키워드가 '전체'가 아닌 경우 검색으로 처리
-        if (!activeKeywords.includes('전체') && activeKeywords.length > 0) {
-          // 키워드 필터링은 검색 API 사용
-          const searchResponse = await apiService.search({
-            q: activeKeywords.join(' '),
-            category: TAB_TO_CATEGORY[activeTab],
-            pricing: PRICING_TYPE_MAP[activeFilter],
-            sort: SORT_TYPE_MAP[sortType] as any // 타입 캐스팅으로 해결
-          });
-
-          // 검색 결과를 AITool 형식으로 변환
-          const searchTools: AITool[] = searchResponse.tools.map(tool => ({
-            id: tool.id.toString(),
-            name: tool.service_name,
-            category: activeTab,
-            description: tool.description,
-            features: tool.keywords || [],
-            rating: tool.overall_rating,
-            // ✅ tags를 문자열로 통일 (keywords 배열을 콤마 구분 문자열로 변환)
-            tags: Array.isArray(tool.keywords) ? tool.keywords.join(', ') : (tool.keywords || ''),
-            url: '', // API에서 제공되지 않음
-            releaseDate: '',
-            company: 'Unknown',
-            pricing: (tool.pricing_type?.toLowerCase() || 'free') as 'free' | 'paid' | 'freemium',
-            featured: false,
-            categoryLabel: tool.category_name,
-            roles: [],
-            userCount: 0,
-            aiRating: tool.overall_rating,
-            logoUrl: tool.logo_url,
-            serviceImageUrl: tool.logo_url,
-            priceImageUrl: tool.logo_url,
-            searchbarLogoUrl: tool.logo_url
-          }));
-
-          setTools(searchTools);
+        // 일반 서비스 목록 조회
+        const apiResponse = await apiService.getAllServices(params);
+        if (Array.isArray(apiResponse)) {
+          setAllTools(apiResponse);
+          setTools(apiResponse); // 초기 표시 = 전체
         } else {
-          // 일반 서비스 목록 조회
-          console.log('API 호출 전, params:', params);
-          
-          const apiResponse = await apiService.getAllServices(params);
-          
-          console.log('API 응답:', apiResponse);
-          console.log('배열인가?', Array.isArray(apiResponse));
-          
-          if (Array.isArray(apiResponse)) {
-            console.log('배열 길이:', apiResponse.length);
-            console.log('첫 번째 요소:', apiResponse[0]);
-            
-            // ✅ 백엔드에서 제대로 된 데이터가 오므로 그대로 사용
-            const processedTools = apiResponse;
-            
-            // 🔍 디버깅: 백엔드에서 온 실제 tags 값 확인
-            if (apiResponse.length > 0) {
-              console.log('=== 백엔드에서 온 실제 tags 값 확인 ===');
-              apiResponse.slice(0, 3).forEach((tool, index) => {
-                console.log(`도구 ${index + 1} (${tool.name}):`);
-                console.log(`  - tags:`, tool.tags);
-                console.log(`  - tags 타입:`, typeof tool.tags);
-              });
-            }
-            
-            setTools(processedTools);
-          } else {
-            console.error('응답이 배열이 아닙니다:', apiResponse);
-            console.error('실제 타입:', Object.prototype.toString.call(apiResponse));
-            setError('데이터 형식 오류가 발생했습니다.');
-          }
+          console.error('응답이 배열이 아닙니다:', apiResponse);
+          setError('데이터 형식 오류가 발생했습니다.');
+          setAllTools([]);
+          setTools([]);
         }
       } catch (error) {
         console.error('AI 서비스 조회 실패:', error);
         setError('AI 서비스를 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.');
+        setAllTools([]);
         setTools([]);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchTools();
-  }, [activeTab, activeKeywords, activeFilter, sortType]);
+    fetchAllTools();
+  }, [activeTab, activeFilter, sortType]);
+
+  // 키워드 선택 시 클라이언트 사이드 필터링
+  useEffect(() => {
+    if (activeKeywords.includes('전체') || activeKeywords.length === 0) {
+      setTools(allTools);
+      return;
+    }
+
+    const selected = activeKeywords.filter(k => k !== '전체');
+
+    const toolMatches = (tool: AITool) => {
+      const featureSet = new Set<string>((tool.features || []).map((s: string) => (s || '').toLowerCase()));
+      const tagsAny: any = (tool as any).tags;
+      const tagSet = new Set<string>((Array.isArray(tagsAny)
+        ? tagsAny
+        : typeof tagsAny === 'string' ? tagsAny.split(',') : [])
+        .map((s: string) => (s || '').trim().toLowerCase()));
+
+      // AND 매칭: 선택한 모든 키워드가 features 또는 tags 중 하나에 포함되어야 함
+      return selected.every((kw) => {
+        const k = kw.toLowerCase();
+        return featureSet.has(k) || tagSet.has(k);
+      });
+    };
+
+    const filtered = allTools.filter(toolMatches);
+    setTools(filtered);
+  }, [activeKeywords, allTools]);
 
   const handleKeywordToggle = (keyword: string) => {
     setActiveKeywords(prev => {
