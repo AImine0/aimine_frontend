@@ -19,6 +19,9 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
   const [statusCheckAttempts, setStatusCheckAttempts] = useState(0);
   const location = useLocation();
 
+  // MyPage인지 확인
+  const isMyPage = location.pathname === '/mypage';
+
   // 인증 상태 및 북마크 상태 확인 (페이지 변경 시마다 실행)
   useEffect(() => {
     const checkAuthAndBookmark = async () => {
@@ -105,6 +108,11 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
         await apiService.removeBookmark(numericId);
         setIsBookmarked(false);
         console.log('✅ 북마크 제거 완료');
+        
+        // MyPage에서 북마크 해제 시 페이지 새로고침 (UI에서 카드가 사라지도록)
+        if (isMyPage) {
+          window.location.reload();
+        }
       } else {
         console.log('➕ 북마크 추가 시도');
         await apiService.addBookmark(numericId);
@@ -166,7 +174,7 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
     );
   };
 
-  // ✅ DB tags 컬럼을 우선적으로 표시하는 함수
+  // DB tags 컬럼을 우선적으로 표시하는 함수
   const getDisplayTag = () => {
     // 1순위: tags가 배열인 경우 첫 번째 요소 사용 (DB tags 컬럼 내용)
     if (Array.isArray(tool.tags) && tool.tags.length > 0) {
@@ -208,7 +216,7 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
             </div>
           </div>
           
-          {/* ✅ DB tags 컬럼 내용 표시 */}
+          {/* DB tags 컬럼 내용 표시 */}
           <span className="inline-flex items-center px-3 py-1 rounded-full font-medium" 
                 style={{ 
                   backgroundColor: '#E9DFFB',
@@ -222,10 +230,43 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
           </span>
         </div>
 
-        {/* 오른쪽: BEST 뱃지, 링크 버튼 */}
+        {/* 오른쪽: BEST 뱃지, 북마크 버튼 (MyPage에서만), 링크 버튼 */}
         <div className="flex items-start gap-2 flex-shrink-0">
           {/* BEST 뱃지 */}
           {rank && rank <= 3 && getBestBadge(rank)}
+
+          {/* 북마크 버튼 - MyPage에서만 표시 */}
+          {isMyPage && isAuthenticated && (
+            <button
+              onClick={handleBookmarkToggle}
+              disabled={bookmarkLoading}
+              className={`flex items-center justify-center transition-all duration-200 ${
+                bookmarkLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-purple-100'
+              }`}
+              style={{ 
+                backgroundColor: isBookmarked ? '#E9DFFB' : '#F3F4F6', 
+                width: '32px', 
+                height: '32px',
+                borderRadius: '3.56px'
+              }}
+              title={isBookmarked ? '북마크 해제' : '북마크 추가'}
+            >
+              {bookmarkLoading ? (
+                <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <svg 
+                  className="w-4 h-4" 
+                  fill={isBookmarked ? 'currentColor' : 'none'} 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24" 
+                  strokeWidth="2" 
+                  style={{ color: isBookmarked ? '#7E50D1' : '#6B7280' }}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                </svg>
+              )}
+            </button>
+          )}
 
           {/* 상세 페이지 링크 */}
           <Link to={`/tool/${tool.id}`}>
