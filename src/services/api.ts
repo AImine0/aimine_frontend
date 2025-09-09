@@ -30,7 +30,6 @@ import type {
   AiCombinationListResponse,
   AiCombinationDetailResponse
 } from '../types/api'; // api.ts에서 임포트
-import { getImageMapping } from '../utils/imageMapping';
 
 const API_BASE_URL = 'https://aimine.up.railway.app';
 
@@ -588,44 +587,36 @@ class ApiService {
     try {
       const queryParams = new URLSearchParams();
       
-      // 백엔드 파라미터 이름과 정확히 매칭
       if (params?.page !== undefined) queryParams.append('page', params.page.toString());
       if (params?.size !== undefined) queryParams.append('size', params.size.toString());
       if (params?.category) queryParams.append('category', params.category);
       if (params?.search) queryParams.append('search', params.search);
       if (params?.sort) queryParams.append('sort', params.sort);
       if (params?.pricing) queryParams.append('pricing', params.pricing);
-
+  
       const queryString = queryParams.toString();
       const endpoint = queryString ? `/ai-services?${queryString}` : '/ai-services';
       
-      // 백엔드가 ApiResponse<ServiceListResponse> 형태로 이중 래핑하여 응답
       const response = await this.request<ApiResponse<ServiceListResponse>>(endpoint);
       
       if (!response.success || !response.data) {
         throw new Error('Invalid response structure');
       }
       
-      // ServiceListResponse에서 실제 데이터 추출
       const serviceList = response.data;
       if (!Array.isArray(serviceList.data)) {
         console.error('데이터가 배열이 아닙니다:', serviceList.data);
         return [];
       }
-
-      // api.ts의 getAllServices 함수에서 tags 처리 부분 수정
-
+  
       return serviceList.data.map(tool => {
         const categorySlug = getCategorySlug(tool.category?.name || '생산성');
-        const imageMapping = getImageMapping(tool.serviceName, categorySlug);
         
         let tagsArray: string[];
         
         if (tool.tags && tool.tags.trim() !== '') {
-          // DB tags 컬럼에 값이 있는 경우 - 해당 값을 배열로 변환
-          tagsArray = [tool.tags.trim()]; // "AI 챗봇" -> ["AI 챗봇"]
+          tagsArray = [tool.tags.trim()];
         } else {
-          // DB tags가 없는 경우 카테고리명을 fallback으로 사용
           tagsArray = [tool.category?.name || '생산성'];
         }
         
@@ -646,10 +637,11 @@ class ApiService {
           roles: [],
           userCount: 0,
           aiRating: Number(tool.overallRating) || 0,
-          logoUrl: imageMapping.logo,
-          serviceImageUrl: imageMapping.serviceImage,
-          priceImageUrl: imageMapping.priceImage,
-          searchbarLogoUrl: imageMapping.searchbarLogo
+          // 백엔드에서 받은 logoUrl만 사용, 나머지는 기본 경로로 fallback
+          logoUrl: tool.logoUrl || '/images/Logo/Logo_FINAL.svg',
+          serviceImageUrl: '/images/GlassMorphism/Detailpage/Detailpage_Happy.png',
+          priceImageUrl: '/images/GlassMorphism/Price/Price_Default.png',
+          searchbarLogoUrl: tool.logoUrl || '/images/SearchbarLogo/Logo_FINAL.svg'
         };
       });
     } catch (error) {
@@ -660,7 +652,6 @@ class ApiService {
 
   async getServiceById(id: string): Promise<AIToolDetail | null> {
     try {
-      // 백엔드가 ApiResponse<ServiceDetailResponse> 형태로 응답
       const response = await this.request<ApiResponse<ServiceDetailResponse>>(`/ai-services/${id}`);
       
       if (!response.success || !response.data) {
@@ -668,19 +659,18 @@ class ApiService {
         return null;
       }
       
-      // ServiceDetailResponse에서 실제 데이터 추출
       const serviceDetail = response.data;
       const toolData = serviceDetail.data;
       
       const categorySlug = getCategorySlug(toolData.category?.name || '생산성');
-      const imageMapping = getImageMapping(toolData.serviceName, categorySlug);
       
       const toolDetail: AIToolDetail = {
         id: toolData.id,
         serviceName: toolData.serviceName,
         description: toolData.description || '',
         websiteUrl: toolData.websiteUrl || '',
-        logoUrl: imageMapping.logo,
+        // 백엔드에서 받은 logoUrl만 사용, 나머지는 기본 경로로 fallback
+        logoUrl: toolData.logoUrl || '/images/Logo/Logo_FINAL.svg',
         launchDate: toolData.launchDate || '',
         category: {
           id: toolData.category?.id || 1,
@@ -703,9 +693,10 @@ class ApiService {
           createdAt: r.createdAt,
           updatedAt: r.createdAt
         })) || [],
-        serviceImageUrl: imageMapping.serviceImage,
-        priceImageUrl: imageMapping.priceImage,
-        searchbarLogoUrl: imageMapping.searchbarLogo
+        // 기본 경로로 fallback (백엔드에 해당 필드가 없음)
+        serviceImageUrl: '/images/GlassMorphism/Detailpage/Detailpage_Happy.png',
+        priceImageUrl: '/images/GlassMorphism/Price/Price_Default.png',
+        searchbarLogoUrl: toolData.logoUrl || '/images/SearchbarLogo/Logo_FINAL.svg'
       };
       
       return toolDetail;
