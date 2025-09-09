@@ -208,6 +208,7 @@ export interface ServiceListResponse {
   }>;
 }
 
+// AI 서비스 관리 타입들 업데이트
 export interface ServiceDetailResponse {
   success: boolean;
   data: {
@@ -216,6 +217,8 @@ export interface ServiceDetailResponse {
     description: string;
     websiteUrl: string;
     logoUrl: string;
+    serviceImageUrl: string;    // 새로 추가된 필드
+    priceImageUrl: string;      // 새로 추가된 필드
     launchDate: string;
     category: {
       id: number;
@@ -398,6 +401,7 @@ export interface AIToolDetail {
     createdAt: string;
     updatedAt?: string;
   }>;
+
   serviceImageUrl: string;
   priceImageUrl: string;
   searchbarLogoUrl: string;
