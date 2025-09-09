@@ -67,17 +67,20 @@ export interface BookmarkDeleteResponse {
   message: string;
 }
 
+// websiteUrl 필드 추가된 BookmarkListResponse
 export interface BookmarkListResponse {
   bookmarks: Array<{
     id: number;
-    aiServiceId: number;           // camelCase로 변경
-    serviceName: string;           // camelCase로 변경  
-    serviceSummary: string;        // camelCase로 변경
-    logoUrl: string;               // camelCase로 변경
-    categoryDisplayName: string;   // camelCase로 변경
-    pricingType: string;           // camelCase로 변경
+    aiServiceId: number;           // camelCase
+    serviceName: string;           // camelCase  
+    serviceSummary: string;        // camelCase
+    logoUrl: string;               // camelCase
+    categoryDisplayName: string;   // camelCase
+    pricingType: string;           // camelCase
+    tags: string;                  // tags 필드 
+    websiteUrl: string;            // websiteUrl 필드 
   }>;
-  totalCount: number;              // camelCase로 변경
+  totalCount: number;              // camelCase
 }
 
 // ================================

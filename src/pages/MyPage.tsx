@@ -4,18 +4,21 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Breadcrumb from '../components/Breadcrumb';
+import ToolCard from '../components/ToolCard';
 import { apiService } from '../services';
-import type { BookmarkListResponse, UserProfileResponse } from '../types';
-import { handleImageError } from '../utils/imageMapping';
+import type { BookmarkListResponse, UserProfileResponse, AITool } from '../types';
 
+// ✅ 백엔드 BookmarkListResponse와 정확히 일치하도록 수정
 interface BookmarkedTool {
   id: number;
-  aiServiceId: number;           // camelCase로 변경
-  serviceName: string;           // camelCase로 변경
-  serviceSummary: string;        // camelCase로 변경
-  logoUrl: string;               // camelCase로 변경
-  categoryDisplayName: string;   // camelCase로 변경
-  pricingType: string;           // camelCase로 변경
+  aiServiceId: number;
+  serviceName: string;
+  serviceSummary: string;
+  logoUrl: string;
+  categoryDisplayName: string;
+  pricingType: string;
+  tags: string;        // ✅ tags 속성 (이미 존재)
+  websiteUrl: string;  // ✅ websiteUrl 속성 추가 (officialUrl에서 매핑)
 }
 
 const MyPage: React.FC = () => {
@@ -23,10 +26,64 @@ const MyPage: React.FC = () => {
   
   // 상태 관리
   const [user, setUser] = useState<UserProfileResponse | null>(null);
-  const [bookmarkedTools, setBookmarkedTools] = useState<BookmarkedTool[]>([]);
+  const [bookmarkedTools, setBookmarkedTools] = useState<AITool[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [removingBookmarks, setRemovingBookmarks] = useState<Set<number>>(new Set());
+
+  // 북마크 데이터를 ToolCard에서 사용할 수 있는 AITool 형태로 변환하는 함수
+  const convertBookmarkToAITool = (bookmark: BookmarkedTool): AITool => {
+    // 가격 타입 변환
+    const mapPricingType = (pricingType: string): 'free' | 'paid' | 'freemium' => {
+      switch (pricingType.toUpperCase()) {
+        case 'FREE':
+          return 'free';
+        case 'PAID':
+          return 'paid';
+        case 'FREEMIUM':
+          return 'freemium';
+        default:
+          return 'freemium';
+      }
+    };
+
+    // 카테고리 슬러그 변환 함수
+    const getCategorySlug = (categoryName: string): string => {
+      const categoryMap: Record<string, string> = {
+        '챗봇': 'chatbot',
+        '텍스트': 'text', 
+        '이미지': 'image',
+        '비디오': 'video',
+        '오디오/음악': 'audio',
+        '코드': 'code',
+        '3D': '3d',
+        '생산성': 'productivity'
+      };
+      return categoryMap[categoryName] || 'chatbot';
+    };
+
+    return {
+      id: bookmark.aiServiceId.toString(),
+      name: bookmark.serviceName,
+      category: getCategorySlug(bookmark.categoryDisplayName),
+      description: bookmark.serviceSummary,
+      features: [],
+      rating: 4.5,
+      tags: bookmark.tags ? [bookmark.tags] : [bookmark.categoryDisplayName], // ✅ tags 사용
+      url: bookmark.websiteUrl || '', // ✅ websiteUrl 사용
+      releaseDate: '',
+      company: '',
+      pricing: mapPricingType(bookmark.pricingType),
+      featured: false,
+      categoryLabel: bookmark.categoryDisplayName,
+      roles: [],
+      userCount: 0,
+      aiRating: 4.5,
+      logoUrl: bookmark.logoUrl || '/images/Logo/Logo_FINAL.svg',
+      serviceImageUrl: bookmark.logoUrl || '/images/Logo/Logo_FINAL.svg',
+      priceImageUrl: bookmark.logoUrl || '/images/Logo/Logo_FINAL.svg',
+      searchbarLogoUrl: bookmark.logoUrl || '/images/Logo/Logo_FINAL.svg'
+    };
+  };
 
   // 인증 확인 및 데이터 로드
   useEffect(() => {
@@ -44,11 +101,14 @@ const MyPage: React.FC = () => {
         // 사용자 정보와 북마크 데이터 병렬로 로드
         const [userProfile, bookmarksResponse] = await Promise.all([
           apiService.getUserProfile(),
-          apiService.getBookmarksFixed() // 수정된 메서드 사용
+          apiService.getBookmarksFixed()
         ]);
 
         setUser(userProfile);
-        setBookmarkedTools(bookmarksResponse.bookmarks);
+        
+        // 북마크 데이터를 AITool 형태로 변환
+        const convertedTools = bookmarksResponse.bookmarks.map(convertBookmarkToAITool);
+        setBookmarkedTools(convertedTools);
 
       } catch (error) {
         console.error('마이페이지 데이터 로드 실패:', error);
@@ -66,57 +126,6 @@ const MyPage: React.FC = () => {
     loadMyPageData();
   }, [navigate]);
 
-  // 북마크 제거 핸들러
-  const handleRemoveBookmark = async (serviceId: number) => {
-    if (removingBookmarks.has(serviceId)) return;
-    
-    try {
-      setRemovingBookmarks(prev => new Set(prev).add(serviceId));
-      
-      await apiService.removeBookmark(serviceId);
-      
-      // 북마크 목록에서 제거 (camelCase 필드 사용)
-      setBookmarkedTools(prev => 
-        prev.filter(tool => tool.aiServiceId !== serviceId)
-      );
-      
-    } catch (error) {
-      console.error('북마크 제거 실패:', error);
-      alert('북마크 제거 중 오류가 발생했습니다.');
-    } finally {
-      setRemovingBookmarks(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(serviceId);
-        return newSet;
-      });
-    }
-  };
-
-  // 가격 뱃지
-  const getPricingBadge = (pricingType: string) => {
-    const type = pricingType.toLowerCase();
-    const badgeConfig = {
-      free: { text: 'Free', bgColor: '#E8F5E8', textColor: '#2E7D33' },
-      paid: { text: 'Paid', bgColor: '#FFF3E0', textColor: '#F57C00' },
-      freemium: { text: 'Freemium', bgColor: '#E3F2FD', textColor: '#1976D2' }
-    };
-    
-    const config = badgeConfig[type as keyof typeof badgeConfig] || badgeConfig.freemium;
-    
-    return (
-      <span 
-        className="inline-flex items-center px-2 py-1 font-medium text-xs rounded-full"
-        style={{ 
-          backgroundColor: config.bgColor,
-          color: config.textColor,
-          fontFamily: 'Pretendard'
-        }}
-      >
-        {config.text}
-      </span>
-    );
-  };
-
   const breadcrumbItems = [
     { label: '마이페이지' }
   ];
@@ -128,7 +137,9 @@ const MyPage: React.FC = () => {
         <div className="flex items-center justify-center pt-20">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">마이페이지를 불러오는 중...</p>
+            <p className="text-gray-600" style={{ fontFamily: 'Pretendard' }}>
+              마이페이지를 불러오는 중...
+            </p>
           </div>
         </div>
       </div>
@@ -209,98 +220,10 @@ const MyPage: React.FC = () => {
               </button>
             </div>
           ) : (
-            /* 북마크 목록 */
+            /* ✅ ToolCard 컴포넌트 재사용 - 기존 직접 구현한 카드 대신 */
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {bookmarkedTools.map((tool) => (
-                <div 
-                  key={tool.id}
-                  className="bg-white rounded-xl hover:border-purple-200 hover:shadow-lg transition-all duration-200 group"
-                  style={{ border: '1px solid #DBCBF9', fontFamily: 'Pretendard', padding: '20px', minHeight: '250px' }}
-                >
-                  {/* 상단: 로고, 카테고리, 북마크/바로가기 버튼 */}
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-start gap-4">
-                      {/* 로고 */}
-                      <div className="flex-shrink-0">
-                        <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
-                          <img 
-                            src={tool.logoUrl} 
-                            alt={`${tool.serviceName} 로고`}
-                            className="w-full h-full object-contain p-1"
-                            onError={(e) => handleImageError(e, '/images/Logo/Logo_FINAL.svg')}
-                          />
-                        </div>
-                      </div>
-                      
-                      {/* 카테고리와 가격 */}
-                      <div className="flex flex-col gap-2">
-                        <div className="flex items-center gap-2">
-                          <span className="inline-flex items-center px-3 py-1 rounded-full font-medium" 
-                               style={{ 
-                                 backgroundColor: '#E9DFFB',
-                                 borderRadius: '20px',
-                                 color: '#202020',
-                                 fontSize: '12px',
-                                 fontFamily: 'Pretendard'
-                               }}>
-                            {tool.categoryDisplayName}
-                          </span>
-                          {getPricingBadge(tool.pricingType)}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* 오른쪽: 북마크 제거, 바로가기 버튼 */}
-                    <div className="flex items-start gap-2 flex-shrink-0">
-                      {/* 북마크 제거 버튼 */}
-                      <button
-                        onClick={() => handleRemoveBookmark(tool.aiServiceId)} // camelCase 사용
-                        disabled={removingBookmarks.has(tool.aiServiceId)}
-                        className="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 bg-red-50 text-red-500 hover:bg-red-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                        title="저장 해제"
-                      >
-                        {removingBookmarks.has(tool.aiServiceId) ? (
-                          <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                        ) : (
-                          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                          </svg>
-                        )}
-                      </button>
-
-                      {/* 상세 페이지 링크 */}
-                      <button 
-                        onClick={() => navigate(`/tool/${tool.aiServiceId}`)} // camelCase 사용
-                        className="flex items-center justify-center transition-all duration-200 group-hover:bg-purple-100" 
-                        style={{ 
-                          backgroundColor: '#E9DFFB', 
-                          width: '32px', 
-                          height: '32px',
-                          borderRadius: '3.56px'
-                        }}
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" style={{ color: '#7E50D1' }}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* 중간: 제목과 설명 */}
-                  <div className="mb-4">
-                    <button
-                      onClick={() => navigate(`/tool/${tool.aiServiceId}`)} // camelCase 사용
-                      className="hover:text-purple-600 transition-colors text-left w-full"
-                    >
-                      <h3 className="font-semibold mb-2 line-clamp-1" style={{ color: '#000000', fontSize: '20px', fontFamily: 'Pretendard' }}>
-                        {tool.serviceName} {/* camelCase 사용 */}
-                      </h3>
-                    </button>
-                    <p className="text-gray-600 leading-relaxed line-clamp-2" style={{ fontSize: '14px', fontFamily: 'Pretendard' }}>
-                      {tool.serviceSummary} {/* camelCase 사용 */}
-                    </p>
-                  </div>
-                </div>
+                <ToolCard key={tool.id} tool={tool} />
               ))}
             </div>
           )}
