@@ -168,7 +168,7 @@ const FeatureListPage: React.FC = () => {
   // 간단 캐시: 탭/가격/정렬 조합 → 데이터
   const listCacheRef = useRef<Record<string, AITool[]>>({});
 
-  // AI 서비스 목록 가져오기 (탭, 가격, 정렬 변경 시에만 네트워크 호출)
+  // AI 서비스 목록 가져오기 (탭/정렬 변경 시 네트워크 호출)
   useEffect(() => {
     const fetchTools = async () => {
       try {
@@ -179,10 +179,9 @@ const FeatureListPage: React.FC = () => {
         const params: any = {
           category: TAB_TO_CATEGORY[activeTab],
           sort: SORT_TYPE_MAP[sortType],
-          pricing: PRICING_TYPE_MAP[activeFilter],
           size: 100 // 충분히 큰 수로 설정
         };
-        const cacheKey = JSON.stringify({ tab: activeTab, pricing: PRICING_TYPE_MAP[activeFilter], sort: SORT_TYPE_MAP[sortType] });
+        const cacheKey = JSON.stringify({ tab: activeTab, sort: SORT_TYPE_MAP[sortType] });
         let apiResponse = listCacheRef.current[cacheKey];
 
         if (!apiResponse) {
@@ -208,24 +207,40 @@ const FeatureListPage: React.FC = () => {
     };
 
     fetchTools();
-  }, [activeTab, activeFilter, sortType]);
+  }, [activeTab, sortType]);
 
   // 선택된 키워드로 클라이언트 사이드 필터링 (즉시 반응, 메모이제이션)
-  const filteredTools = useMemo(() => {
-    const selected = activeKeywords.filter(k => k !== '전체');
-    if (selected.length === 0) return baseTools;
-
-    const normalizedSelected = selected.map(k => k.toLowerCase());
-    return baseTools.filter(tool => {
+  // 0) 검색용 문자열을 미리 준비 (1회 계산)
+  const preparedTools = useMemo(() => {
+    return baseTools.map(tool => {
       const featureText = (tool.features || []).join(' ');
       const tagText = Array.isArray(tool.tags) ? tool.tags.join(' ') : String(tool.tags || '');
       const haystack = [tool.name, tool.description, tool.categoryLabel, featureText, tagText]
         .filter(Boolean)
         .join(' ')
         .toLowerCase();
-      return normalizedSelected.some(kw => haystack.includes(kw));
+      return { tool, haystack };
     });
-  }, [baseTools, activeKeywords]);
+  }, [baseTools]);
+
+  // 1) 키워드/가격 필터를 적용
+  const filteredTools = useMemo(() => {
+    const selected = activeKeywords.filter(k => k !== '전체');
+    let list = preparedTools;
+
+    // 1) 키워드 필터
+    if (selected.length > 0) {
+      const normalizedSelected = selected.map(k => k.toLowerCase());
+      list = list.filter(item => normalizedSelected.some(kw => item.haystack.includes(kw)));
+    }
+
+    // 2) 가격 필터
+    if (activeFilter !== 'all') {
+      list = list.filter(item => item.tool.pricing === (activeFilter as any));
+    }
+
+    return list.map(item => item.tool);
+  }, [preparedTools, activeKeywords, activeFilter]);
 
   // 파생 리스트를 실제 렌더링 상태에 반영
   useEffect(() => {
@@ -256,10 +271,10 @@ const FeatureListPage: React.FC = () => {
   // BEST 1,2,3는 상위 3개
   const featuredTools = tools.slice(0, 3);
 
-  // 가격별 개수 계산
-  const filteredFreeCount = tools.filter(tool => tool.pricing === 'free').length;
-  const filteredPaidCount = tools.filter(tool => tool.pricing === 'paid').length;
-  const filteredFreemiumCount = tools.filter(tool => tool.pricing === 'freemium').length;
+  // 가격별 개수 계산 (고정: 현재 탭의 전체 목록 기준)
+  const filteredFreeCount = baseTools.filter(tool => tool.pricing === 'free').length;
+  const filteredPaidCount = baseTools.filter(tool => tool.pricing === 'paid').length;
+  const filteredFreemiumCount = baseTools.filter(tool => tool.pricing === 'freemium').length;
 
   const getTabTitle = (tab: string) => {
     const tabNames: { [key: string]: string } = {
@@ -353,7 +368,7 @@ const FeatureListPage: React.FC = () => {
         />
 
         <FilterBar
-          totalCount={tools.length}
+          totalCount={baseTools.length}
           freeCount={filteredFreeCount}
           paidCount={filteredPaidCount}
           freemiumCount={filteredFreemiumCount}
