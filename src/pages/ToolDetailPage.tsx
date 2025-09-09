@@ -4,7 +4,7 @@ import Header from '../components/Header';
 import Breadcrumb from '../components/Breadcrumb';
 import { apiService } from '../services';
 import type { AIToolDetail, ReviewListResponse } from '../types';
-import { handleImageError, getImageMapping } from '../utils/imageMapping';
+import { handleImageError } from '../utils/imageMapping';
 
 const ToolDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -196,8 +196,6 @@ const ToolDetailPage: React.FC = () => {
   }
 
   // 이미지 매핑 가져오기
-  const imageMapping = getImageMapping(toolDetail.serviceName, toolDetail.category.slug || 'chatbot');
-
   const breadcrumbItems = [
     { label: '기능별' },
     { label: toolDetail.category.name },
@@ -219,7 +217,7 @@ const ToolDetailPage: React.FC = () => {
             <div className="flex items-center gap-4 mt-4">
               <div className="w-16 h-16 flex items-center justify-center flex-shrink-0 bg-purple-200 rounded-lg p-2 overflow-hidden">
                 <img 
-                  src={imageMapping.logo}
+                  src={toolDetail.logoUrl}
                   alt={toolDetail.serviceName}
                   className="w-full h-full object-contain"
                   onError={(e) => handleImageError(e, '/images/Logo/Logo_FINAL.svg')}
@@ -307,7 +305,7 @@ const ToolDetailPage: React.FC = () => {
           {/* 오른쪽: 이미지 갤러리 */}
           <div className="w-80 flex-shrink-0 bg-purple-100 rounded-lg p-4">
             <img 
-              src={imageMapping.serviceImage}
+              src={toolDetail.serviceImageUrl}
               alt={`${toolDetail.serviceName} 서비스 이미지`}
               className="w-full h-auto object-contain"
               onError={(e) => handleImageError(e, '/images/GlassMorphism/Detailpage/Detailpage_Happy.png')}
@@ -355,7 +353,7 @@ const ToolDetailPage: React.FC = () => {
           {/* 가격 플랜 이미지 */}
           <div className="bg-white rounded-lg border border-gray-200 p-6">
             <img 
-              src={imageMapping.priceImage}
+              src={toolDetail.priceImageUrl}
               alt={`${toolDetail.serviceName} 가격 정보`}
               className="w-full max-w-4xl mx-auto"
               style={{ 
