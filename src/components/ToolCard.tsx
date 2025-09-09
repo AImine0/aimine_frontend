@@ -155,6 +155,26 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
     }
   };
 
+  // 외부 URL로 이동하는 핸들러
+  const handleExternalLink = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (tool.url && tool.url.trim() !== '') {
+      // URL이 http:// 또는 https://로 시작하지 않으면 https:// 추가
+      let url = tool.url.trim();
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        url = 'https://' + url;
+      }
+      
+      console.log('🔗 외부 링크로 이동:', url);
+      window.open(url, '_blank', 'noopener,noreferrer');
+    } else {
+      console.warn('⚠️ 유효하지 않은 URL:', tool.url);
+      alert('유효한 웹사이트 URL이 없습니다.');
+    }
+  };
+
   // BEST 뱃지
   const getBestBadge = (rank: number) => {
     return (
@@ -230,7 +250,7 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
           </span>
         </div>
 
-        {/* 오른쪽: BEST 뱃지, 북마크 버튼 (MyPage에서만), 링크 버튼 */}
+        {/* 오른쪽: BEST 뱃지, 북마크 버튼 (MyPage에서만), 바로가기 버튼 */}
         <div className="flex items-start gap-2 flex-shrink-0">
           {/* BEST 뱃지 */}
           {rank && rank <= 3 && getBestBadge(rank)}
@@ -268,20 +288,22 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
             </button>
           )}
 
-          {/* 상세 페이지 링크 */}
-          <Link to={`/tool/${tool.id}`}>
-            <button className="flex items-center justify-center transition-all duration-200 group-hover:bg-purple-100" 
-                    style={{ 
-                      backgroundColor: '#E9DFFB', 
-                      width: '32px', 
-                      height: '32px',
-                      borderRadius: '3.56px'
-                    }}>
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" style={{ color: '#7E50D1' }}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-              </svg>
-            </button>
-          </Link>
+          {/* 바로가기 버튼 - 외부 URL로 이동 */}
+          <button
+            onClick={handleExternalLink}
+            className="flex items-center justify-center transition-all duration-200 group-hover:bg-purple-100" 
+            style={{ 
+              backgroundColor: '#E9DFFB', 
+              width: '32px', 
+              height: '32px',
+              borderRadius: '3.56px'
+            }}
+            title={`${tool.name} 공식 사이트로 이동`}
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" style={{ color: '#7E50D1' }}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+          </button>
         </div>
       </div>
 
