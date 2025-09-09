@@ -669,7 +669,6 @@ class ApiService {
         serviceName: toolData.serviceName,
         description: toolData.description || '',
         websiteUrl: toolData.websiteUrl || '',
-        // 백엔드에서 받은 logoUrl만 사용, 나머지는 기본 경로로 fallback
         logoUrl: toolData.logoUrl || '/images/Logo/Logo_FINAL.svg',
         launchDate: toolData.launchDate || '',
         category: {
@@ -693,9 +692,9 @@ class ApiService {
           createdAt: r.createdAt,
           updatedAt: r.createdAt
         })) || [],
-        // 기본 경로로 fallback (백엔드에 해당 필드가 없음)
-        serviceImageUrl: '/images/GlassMorphism/Detailpage/Detailpage_Happy.png',
-        priceImageUrl: '/images/GlassMorphism/Price/Price_Default.png',
+        // 백엔드에서 새로 추가된 이미지 필드들 처리
+        serviceImageUrl: toolData.serviceImageUrl || '/images/GlassMorphism/Detailpage/Detailpage_Happy.png',
+        priceImageUrl: toolData.priceImageUrl || '/images/GlassMorphism/Price/Price_Default.png',
         searchbarLogoUrl: toolData.logoUrl || '/images/SearchbarLogo/Logo_FINAL.svg'
       };
       
