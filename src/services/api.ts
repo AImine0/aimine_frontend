@@ -613,21 +613,19 @@ class ApiService {
         return [];
       }
 
+      // api.ts의 getAllServices 함수에서 tags 처리 부분 수정
+
       return serviceList.data.map(tool => {
         const categorySlug = getCategorySlug(tool.category?.name || '생산성');
         const imageMapping = getImageMapping(tool.serviceName, categorySlug);
         
-        // tags 타입 처리 (string[] 배열로 통일)
         let tagsArray: string[];
         
         if (tool.tags && tool.tags.trim() !== '') {
           // DB tags 컬럼에 값이 있는 경우 - 해당 값을 배열로 변환
           tagsArray = [tool.tags.trim()]; // "AI 챗봇" -> ["AI 챗봇"]
-        } else if (Array.isArray(tool.keywords) && tool.keywords.length > 0) {
-          // tags가 없으면 keywords를 fallback으로 사용
-          tagsArray = tool.keywords;
         } else {
-          // 둘 다 없으면 카테고리명을 fallback으로 사용
+          // DB tags가 없는 경우 카테고리명을 fallback으로 사용
           tagsArray = [tool.category?.name || '생산성'];
         }
         
@@ -648,11 +646,10 @@ class ApiService {
           roles: [],
           userCount: 0,
           aiRating: Number(tool.overallRating) || 0,
-          // 백엔드 logoUrl 우선 사용, 없으면 getImageMapping fallback
-          logoUrl: tool.logoUrl || imageMapping.logo,
-          serviceImageUrl: tool.logoUrl || imageMapping.serviceImage,
-          priceImageUrl: tool.logoUrl || imageMapping.priceImage,
-          searchbarLogoUrl: tool.logoUrl || imageMapping.searchbarLogo
+          logoUrl: imageMapping.logo,
+          serviceImageUrl: imageMapping.serviceImage,
+          priceImageUrl: imageMapping.priceImage,
+          searchbarLogoUrl: imageMapping.searchbarLogo
         };
       });
     } catch (error) {
