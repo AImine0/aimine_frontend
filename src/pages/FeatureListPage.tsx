@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom'; // 추가
 import Header from '../components/Header';
 import Breadcrumb from '../components/Breadcrumb';
 import KeywordFilter from '../components/KeywordFilter';
@@ -143,7 +144,12 @@ const PRICING_TYPE_MAP: Record<FilterType, string | undefined> = {
 };
 
 const FeatureListPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('chatbot');
+  const [searchParams, setSearchParams] = useSearchParams(); // 추가
+  
+  // URL에서 tab 파라미터 읽어서 초기값 설정
+  const initialTab = searchParams.get('tab') || 'chatbot';
+  const [activeTab, setActiveTab] = useState(initialTab);
+  
   const [activeKeywords, setActiveKeywords] = useState<string[]>(['전체']);
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
   const [sortType, setSortType] = useState('popular');
@@ -237,10 +243,14 @@ const FeatureListPage: React.FC = () => {
   };
 
   const handleKeywordReset = () => setActiveKeywords(['전체']);
+  
+  // 탭 변경 핸들러 수정: URL 파라미터도 함께 업데이트
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
     // 탭 변경 시 키워드 초기화
     setActiveKeywords(['전체']);
+    // URL 파라미터 업데이트
+    setSearchParams({ tab });
   };
 
   // BEST 1,2,3는 상위 3개
