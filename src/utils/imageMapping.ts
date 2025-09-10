@@ -183,7 +183,7 @@ const SERVICE_IMAGE_MAPPING: Record<string, string> = {
 
   // Audio 서비스들
   'Adobe Podcast': 'AdobePodcast.png',
-  'AIVA': 'Aiva.png',
+  'AIVA': 'AIVA.png',
   'audioread': 'AudioRead.png',
   'Beatoven AI': 'BeatovenAi.png',
   'Boomy': 'Boomy.png',
@@ -192,7 +192,7 @@ const SERVICE_IMAGE_MAPPING: Record<string, string> = {
   'Daglo': 'Daglo.png',
   'Deepdub': 'Deepdub.png',
   'DIKTATORIAL': 'Diktatorial.png',
-  'ElevenLabs': 'ElevenLabs.png',
+  'ElevenLabs': 'Elevenlabs.png',
   'FineVoice': 'FineVoice.png',
   'Kits AI': 'KitsAi.png',
   'LALAL.AI': 'LalalAi.png',
@@ -273,7 +273,7 @@ const SERVICE_IMAGE_MAPPING: Record<string, string> = {
   'Paper Digest': 'PaperDigest.png',
   'Rytr': 'Rytr.png',
   'Scholarcy': 'Scholarcy.png',
-  'SciSpace': 'Scispace.png',
+  'SciSpace': 'SciSpace.png',
   'TLDRthis': 'Tldrthis.png',
   'Transmonkey': 'Transmonkey.png',
   'Typeit': 'Typeit.png',
@@ -285,7 +285,7 @@ const SERVICE_IMAGE_MAPPING: Record<string, string> = {
   '가제트 AI': 'GadgetAi.png',
 
   // Product 서비스들
-  'AlphaSense': 'AlphaSense.png',
+  'AlphaSense': 'AlphaSence.png',
   'Brandwatch': 'Brandwatch.png',
   'Callabo': 'Callabo.png',
   'CK PASS': 'CkPass.png',
