@@ -1,4 +1,4 @@
-// [필터바 컴포넌트] 가격/정렬 필터 및 카운트 - 실시간 개수, 확장된 정렬, 반응형 디자인
+// [필터바 컴포넌트] 가격/정렬 필터 및 카운트 - 드롭다운 레이아웃 문제 완전 해결
 import React, { useState, useEffect, useRef } from 'react';
 import type { FilterType } from '../types';
 
@@ -35,6 +35,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
   showCounts = true
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // 정렬 옵션들 - 추천순/최신순만
@@ -131,25 +132,12 @@ const FilterBar: React.FC<FilterBarProps> = ({
   };
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 pb-4" 
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 3 pb-4" 
          style={{ fontFamily: 'Pretendard' }}>
       
       {/* 가격 필터 섹션 */}
       <div className="flex flex-wrap items-center gap-4">
-        <span className="font-medium text-sm text-gray-600">
-          {loading ? (
-            <div className="flex items-center gap-2">
-              <div className="w-16 h-4 bg-gray-200 rounded animate-pulse"></div>
-              <span>개</span>
-            </div>
-          ) : (
-            `총 ${totalCount.toLocaleString()}개`
-          )}
-        </span>
-
-        <div className="h-4 w-px bg-gray-300 hidden sm:block"></div>
-
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-1.5">
           {priceFilters.map((filter, index) => {
             const isActive = activeFilter === filter.key;
             const hasCount = filter.count > 0 || filter.key === 'all';
@@ -160,10 +148,10 @@ const FilterBar: React.FC<FilterBarProps> = ({
                   onClick={() => onFilterChange(filter.key)}
                   disabled={!hasCount && !loading}
                   className={`text-sm transition-all duration-200 hover:underline disabled:opacity-40 disabled:cursor-not-allowed ${
-                    isActive ? 'font-semibold' : 'font-medium'
+                    isActive ? 'font-semibold' : 'font-normal'
                   }`}
                   style={{
-                    color: isActive ? '#7248BD' : filter.color,
+                    color: isActive ? '#7E50D1' : '#6F6E6E',
                     fontFamily: 'Pretendard'
                   }}
                 >
@@ -172,7 +160,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
                 </button>
                 
                 {index < priceFilters.length - 1 && (
-                  <span className="text-gray-400 text-sm select-none">•</span>
+                  <span className="text-gray-400 text-xs select-none">•</span>
                 )}
               </React.Fragment>
             );
@@ -181,18 +169,77 @@ const FilterBar: React.FC<FilterBarProps> = ({
       </div>
 
       {/* 정렬 드롭다운 섹션 */}
-      <div className="relative" ref={dropdownRef}>
+      <div className="relative w-32" ref={dropdownRef}>
         <button
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg transition-all duration-200 hover:shadow-md focus:ring-2 focus:ring-purple-500 focus:outline-none"
-          style={{ border: '1px solid #DBCBF9', fontFamily: 'Pretendard' }}
+          className={`flex items-center w-full px-4 py-2 bg-white transition-none ${
+            isDropdownOpen ? 'rounded-t-xl' : 'rounded-xl'
+          }`}
+          style={{
+            borderTop: '1px solid #DBCBF9',
+            borderLeft: '1px solid #DBCBF9',
+            borderRight: '1px solid #DBCBF9',
+            borderBottom: isDropdownOpen ? 'none' : '1px solid #DBCBF9',
+            height: '40px',
+            fontFamily: 'Pretendard',
+            outline: 'none',
+            boxShadow: 'none'
+          }}
           aria-expanded={isDropdownOpen}
           aria-haspopup="listbox"
         >
-          <span className="text-sm" style={{ color: '#7E50D1' }}>
-            {getCurrentSortOption().icon} {getCurrentSortOption().label}
-          </span>
+          {/* 화살표를 제외한 나머지 영역에서 가운데 정렬 */}
+          <div className="flex-1 flex items-center justify-center">
+            {/* 텍스트와 i버튼을 묶어서 */}
+            <div className="flex items-center gap-1.5">
+              {/* 텍스트 */}
+              <span 
+                style={{ 
+                  color: '#7E50D1',
+                  fontSize: '14px',
+                  fontWeight: 700
+                }}
+              >
+                {getCurrentSortOption().label}
+              </span>
+              
+              {/* 추천순 정보 버튼 - 추천순이 선택된 경우에만 표시 */}
+              {sortType === 'popular' && (
+                <div className="relative">
+                  <div
+                    onMouseEnter={() => setShowTooltip(true)}
+                    onMouseLeave={() => setShowTooltip(false)}
+                    onClick={(e) => e.stopPropagation()}
+                    className="flex items-center justify-center w-3.5 h-3.5 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors"
+                    style={{
+                      fontSize: '7px',
+                      fontWeight: 'bold',
+                      color: '#666'
+                    }}
+                  >
+                    i
+                  </div>
+
+                  {/* 툴팁 */}
+                  {showTooltip && (
+                    <div className="absolute top-8 right-0 w-80 p-3 bg-white rounded-lg border border-gray-200 z-[1001]">
+                      {/* 말풍선 꼬리 */}
+                      <div 
+                        className="absolute -top-1 right-3 w-2 h-2 bg-white border-t border-l border-gray-200"
+                        style={{ transform: 'rotate(45deg)' }}
+                      />
+                      
+                      <div className="text-xs text-gray-700 leading-relaxed" style={{ fontFamily: 'Pretendard' }}>
+                        추천순은 AI의 <span className="font-semibold">사용성</span>(쉽고 직관적으로 사용할 수 있는가), <span className="font-semibold">유용성</span>(실제 문제 해결에 도움이 되는가), <span className="font-semibold">감성</span>(사용자에게 긍정적인 인상을 주는가) 측면에 대해 ChatGPT, Gemini, Claude가 평가한 점수를 기반으로 산정되었으며, 해당 점수는 각 서비스의 상세 페이지에서 AI 평점으로 확인하실 수 있습니다.
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
           
+          {/* 오른쪽: 드롭다운 화살표만 */}
           <svg 
             className={`w-4 h-4 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`}
             fill="none" 
@@ -205,44 +252,51 @@ const FilterBar: React.FC<FilterBarProps> = ({
           </svg>
         </button>
 
+        {/* 드롭다운 메뉴 */}
         {isDropdownOpen && (
-          <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-20 py-1"
-               role="listbox">
+          <div 
+            className="absolute left-0 right-0 bg-white rounded-b-xl shadow-lg overflow-hidden"
+            role="listbox"
+            style={{ 
+              top: '40px',
+              borderLeft: '1px solid #DBCBF9',
+              borderRight: '1px solid #DBCBF9',
+              borderBottom: '1px solid #DBCBF9',
+              zIndex: 1000,
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+            }}
+          >
+            {/* 드롭다운과 첫 번째 버튼 사이 구분선 */}
+            <div style={{ height: '1px', backgroundColor: '#DBCBF9', width: '100%' }} />
+            
             {sortOptions.map((option, index) => {
               const isActive = sortType === option.key;
               
               return (
-                <button
-                  key={option.key}
-                  onClick={() => handleSortChange(option.key)}
-                  className={`w-full px-4 py-3 text-left hover:bg-purple-50 transition-colors duration-150 flex items-center justify-between group ${
-                    isActive ? 'bg-purple-50' : ''
-                  }`}
-                  role="option"
-                  aria-selected={isActive}
-                  style={{ fontFamily: 'Pretendard' }}
-                >
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span>{option.icon}</span>
-                      <span 
-                        className="text-sm font-medium"
-                        style={{ color: isActive ? '#7248BD' : '#333' }}
-                      >
-                        {option.label}
-                      </span>
-                    </div>
-                    <div className="text-xs text-gray-500 mt-0.5">
-                      {option.description}
-                    </div>
-                  </div>
+                <React.Fragment key={option.key}>
+                  <button
+                    onClick={() => handleSortChange(option.key)}
+                    className="w-full px-4 py-3 text-center"
+                    role="option"
+                    aria-selected={isActive}
+                    style={{ 
+                      fontFamily: 'Pretendard',
+                      backgroundColor: 'transparent',
+                      border: 'none',
+                      outline: 'none',
+                      fontSize: '14px',
+                      fontWeight: isActive ? 700 : 600,
+                      color: isActive ? '#7E50D1' : '#8C8C8C'
+                    }}
+                  >
+                    {option.label}
+                  </button>
                   
-                  {isActive && (
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" style={{ color: '#7248BD' }}>
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
+                  {/* 각 버튼 사이 구분선 (마지막 버튼 제외) */}
+                  {index < sortOptions.length - 1 && (
+                    <div style={{ height: '1px', backgroundColor: '#DBCBF9', width: '100%' }} />
                   )}
-                </button>
+                </React.Fragment>
               );
             })}
           </div>

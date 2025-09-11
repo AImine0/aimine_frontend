@@ -215,7 +215,7 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
 
   return (
     <div className={`bg-white rounded-xl hover:border-purple-200 hover:shadow-lg transition-all duration-200 group ${className || ''}`} 
-         style={{ border: '1px solid #DBCBF9', fontFamily: 'Pretendard', padding: '20px', minHeight: '280px' }}>
+         style={{ border: '1px solid #DBCBF9', fontFamily: 'Pretendard', padding: '20px', minHeight: '240px' }}>
       
       {/* 상단: 로고, 카테고리, BEST 뱃지 */}
       <div className="flex items-start justify-between mb-4">
@@ -314,7 +314,15 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
             {tool.name}
           </h3>
         </Link>
-        <p className="leading-relaxed line-clamp-2 text-left" style={{ fontSize: '14px', fontFamily: 'Pretendard', color: '#202020', fontWeight: '600' }}>
+        <p className="leading-relaxed line-clamp-2 text-left" 
+          style={{ 
+            fontSize: '14px', 
+            fontFamily: 'Pretendard', 
+            color: '#202020', 
+            fontWeight: '600',
+            height: '42px',        // 2줄 고정 높이 (14px * 1.5 line-height * 2줄 = 42px)
+            lineHeight: '1.5'      // line-height 명시적 설정
+          }}>
           {tool.description}
         </p>
       </div>
