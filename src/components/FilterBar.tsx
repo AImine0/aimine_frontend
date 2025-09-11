@@ -136,20 +136,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
       
       {/* 가격 필터 섹션 */}
       <div className="flex flex-wrap items-center gap-4">
-        <span className="font-medium text-sm text-gray-600">
-          {loading ? (
-            <div className="flex items-center gap-2">
-              <div className="w-16 h-4 bg-gray-200 rounded animate-pulse"></div>
-              <span>개</span>
-            </div>
-          ) : (
-            `총 ${totalCount.toLocaleString()}개`
-          )}
-        </span>
-
-        <div className="h-4 w-px bg-gray-300 hidden sm:block"></div>
-
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-1.5">
           {priceFilters.map((filter, index) => {
             const isActive = activeFilter === filter.key;
             const hasCount = filter.count > 0 || filter.key === 'all';
@@ -160,10 +147,10 @@ const FilterBar: React.FC<FilterBarProps> = ({
                   onClick={() => onFilterChange(filter.key)}
                   disabled={!hasCount && !loading}
                   className={`text-sm transition-all duration-200 hover:underline disabled:opacity-40 disabled:cursor-not-allowed ${
-                    isActive ? 'font-semibold' : 'font-medium'
+                    isActive ? 'font-semibold' : 'font-normal'
                   }`}
                   style={{
-                    color: isActive ? '#7248BD' : filter.color,
+                    color: isActive ? '#7E50D1' : '#6F6E6E',
                     fontFamily: 'Pretendard'
                   }}
                 >
@@ -172,7 +159,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
                 </button>
                 
                 {index < priceFilters.length - 1 && (
-                  <span className="text-gray-400 text-sm select-none">•</span>
+                  <span className="text-gray-400 text-xs select-none">•</span>
                 )}
               </React.Fragment>
             );
@@ -208,7 +195,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
         {isDropdownOpen && (
           <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-20 py-1"
                role="listbox">
-            {sortOptions.map((option, index) => {
+            {sortOptions.map((option) => {
               const isActive = sortType === option.key;
               
               return (
