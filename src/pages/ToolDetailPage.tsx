@@ -209,7 +209,7 @@ const ToolDetailPage: React.FC = () => {
       
       <main>
         {/* 헤더 섹션 */}
-        <div className="relative pt-16 pb-24 mb-12 " style={{ backgroundColor: '#F2EEFB' }}>
+        <div className="relative pt-16 pb-24 mb-0 " style={{ backgroundColor: '#F2EEFB' }}>
           <div className="max-w-6xl mx-auto px-4">
             <div className="-mb-2">
               <Breadcrumb items={breadcrumbItems} />
