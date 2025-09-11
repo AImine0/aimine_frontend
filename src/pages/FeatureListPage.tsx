@@ -392,7 +392,7 @@ const FeatureListPage: React.FC = () => {
         {tools.length > 0 && (
           <>
             {/* BEST 1,2,3 */}
-            <section className="mb-12">
+            <section className="mb-6">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {featuredTools.map((tool, index) => (
                   <ToolCard key={tool.id} tool={tool} rank={index + 1} />
