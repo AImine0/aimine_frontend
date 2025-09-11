@@ -1,4 +1,4 @@
-// [필터바 컴포넌트] 가격/정렬 필터 및 카운트 - 실시간 개수, 확장된 정렬, 반응형 디자인
+// [필터바 컴포넌트] 가격/정렬 필터 및 카운트 - 드롭다운 레이아웃 문제 완전 해결
 import React, { useState, useEffect, useRef } from 'react';
 import type { FilterType } from '../types';
 
@@ -168,16 +168,36 @@ const FilterBar: React.FC<FilterBarProps> = ({
       </div>
 
       {/* 정렬 드롭다운 섹션 */}
-      <div className="relative" ref={dropdownRef}>
+      <div className="relative w-32" ref={dropdownRef}>
         <button
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg transition-all duration-200 hover:shadow-md focus:ring-2 focus:ring-purple-500 focus:outline-none"
-          style={{ border: '1px solid #DBCBF9', fontFamily: 'Pretendard' }}
+          className={`flex items-center justify-between w-full gap-2 px-4 py-2 bg-white transition-none ${
+            isDropdownOpen ? 'rounded-t-xl' : 'rounded-xl'
+          }`}
+          style={{
+            // 핵심 수정: 드롭다운이 열릴 때 하단 테두리 제거
+            borderTop: '1px solid #DBCBF9',
+            borderLeft: '1px solid #DBCBF9',
+            borderRight: '1px solid #DBCBF9',
+            borderBottom: isDropdownOpen ? 'none' : '1px solid #DBCBF9', // 열릴 때 하단 제거!
+            height: '40px',
+            fontFamily: 'Pretendard',
+            outline: 'none',
+            boxShadow: 'none'
+          }}
           aria-expanded={isDropdownOpen}
           aria-haspopup="listbox"
         >
-          <span className="text-sm" style={{ color: '#7E50D1' }}>
-            {getCurrentSortOption().icon} {getCurrentSortOption().label}
+          <span 
+            style={{ 
+              color: '#7E50D1',
+              fontSize: '14px',
+              fontWeight: 700,
+              textAlign: 'center',
+              flex: 1
+            }}
+          >
+            {getCurrentSortOption().label}
           </span>
           
           <svg 
@@ -192,44 +212,52 @@ const FilterBar: React.FC<FilterBarProps> = ({
           </svg>
         </button>
 
+        {/* 드롭다운 메뉴 */}
         {isDropdownOpen && (
-          <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-20 py-1"
-               role="listbox">
-            {sortOptions.map((option) => {
+          <div 
+            className="absolute left-0 right-0 bg-white rounded-b-xl shadow-lg overflow-hidden"
+            role="listbox"
+            style={{ 
+              top: '40px', // 버튼 높이만큼 정확히 아래에 위치
+              borderLeft: '1px solid #DBCBF9',
+              borderRight: '1px solid #DBCBF9',
+              borderBottom: '1px solid #DBCBF9',
+              // borderTop은 아예 제거 - 구분선으로만 처리
+              zIndex: 1000,
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+            }}
+          >
+            {/* 드롭다운과 첫 번째 버튼 사이 구분선 - 이제 유일한 구분선 */}
+            <div style={{ height: '1px', backgroundColor: '#DBCBF9', width: '100%' }} />
+            
+            {sortOptions.map((option, index) => {
               const isActive = sortType === option.key;
               
               return (
-                <button
-                  key={option.key}
-                  onClick={() => handleSortChange(option.key)}
-                  className={`w-full px-4 py-3 text-left hover:bg-purple-50 transition-colors duration-150 flex items-center justify-between group ${
-                    isActive ? 'bg-purple-50' : ''
-                  }`}
-                  role="option"
-                  aria-selected={isActive}
-                  style={{ fontFamily: 'Pretendard' }}
-                >
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span>{option.icon}</span>
-                      <span 
-                        className="text-sm font-medium"
-                        style={{ color: isActive ? '#7248BD' : '#333' }}
-                      >
-                        {option.label}
-                      </span>
-                    </div>
-                    <div className="text-xs text-gray-500 mt-0.5">
-                      {option.description}
-                    </div>
-                  </div>
+                <React.Fragment key={option.key}>
+                  <button
+                    onClick={() => handleSortChange(option.key)}
+                    className="w-full px-4 py-3 text-center"
+                    role="option"
+                    aria-selected={isActive}
+                    style={{ 
+                      fontFamily: 'Pretendard',
+                      backgroundColor: 'transparent',
+                      border: 'none',
+                      outline: 'none',
+                      fontSize: '14px',
+                      fontWeight: isActive ? 700 : 600,
+                      color: isActive ? '#7E50D1' : '#8C8C8C'
+                    }}
+                  >
+                    {option.label}
+                  </button>
                   
-                  {isActive && (
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" style={{ color: '#7248BD' }}>
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
+                  {/* 각 버튼 사이 구분선 (마지막 버튼 제외) */}
+                  {index < sortOptions.length - 1 && (
+                    <div style={{ height: '1px', backgroundColor: '#DBCBF9', width: '100%' }} />
                   )}
-                </button>
+                </React.Fragment>
               );
             })}
           </div>
