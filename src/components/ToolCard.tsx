@@ -215,7 +215,7 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
 
   return (
     <div className={`bg-white rounded-xl hover:border-purple-200 hover:shadow-lg transition-all duration-200 group ${className || ''}`} 
-         style={{ border: '1px solid #DBCBF9', fontFamily: 'Pretendard', padding: '20px', minHeight: '280px' }}>
+         style={{ border: '1px solid #DBCBF9', fontFamily: 'Pretendard', padding: '20px', minHeight: '230px' }}>
       
       {/* 상단: 로고, 카테고리, BEST 뱃지 */}
       <div className="flex items-start justify-between mb-4">
