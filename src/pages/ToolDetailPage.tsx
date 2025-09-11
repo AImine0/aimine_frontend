@@ -211,7 +211,9 @@ const ToolDetailPage: React.FC = () => {
         {/* 헤더 섹션 */}
         <div className="relative pt-10 pb-16 mb-12" style={{ backgroundColor: '#F2EEFB' }}>
           <div className="max-w-6xl mx-auto px-4">
-            <Breadcrumb items={breadcrumbItems} />
+            <div className="-mb-2">
+              <Breadcrumb items={breadcrumbItems} />
+            </div>
           </div>
         </div>
         
@@ -222,8 +224,8 @@ const ToolDetailPage: React.FC = () => {
           {/* 왼쪽: 도구 정보 */}
           <div className="flex-1 max-w-2xl">
             {/* 로고: 배너와 본문 경계에 반쯤 겹치게, 제목 바로 위에 배치 */}
-            <div className="-mt-28 md:-mt-32 mb-3 relative z-30">
-              <div className="w-28 h-28 md:w-32 md:h-32 flex items-center justify-center bg-white rounded-2xl p-4 shadow-md" style={{ border: '1px solid #E4E0F3' }}>
+            <div className="-mt-10 md:-mt-12 mb-2 relative z-30">
+              <div className="w-20 h-20 md:w-24 md:h-24 flex items-center justify-center bg-white rounded-2xl p-2">
                 <img 
                   src={toolDetail.logoUrl}
                   alt={toolDetail.serviceName}
@@ -234,8 +236,8 @@ const ToolDetailPage: React.FC = () => {
             </div>
             {/* 제목과 액션 (로고 바로 아래에서 시작) */}
             <div className="flex-1">
-              <div className="flex items-center justify-between mt-2">
-                <h1 className="text-3xl md:text-4xl font-bold text-black">{toolDetail.serviceName}</h1>
+              <div className="flex items-center justify-between mt-3">
+                <h1 className="text-2xl md:text-3xl font-bold text-black">{toolDetail.serviceName}</h1>
                 <div className="hidden md:flex items-center gap-3">
                   <button 
                     onClick={handleBookmarkToggle}
@@ -258,7 +260,7 @@ const ToolDetailPage: React.FC = () => {
                     href={toolDetail.websiteUrl} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium flex items-center gap-2"
+                    className="px-5 py-2.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium flex items-center gap-2 text-sm"
                   >
                     바로가기
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -268,7 +270,7 @@ const ToolDetailPage: React.FC = () => {
                 </div>
               </div>
               {/* 모바일에서 버튼 노출 */}
-              <div className="mt-3 flex md:hidden items-center gap-3">
+              <div className="mt-2 flex md:hidden items-center gap-2">
                 <button 
                   onClick={handleBookmarkToggle}
                   disabled={bookmarkLoading}
@@ -290,7 +292,7 @@ const ToolDetailPage: React.FC = () => {
                   href={toolDetail.websiteUrl} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium flex items-center gap-2"
+                  className="px-5 py-2.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium flex items-center gap-2 text-sm"
                 >
                   바로가기
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -300,7 +302,7 @@ const ToolDetailPage: React.FC = () => {
               </div>
             </div>
             
-            <p className="text-lg text-gray-700 mb-8">{toolDetail.description}</p>
+            <p className="text-base text-gray-700 mb-6">{toolDetail.description}</p>
             
             {/* 평점 정보 */}
             <div className="flex items-center gap-8 mb-8">
