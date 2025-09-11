@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import GoogleLogin from './GoogleLogin';
+import LoginModal from './LoginModal';
 import { apiService } from '../services';
 
 interface Tab {
@@ -80,7 +81,7 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
 
   // 로그인 처리
   const handleLogin = () => {
-    window.location.href = 'https://aimine.up.railway.app/oauth2/authorization/google';
+    setShowLoginModal(true);
   };
 
   // 로그인 성공 처리
@@ -365,6 +366,9 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" style={{ height: '1px', background: '#E6EAF2', marginTop: '-1px' }} />
         </div>
       )}
+
+      {/* 로그인 모달 */}
+      <LoginModal open={showLoginModal} onClose={() => setShowLoginModal(false)} />
     </header>
   );
 };
