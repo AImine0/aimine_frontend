@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import GoogleLogin from './GoogleLogin';
+import LoginModal from './LoginModal';
 import { apiService } from '../services';
 
 interface Tab {
@@ -80,7 +81,7 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
 
   // 로그인 처리
   const handleLogin = () => {
-    window.location.href = 'https://aimine.up.railway.app/oauth2/authorization/google';
+    setShowLoginModal(true);
   };
 
   // 로그인 성공 처리
@@ -163,63 +164,60 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
             </nav>
           </div>
 
-          {/* 중앙: 검색바 */}
-          <div className="hidden md:flex flex-1 max-w-lg mx-8" ref={searchRef}>
-            <div className="relative w-full">
-              <div className="relative">
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onFocus={() => {
-                    setIsSearchFocused(true);
-                    setShowSearchSuggestions(true);
-                  }}
-                  onKeyPress={handleKeyPress}
-                  placeholder="AI 서비스를 검색하세요..."
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm"
-                  style={{ fontFamily: 'Pretendard' }}
-                />
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                </div>
-                <button
-                  onClick={() => handleSearch()}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                >
-                  <svg className="h-4 w-4 text-purple-500 hover:text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                </button>
-              </div>
+          {/* 중앙 영역 제거 (검색바를 우측으로 이동) */}
 
-              {/* 검색 자동완성 */}
-              {showSearchSuggestions && searchSuggestions.length > 0 && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-50">
-                  {searchSuggestions.slice(0, 5).map((suggestion, index) => (
-                    <button
-                      key={index}
-                      onClick={() => handleSearch(suggestion)}
-                      className="w-full px-4 py-2 text-left hover:bg-gray-50 text-sm"
-                      style={{ fontFamily: 'Pretendard' }}
-                    >
-                      <div className="flex items-center gap-2">
-                        <svg className="h-3 w-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                        <span>{suggestion}</span>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* 오른쪽: 사용자 메뉴 */}
+          {/* 오른쪽: 검색 + 사용자 메뉴 */}
           <div className="flex items-center gap-3">
+            {/* 데스크톱 검색바 (로그인 버튼 왼쪽) */}
+            <div className="hidden md:flex w-72" ref={searchRef}>
+              <div className="relative w-full">
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onFocus={() => {
+                      setIsSearchFocused(true);
+                      setShowSearchSuggestions(true);
+                    }}
+                    onKeyPress={handleKeyPress}
+                    placeholder="원하는 AI 서비스를 검색해보세요."
+                    className="w-full pl-4 pr-4 py-2 border rounded-full focus:outline-none focus:ring-0 focus:border-[#BCBCBC] text-sm placeholder:font-medium placeholder-[#9B9B9B]"
+                    style={{ fontFamily: 'Pretendard', borderColor: '#BCBCBC' }}
+                  />
+                  {/* 왼쪽 검색 아이콘 제거 */}
+                  <button
+                    onClick={() => handleSearch()}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  >
+                    <svg className="h-4 w-4 text-purple-500 hover:text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                  </button>
+                </div>
+
+                {/* 검색 자동완성 */}
+                {showSearchSuggestions && searchSuggestions.length > 0 && (
+                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-50">
+                    {searchSuggestions.slice(0, 5).map((suggestion, index) => (
+                      <button
+                        key={index}
+                        onClick={() => handleSearch(suggestion)}
+                        className="w-full px-4 py-2 text-left hover:bg-gray-50 text-sm"
+                        style={{ fontFamily: 'Pretendard' }}
+                      >
+                        <div className="flex items-center gap-2">
+                          <svg className="h-3 w-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                          </svg>
+                          <span>{suggestion}</span>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
             
             {/* 모바일 검색 버튼 */}
             <Link 
@@ -237,40 +235,36 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
                 <button
                   onClick={() => setShowUserMenu(!showUserMenu)}
                   className="flex items-center gap-2 p-1 rounded-full hover:bg-gray-100 transition-colors"
+                  aria-label="사용자 메뉴 열기"
                 >
                   <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
                     <span className="text-sm font-medium text-purple-600">
                       {user?.name?.charAt(0) || 'U'}
                     </span>
                   </div>
-                  <svg className="h-4 w-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
                 </button>
 
                 {showUserMenu && (
-                  <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-50">
-                    <div className="px-4 py-2 border-b border-gray-100">
-                      <p className="text-sm font-medium text-gray-900">{user?.name}</p>
-                      <p className="text-xs text-gray-500">{user?.email}</p>
-                    </div>
-                    
+                  <div
+                    className="absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-lg py-2 z-50"
+                    style={{ border: '1px solid #BCBCBC' }}
+                  >
                     <Link
                       to="/mypage"
-                      className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                      className="flex items-center gap-2 px-4 py-3 text-sm text-gray-800 hover:bg-[#ECECEC]"
                       onClick={() => setShowUserMenu(false)}
                     >
-                      <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      <svg className="h-4 w-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5v14a2 2 0 002 2h10a2 2 0 002-2V5M9 3h6m-6 8h6M9 13h4" />
                       </svg>
-                      마이페이지
+                      저장한 AI 보기
                     </Link>
-                    
+
                     <button
                       onClick={handleLogout}
-                      className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                      className="flex items-center gap-2 w-full px-4 py-3 text-sm text-gray-800 hover:bg-[#ECECEC]"
                     >
-                      <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="h-4 w-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                       </svg>
                       로그아웃
@@ -365,6 +359,9 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" style={{ height: '1px', background: '#E6EAF2', marginTop: '-1px' }} />
         </div>
       )}
+
+      {/* 로그인 모달 */}
+      <LoginModal open={showLoginModal} onClose={() => setShowLoginModal(false)} />
     </header>
   );
 };

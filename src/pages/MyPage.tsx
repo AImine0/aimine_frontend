@@ -199,13 +199,14 @@ const MyPage: React.FC = () => {
               fontFamily: 'Pretendard',
               fontWeight: 500,
               fontSize: '14px',
-              color: '#9B9B9B'
+              color: '#9B9B9B',
+              marginTop: '12px'
             }}
           >
             저장한 AI들을 카테고리별로 모아서 비교해보세요!
           </p>
           {/* 카테고리 필터 칩 */}
-          <div className="mt-8 flex flex-wrap gap-4">
+          <div className="mt-8 flex flex-wrap gap-2">
             {categoryChips.map((chip) => {
               const isActive = activeCategory === chip.id;
               return (
