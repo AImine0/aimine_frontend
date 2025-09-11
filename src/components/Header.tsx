@@ -164,63 +164,60 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
             </nav>
           </div>
 
-          {/* 중앙: 검색바 */}
-          <div className="hidden md:flex flex-1 max-w-lg mx-8" ref={searchRef}>
-            <div className="relative w-full">
-              <div className="relative">
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onFocus={() => {
-                    setIsSearchFocused(true);
-                    setShowSearchSuggestions(true);
-                  }}
-                  onKeyPress={handleKeyPress}
-                  placeholder="AI 서비스를 검색하세요..."
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm"
-                  style={{ fontFamily: 'Pretendard' }}
-                />
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                </div>
-                <button
-                  onClick={() => handleSearch()}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                >
-                  <svg className="h-4 w-4 text-purple-500 hover:text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                </button>
-              </div>
+          {/* 중앙 영역 제거 (검색바를 우측으로 이동) */}
 
-              {/* 검색 자동완성 */}
-              {showSearchSuggestions && searchSuggestions.length > 0 && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-50">
-                  {searchSuggestions.slice(0, 5).map((suggestion, index) => (
-                    <button
-                      key={index}
-                      onClick={() => handleSearch(suggestion)}
-                      className="w-full px-4 py-2 text-left hover:bg-gray-50 text-sm"
-                      style={{ fontFamily: 'Pretendard' }}
-                    >
-                      <div className="flex items-center gap-2">
-                        <svg className="h-3 w-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                        <span>{suggestion}</span>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* 오른쪽: 사용자 메뉴 */}
+          {/* 오른쪽: 검색 + 사용자 메뉴 */}
           <div className="flex items-center gap-3">
+            {/* 데스크톱 검색바 (로그인 버튼 왼쪽) */}
+            <div className="hidden md:flex w-72" ref={searchRef}>
+              <div className="relative w-full">
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onFocus={() => {
+                      setIsSearchFocused(true);
+                      setShowSearchSuggestions(true);
+                    }}
+                    onKeyPress={handleKeyPress}
+                    placeholder="원하는 AI 서비스를 검색해보세요."
+                    className="w-full pl-4 pr-4 py-2 border rounded-full focus:outline-none focus:ring-0 focus:border-[#BCBCBC] text-sm placeholder:font-medium placeholder-[#9B9B9B]"
+                    style={{ fontFamily: 'Pretendard', borderColor: '#BCBCBC' }}
+                  />
+                  {/* 왼쪽 검색 아이콘 제거 */}
+                  <button
+                    onClick={() => handleSearch()}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  >
+                    <svg className="h-4 w-4 text-purple-500 hover:text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                  </button>
+                </div>
+
+                {/* 검색 자동완성 */}
+                {showSearchSuggestions && searchSuggestions.length > 0 && (
+                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-50">
+                    {searchSuggestions.slice(0, 5).map((suggestion, index) => (
+                      <button
+                        key={index}
+                        onClick={() => handleSearch(suggestion)}
+                        className="w-full px-4 py-2 text-left hover:bg-gray-50 text-sm"
+                        style={{ fontFamily: 'Pretendard' }}
+                      >
+                        <div className="flex items-center gap-2">
+                          <svg className="h-3 w-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                          </svg>
+                          <span>{suggestion}</span>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
             
             {/* 모바일 검색 버튼 */}
             <Link 
