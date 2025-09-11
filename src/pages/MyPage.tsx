@@ -28,6 +28,7 @@ const MyPage: React.FC = () => {
   const [bookmarkedTools, setBookmarkedTools] = useState<AITool[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useState<string>('all');
 
   // 북마크 데이터를 ToolCard에서 사용할 수 있는 AITool 형태로 변환하는 함수
   const convertBookmarkToAITool = (bookmark: BookmarkedTool): AITool => {
@@ -122,6 +123,24 @@ const MyPage: React.FC = () => {
 
   // 상단 텍스트 제거에 따라 브레드크럼 항목 제거
 
+  // 카테고리 칩 목록
+  const categoryChips: { id: string; label: string }[] = [
+    { id: 'all', label: '전체' },
+    { id: 'chatbot', label: '챗봇' },
+    { id: 'text', label: '텍스트' },
+    { id: 'image', label: '이미지' },
+    { id: 'video', label: '비디오' },
+    { id: 'audio', label: '오디오/음악' },
+    { id: 'code', label: '코드' },
+    { id: '3d', label: '3D' },
+    { id: 'productivity', label: '생산성' }
+  ];
+
+  // 필터링된 결과
+  const filteredTools = activeCategory === 'all'
+    ? bookmarkedTools
+    : bookmarkedTools.filter((tool) => tool.category === activeCategory);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-white">
@@ -164,7 +183,7 @@ const MyPage: React.FC = () => {
       <Header tabs={[]} activeTab="" onTabChange={() => {}} />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         {/* 상단바와 저장한 AI 사이 텍스트 제거 - 간격 최소화 */}
-        <div className="mb-6">
+        <div className="mt-6 mb-6">
           <h1
             style={{
               fontFamily: 'Pretendard',
@@ -185,16 +204,57 @@ const MyPage: React.FC = () => {
           >
             저장한 AI들을 카테고리별로 모아서 비교해보세요!
           </p>
+          {/* 카테고리 필터 칩 */}
+          <div className="mt-4 flex flex-wrap gap-4">
+            {categoryChips.map((chip) => {
+              const isActive = activeCategory === chip.id;
+              return (
+                <button
+                  key={chip.id}
+                  onClick={() => setActiveCategory(chip.id)}
+                  className="inline-flex items-center px-5 py-2 rounded-[12px] transition-colors"
+                  style={{
+                    borderWidth: '1px',
+                    borderColor: isActive ? '#A987E8' : '#BCBCBC',
+                    backgroundColor: isActive ? '#F2EEFB' : '#FFFFFF'
+                  }}
+                >
+                  {isActive && (
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      style={{ marginRight: '6px' }}
+                    >
+                      <path d="M20 6L9 17L4 12" stroke="#7242C9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  )}
+                  <span
+                    style={{
+                      fontFamily: 'Pretendard',
+                      fontWeight: isActive ? 700 : 500,
+                      fontSize: '14px',
+                      color: isActive ? '#7242C9' : '#5B5B5B'
+                    }}
+                  >
+                    {chip.label}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* 저장한 AI 섹션 */}
         <section>
 
-          {bookmarkedTools.length === 0 ? (
+          {filteredTools.length === 0 ? (
             /* 빈 상태 */
             <div className="text-center py-12 bg-gray-50 rounded-lg">
               <div className="text-6xl mb-4">📌</div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">저장한 AI가 없습니다</h3>
+              <h3 className="text-xl font-semibold text-gray-800 mb-2">해당 카테고리의 저장한 AI가 없습니다</h3>
               <p className="text-gray-600 mb-6">
                 관심있는 AI 서비스를 저장해보세요. 나중에 쉽게 찾을 수 있습니다.
               </p>
@@ -209,7 +269,7 @@ const MyPage: React.FC = () => {
           ) : (
             /* ✅ ToolCard 컴포넌트 재사용 - 기존 직접 구현한 카드 대신 */
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {bookmarkedTools.map((tool) => (
+              {filteredTools.map((tool) => (
                 <ToolCard key={tool.id} tool={tool} />
               ))}
             </div>
