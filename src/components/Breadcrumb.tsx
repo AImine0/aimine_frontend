@@ -14,7 +14,7 @@ interface BreadcrumbProps {
 const Breadcrumb: React.FC<BreadcrumbProps> = ({ items }) => {
   return (
     <nav className="flex mb-6" aria-label="Breadcrumb" style={{ fontFamily: 'Pretendard' }}>
-      <ol className="flex items-center space-x-2">
+      <ol className="flex items-center space-x-1">
         <li>
           <div className="flex items-center">
             <a href="/" className="text-sm font-medium" style={{ color: '#9B9B9B', fontFamily: 'Pretendard' }}>
@@ -26,7 +26,7 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ items }) => {
           <li key={index}>
             <div className="flex items-center">
               <svg
-                className="flex-shrink-0 h-4 w-4 mx-2"
+                className="flex-shrink-0 h-4 w-4 mx-1"
                 fill="currentColor"
                 viewBox="0 0 20 20"
                 aria-hidden="true"
