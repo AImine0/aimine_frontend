@@ -215,16 +215,9 @@ const ToolDetailPage: React.FC = () => {
               <Breadcrumb items={breadcrumbItems} />
             </div>
           </div>
-        </div>
-        
-        <div className="max-w-6xl mx-auto px-4 pt-6">
-        
-        {/* 메인 히어로 섹션 */}
-        <div className="flex items-start gap-12 mb-12">
-          {/* 왼쪽: 도구 정보 */}
-          <div className="flex-1 max-w-2xl">
-            {/* 로고: 배너와 본문 경계에 반쯤 겹치게, 제목 바로 위에 배치 */}
-            <div className="-mt-10 md:-mt-12 mb-2 relative z-30">
+          {/* 절대배치 로고: 경계에 1/2 겹침 보장 */}
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="absolute left-4 md:left-8 bottom-0 translate-y-1/2 z-30">
               <div className="w-20 h-20 md:w-24 md:h-24 flex items-center justify-center bg-white rounded-2xl p-2">
                 <img 
                   src={toolDetail.logoUrl}
@@ -234,9 +227,18 @@ const ToolDetailPage: React.FC = () => {
                 />
               </div>
             </div>
-            {/* 제목과 액션 (로고 바로 아래에서 시작) */}
+          </div>
+        </div>
+        
+        <div className="max-w-6xl mx-auto px-4 pt-6">
+        
+        {/* 메인 히어로 섹션 */}
+        <div className="flex items-start gap-12 mb-12">
+          {/* 왼쪽: 도구 정보 */}
+          <div className="flex-1 max-w-2xl">
+            {/* 제목과 액션 (헤더 로고 아래에서 시작) */}
             <div className="flex-1">
-              <div className="flex items-center justify-between mt-3">
+              <div className="flex items-center justify-between mt-12 md:mt-16">
                 <h1 className="text-2xl md:text-3xl font-bold text-black">{toolDetail.serviceName}</h1>
                 <div className="hidden md:flex items-center gap-3">
                   <button 
