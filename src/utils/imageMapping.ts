@@ -160,7 +160,7 @@ const SERVICE_IMAGE_MAPPING: Record<string, string> = {
   'Kaiber': 'Kaiber.png',
   'Kling': 'Kling.png',
   'LipDub AI': 'LipDubAi.png',
-  'Luma': 'Luma.png',
+  'Lumalabs AI': 'Luma.png',
   'Lumen5': 'Lumen5.png',
   'Melies': 'Melies.png',
   'Opus clip': 'OpusClip.png',
@@ -265,6 +265,7 @@ const SERVICE_IMAGE_MAPPING: Record<string, string> = {
   'JotBot': 'JotBot.png',
   'Lilys.ai': 'LilysAi.png',
   'Magic Write': 'MagicWrite.png',
+  'Magic Design': 'MagicWrite.png',
   'Manga Translator': 'MangaTranslator.png',
   'Nebo': 'Nebo.png',
   'Novelist AI': 'NovelistAi.png',
@@ -323,6 +324,7 @@ const SERVICE_IMAGE_MAPPING: Record<string, string> = {
   'OctoparseAI': 'OctoparseAi.png',
   'OpenSurvey': 'OpenSurvey.png',
   'Perdoo': 'Perdoo.png',
+  'PromptoMANIA': 'PromptoMania.png',
   'Qlik': 'Qlik.png',
   'Quantive': 'Quantive.png',
   'Quizgecko': 'Quizgecko.png',
@@ -480,11 +482,11 @@ export function getServicesInCategory(categorySlug: string): string[] {
   const categoryMappings = {
     'chat': ['ChatGPT', 'Claude', 'Gemini', 'Perplexity', 'Microsoft Copilot'],
     'image': ['Midjourney', 'DALL·E', 'Stable Diffusion', 'Leonardo.ai'],
-    'video': ['Runway', 'Pika', 'Luma', 'Synthesia'],
+    'video': ['Runway', 'Pika', 'Lumalabs AI', 'Synthesia'],
     'audio': ['ElevenLabs', 'Suno AI', 'AIVA', 'Mubert'],
     'code': ['GitHub Copilot', 'Cursor', 'Claude Code', 'Tabnine'],
-    'text': ['Jasper', 'Grammarly', 'Copy.ai', 'Wordtune'],
-    'product': ['Gamma', 'Tome', 'Galileo AI', 'Miro AI'],
+    'text': ['Jasper', 'Grammarly', 'Copy.ai', 'Wordtune', 'Magic Design'],
+    'product': ['Gamma', 'Tome', 'Galileo AI', 'Miro AI', 'PromptoMANIA', 'Scalenut'],
     '3d': ['Meshy AI', 'Kaedim', 'Tripo', 'Rodin']
   };
   
