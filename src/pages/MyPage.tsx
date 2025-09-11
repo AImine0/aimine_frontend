@@ -251,20 +251,39 @@ const MyPage: React.FC = () => {
         <section>
 
           {filteredTools.length === 0 ? (
-            /* 빈 상태 */
-            <div className="text-center py-12 bg-gray-50 rounded-lg">
-              <div className="text-6xl mb-4">📌</div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">해당 카테고리의 저장한 AI가 없습니다</h3>
-              <p className="text-gray-600 mb-6">
-                관심있는 AI 서비스를 저장해보세요. 나중에 쉽게 찾을 수 있습니다.
-              </p>
-              <button
-                onClick={() => navigate('/')}
-                className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium transition-colors"
-                style={{ fontFamily: 'Pretendard' }}
-              >
-                AI 서비스 둘러보기
-              </button>
+            /* 빈 상태 - 중앙 정렬 일러스트 + 문구 */
+            <div className="flex items-center justify-center py-16">
+              <div className="flex flex-col items-center text-center">
+                <img
+                  src="/images/GlassMorphism/Mypage_Save.png"
+                  alt="저장된 AI 없음"
+                  style={{ width: '80px', height: '80px', marginBottom: '16px' }}
+                />
+                <div
+                  style={{
+                    fontFamily: 'Pretendard',
+                    fontWeight: 600,
+                    fontSize: '18px',
+                    color: '#202020',
+                    marginBottom: '8px'
+                  }}
+                >
+                  저장된 AI가 없습니다.
+                </div>
+                <div
+                  style={{
+                    fontFamily: 'Pretendard',
+                    fontWeight: 400,
+                    fontSize: '16px',
+                    color: '#202020',
+                    lineHeight: 1.6
+                  }}
+                >
+                  AIMine에서 마음에 드는 AI만 모아
+                  <br />
+                  한눈에 비교해보세요!
+                </div>
+              </div>
             </div>
           ) : (
             /* ✅ ToolCard 컴포넌트 재사용 - 기존 직접 구현한 카드 대신 */
