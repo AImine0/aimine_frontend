@@ -205,7 +205,7 @@ const MyPage: React.FC = () => {
             저장한 AI들을 카테고리별로 모아서 비교해보세요!
           </p>
           {/* 카테고리 필터 칩 */}
-          <div className="mt-4 flex flex-wrap gap-4">
+          <div className="mt-8 flex flex-wrap gap-4">
             {categoryChips.map((chip) => {
               const isActive = activeCategory === chip.id;
               return (
