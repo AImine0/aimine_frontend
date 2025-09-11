@@ -132,7 +132,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
   };
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 pb-4" 
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 3 pb-4" 
          style={{ fontFamily: 'Pretendard' }}>
       
       {/* 가격 필터 섹션 */}
