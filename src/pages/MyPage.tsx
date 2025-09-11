@@ -3,10 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
-import Breadcrumb from '../components/Breadcrumb';
 import ToolCard from '../components/ToolCard';
 import { apiService } from '../services';
-import type { BookmarkListResponse, UserProfileResponse, AITool } from '../types';
+import type { AITool } from '../types';
 
 // ✅ 백엔드 BookmarkListResponse와 정확히 일치하도록 수정
 interface BookmarkedTool {
@@ -25,7 +24,7 @@ const MyPage: React.FC = () => {
   const navigate = useNavigate();
   
   // 상태 관리
-  const [user, setUser] = useState<UserProfileResponse | null>(null);
+  // 사용자 표시 요소 제거에 따라 사용자 상태는 미사용
   const [bookmarkedTools, setBookmarkedTools] = useState<AITool[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -99,12 +98,7 @@ const MyPage: React.FC = () => {
         setError(null);
 
         // 사용자 정보와 북마크 데이터 병렬로 로드
-        const [userProfile, bookmarksResponse] = await Promise.all([
-          apiService.getUserProfile(),
-          apiService.getBookmarksFixed()
-        ]);
-
-        setUser(userProfile);
+        const bookmarksResponse = await apiService.getBookmarksFixed();
         
         // 북마크 데이터를 AITool 형태로 변환
         const convertedTools = bookmarksResponse.bookmarks.map(convertBookmarkToAITool);
@@ -126,9 +120,7 @@ const MyPage: React.FC = () => {
     loadMyPageData();
   }, [navigate]);
 
-  const breadcrumbItems = [
-    { label: '마이페이지' }
-  ];
+  // 상단 텍스트 제거에 따라 브레드크럼 항목 제거
 
   if (loading) {
     return (
@@ -170,38 +162,33 @@ const MyPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-white">
       <Header tabs={[]} activeTab="" onTabChange={() => {}} />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Breadcrumb items={breadcrumbItems} />
-
-        {/* 사용자 정보 헤더 */}
-        <div className="mb-8">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center">
-              <span className="text-2xl font-semibold text-purple-600">
-                {user?.name?.charAt(0) || 'U'}
-              </span>
-            </div>
-            <div>
-              <h1 className="font-semibold text-2xl text-black mb-1" style={{ fontFamily: 'Pretendard' }}>
-                {user?.name || '사용자'}님의 마이페이지
-              </h1>
-              <p className="text-gray-600" style={{ fontFamily: 'Pretendard' }}>
-                {user?.email}
-              </p>
-            </div>
-          </div>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        {/* 상단바와 저장한 AI 사이 텍스트 제거 - 간격 최소화 */}
+        <div className="mb-6">
+          <h1
+            style={{
+              fontFamily: 'Pretendard',
+              fontWeight: 600,
+              fontSize: '32px',
+              color: '#202020'
+            }}
+          >
+            저장한 AI
+          </h1>
+          <p
+            style={{
+              fontFamily: 'Pretendard',
+              fontWeight: 500,
+              fontSize: '14px',
+              color: '#9B9B9B'
+            }}
+          >
+            저장한 AI들을 카테고리별로 모아서 비교해보세요!
+          </p>
         </div>
 
         {/* 저장한 AI 섹션 */}
         <section>
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="font-semibold text-xl text-black" style={{ fontFamily: 'Pretendard' }}>
-              저장한 AI
-            </h2>
-            <span className="text-sm text-gray-500" style={{ fontFamily: 'Pretendard' }}>
-              총 {bookmarkedTools.length}개
-            </span>
-          </div>
 
           {bookmarkedTools.length === 0 ? (
             /* 빈 상태 */
