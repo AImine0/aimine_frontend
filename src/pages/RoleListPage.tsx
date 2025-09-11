@@ -307,13 +307,13 @@ const RoleListPage: React.FC = () => {
                             {combos[comboIdx].aiList.map((ai) => {
                               const categoryMap: Record<string, string> = {
                                 'ChatGPT': 'chat', 'Claude': 'chat', 'Gemini': 'chat',
-                                'DALL-E': 'image', 'Midjourney': 'image', 'Stable Diffusion': 'image', 'PromptoMANIA': 'image', 'Leonardo.ai': 'image', 'Adobe Firefly': 'image',
+                                'DALL-E': 'image', 'Midjourney': 'image', 'Stable Diffusion': 'image', 'PromptoMANIA': 'product', 'Leonardo.ai': 'image', 'Adobe Firefly': 'image',
                                 'Runway': 'video', 'Pika': 'video', 'Pika Labs': 'video', 'Animaker': 'video', 'Lumen5': 'video', 'Synthesia': 'video',
                                 'ElevenLabs': 'audio', 'Suno AI': 'audio', 'AIVA': 'audio', 'Soundful': 'audio', 'LALAL.AI': 'audio', 'Typecast': 'audio',
                                 'GitHub Copilot': 'code', 'Cursor': 'code',
-                                'Jasper': 'text', 'Grammarly': 'text', 'Connected Papers': 'text', 'SciSpace': 'text', 'Jenni AI': 'text', 'Copy.ai': 'text', 'Scalenut': 'text', 'Rytr': 'text',
-                                'Relume': 'product', 'Relume AI': 'product', 'Galileo AI': 'product', 'Uizard': 'product', 'Gamma': 'product', 'Tome': 'product', 'SlidesAI': 'product', 'Miro AI': 'product', 'Crayon': 'product', 'Magic Design': 'product', 'Make': 'product', 'Shiftee': 'product', 'Zep Quiz': 'product', 'AlphaSense': 'product',
-                                'Kaedim': '3d', 'Meshy': '3d', 'Meshy AI': '3d', 'Lumalabs AI': '3d'
+                                'Jasper': 'text', 'Grammarly': 'text', 'Connected Papers': 'text', 'SciSpace': 'text', 'Jenni AI': 'text', 'Copy.ai': 'text', 'Scalenut': 'product', 'Rytr': 'text',
+                                'Relume': 'product', 'Relume AI': 'product', 'Galileo AI': 'product', 'Uizard': 'product', 'Gamma': 'product', 'Tome': 'product', 'SlidesAI': 'product', 'Miro AI': 'product', 'Crayon': 'product', 'Magic Design': 'text', 'Make': 'product', 'Shiftee': 'product', 'Zep Quiz': 'product', 'AlphaSense': 'product',
+                                'Kaedim': '3d', 'Meshy': '3d', 'Meshy AI': '3d', 'Lumalabs AI': 'video'
                               };
                               
                               const category = categoryMap[ai] || 'chat';
