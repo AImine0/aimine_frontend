@@ -209,7 +209,7 @@ const ToolDetailPage: React.FC = () => {
       
       <main>
         {/* 헤더 섹션 */}
-        <div className="relative pt-10 pb-14 mb-12" style={{ backgroundColor: '#F2EEFB' }}>
+        <div className="relative pt-10 pb-16 mb-12" style={{ backgroundColor: '#F2EEFB' }}>
           <div className="max-w-6xl mx-auto px-4">
             <Breadcrumb items={breadcrumbItems} />
           </div>
@@ -221,9 +221,9 @@ const ToolDetailPage: React.FC = () => {
         <div className="flex items-start gap-12 mb-12">
           {/* 왼쪽: 도구 정보 */}
           <div className="flex-1 max-w-2xl">
-            {/* 로고가 배너와 본문 사이에 겹치도록 배치 */}
-            <div className="-mt-12 md:-mt-14 mb-4 relative z-10 flex flex-col md:flex-row md:items-center gap-4">
-              <div className="w-24 h-24 md:w-28 md:h-28 flex items-center justify-center flex-shrink-0 bg-white rounded-2xl p-4 shadow-md" style={{ border: '1px solid #E4E0F3' }}>
+            {/* 로고: 배너와 본문 경계에 반쯤 겹치게, 제목 바로 위에 배치 */}
+            <div className="-mt-28 md:-mt-32 mb-3 relative z-30">
+              <div className="w-28 h-28 md:w-32 md:h-32 flex items-center justify-center bg-white rounded-2xl p-4 shadow-md" style={{ border: '1px solid #E4E0F3' }}>
                 <img 
                   src={toolDetail.logoUrl}
                   alt={toolDetail.serviceName}
@@ -231,42 +231,12 @@ const ToolDetailPage: React.FC = () => {
                   onError={(e) => handleImageError(e, '/images/Logo/Logo_FINAL.svg')}
                 />
               </div>
-              <div className="flex-1">
-                <div className="flex items-center justify-between">
-                  <h1 className="text-3xl md:text-4xl font-bold text-black">{toolDetail.serviceName}</h1>
-                  <div className="hidden md:flex items-center gap-3">
-                    <button 
-                      onClick={handleBookmarkToggle}
-                      disabled={bookmarkLoading}
-                      className={`w-12 h-12 border rounded-lg flex items-center justify-center transition-colors ${
-                        isBookmarked 
-                          ? 'border-purple-600 bg-purple-50 text-purple-600' 
-                          : 'border-gray-300 text-gray-700 hover:bg-gray-50'
-                      } ${bookmarkLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    >
-                      {bookmarkLoading ? (
-                        <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                      ) : (
-                        <svg className="w-6 h-6" fill={isBookmarked ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-                        </svg>
-                      )}
-                    </button>
-                    <a 
-                      href={toolDetail.websiteUrl} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium flex items-center gap-2"
-                    >
-                      바로가기
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                      </svg>
-                    </a>
-                  </div>
-                </div>
-                {/* 모바일에서 버튼 노출 */}
-                <div className="mt-3 flex md:hidden items-center gap-3">
+            </div>
+            {/* 제목과 액션 (로고 바로 아래에서 시작) */}
+            <div className="flex-1">
+              <div className="flex items-center justify-between mt-2">
+                <h1 className="text-3xl md:text-4xl font-bold text-black">{toolDetail.serviceName}</h1>
+                <div className="hidden md:flex items-center gap-3">
                   <button 
                     onClick={handleBookmarkToggle}
                     disabled={bookmarkLoading}
@@ -296,6 +266,37 @@ const ToolDetailPage: React.FC = () => {
                     </svg>
                   </a>
                 </div>
+              </div>
+              {/* 모바일에서 버튼 노출 */}
+              <div className="mt-3 flex md:hidden items-center gap-3">
+                <button 
+                  onClick={handleBookmarkToggle}
+                  disabled={bookmarkLoading}
+                  className={`w-12 h-12 border rounded-lg flex items-center justify-center transition-colors ${
+                    isBookmarked 
+                      ? 'border-purple-600 bg-purple-50 text-purple-600' 
+                      : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                  } ${bookmarkLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                >
+                  {bookmarkLoading ? (
+                    <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <svg className="w-6 h-6" fill={isBookmarked ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                    </svg>
+                  )}
+                </button>
+                <a 
+                  href={toolDetail.websiteUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium flex items-center gap-2"
+                >
+                  바로가기
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </a>
               </div>
             </div>
             
