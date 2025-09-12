@@ -179,6 +179,7 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
   const getBestBadge = (rank: number) => {
     return (
       <span className="inline-flex items-center px-2 py-1 font-bold"
+            data-best-badge
             style={{ 
               backgroundColor: '#F2EEFB', 
               color: '#7E50D1',
@@ -214,8 +215,59 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
   };
 
   return (
-    <div className={`bg-white rounded-xl hover:border-purple-200 hover:shadow-lg transition-all duration-200 group ${className || ''}`} 
-         style={{ border: '1px solid #DBCBF9', fontFamily: 'Pretendard', padding: '20px', minHeight: '240px' }}>
+    <div className={`bg-white rounded-xl group ${className || ''}`} 
+         style={{ 
+           border: '1px solid #DBCBF9', 
+           fontFamily: 'Pretendard', 
+           padding: '20px', 
+           minHeight: '240px' 
+         }}
+         onMouseEnter={(e) => {
+           e.currentTarget.style.backgroundColor = '#F2EEFB';
+           e.currentTarget.style.border = 'none';
+           // tags 컴포넌트 hover 효과
+           const tagsElement = e.currentTarget.querySelector('[data-tags]');
+           if (tagsElement) {
+             (tagsElement as HTMLElement).style.backgroundColor = '#DBCBF9';
+           }
+           // 바로가기 버튼 hover 효과
+           const visitButton = e.currentTarget.querySelector('[data-visit-button]');
+           if (visitButton) {
+             (visitButton as HTMLElement).style.backgroundColor = '#7E50D1';
+             const visitIcon = visitButton.querySelector('img');
+             if (visitIcon) {
+               (visitIcon as HTMLImageElement).src = '/images/Icon/Visit/32/White.svg';
+             }
+           }
+           // BEST 태그 hover 효과
+           const bestBadge = e.currentTarget.querySelector('[data-best-badge]');
+           if (bestBadge) {
+             (bestBadge as HTMLElement).style.backgroundColor = '#E9DFFB';
+           }
+         }}
+         onMouseLeave={(e) => {
+           e.currentTarget.style.backgroundColor = '#FFFFFF';
+           e.currentTarget.style.border = '1px solid #DBCBF9';
+           // tags 컴포넌트 원래 색상으로 복원
+           const tagsElement = e.currentTarget.querySelector('[data-tags]');
+           if (tagsElement) {
+             (tagsElement as HTMLElement).style.backgroundColor = '#E9DFFB';
+           }
+           // 바로가기 버튼 원래 색상으로 복원
+           const visitButton = e.currentTarget.querySelector('[data-visit-button]');
+           if (visitButton) {
+             (visitButton as HTMLElement).style.backgroundColor = '#E9DFFB';
+             const visitIcon = visitButton.querySelector('img');
+             if (visitIcon) {
+               (visitIcon as HTMLImageElement).src = '/images/Icon/Visit/32/Black.svg';
+             }
+           }
+           // BEST 태그 원래 색상으로 복원
+           const bestBadge = e.currentTarget.querySelector('[data-best-badge]');
+           if (bestBadge) {
+             (bestBadge as HTMLElement).style.backgroundColor = '#F2EEFB';
+           }
+         }}>
       
       {/* 상단: 로고, 카테고리, BEST 뱃지 */}
       <div className="flex items-start justify-between mb-4">
@@ -238,6 +290,7 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
           
           {/* DB tags 컬럼 내용 표시 */}
           <span className="inline-flex items-center px-3 py-1 rounded-full font-medium" 
+                data-tags
                 style={{ 
                   backgroundColor: '#E9DFFB',
                   borderRadius: '20px',
@@ -260,8 +313,8 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
             <button
               onClick={handleBookmarkToggle}
               disabled={bookmarkLoading}
-              className={`flex items-center justify-center transition-all duration-200 ${
-                bookmarkLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-purple-100'
+              className={`flex items-center justify-center ${
+                bookmarkLoading ? 'opacity-50 cursor-not-allowed' : ''
               }`}
               style={{ 
                 backgroundColor: isBookmarked ? '#E9DFFB' : '#F3F4F6', 
@@ -270,6 +323,16 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
                 borderRadius: '3.56px'
               }}
               title={isBookmarked ? '북마크 해제' : '북마크 추가'}
+              onMouseEnter={(e) => {
+                if (!bookmarkLoading) {
+                  e.currentTarget.style.backgroundColor = '#DBCBF9';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!bookmarkLoading) {
+                  e.currentTarget.style.backgroundColor = isBookmarked ? '#E9DFFB' : '#F3F4F6';
+                }
+              }}
             >
               {bookmarkLoading ? (
                 <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
@@ -282,7 +345,8 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
           {/* 바로가기 버튼 - 외부 URL로 이동 */}
           <button
             onClick={handleExternalLink}
-            className="flex items-center justify-center transition-all duration-200 group-hover:bg-purple-100" 
+            className="flex items-center justify-center" 
+            data-visit-button
             style={{ 
               backgroundColor: '#E9DFFB', 
               width: '32px', 
