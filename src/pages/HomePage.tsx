@@ -37,11 +37,11 @@ const HomePage: React.FC = () => {
                 key={item.id}
                 onClick={() => navigate(item.to)}
                 className="rounded-2xl transition-shadow text-left"
-                style={{ backgroundColor: '#F2EEFB', padding: '18px', height: '156px', overflow: 'hidden' }}
+                style={{ backgroundColor: '#F2EEFB', padding: '18px', height: '144px', overflow: 'hidden' }}
               >
                 <div style={{ color: '#202020', fontSize: '22px', fontWeight: 600, marginTop: '12px', marginLeft: '12px' }}>{item.title}</div>
-                <div className="w-full flex items-end justify-end" style={{ height: '110px', overflow: 'hidden' }}>
-                  <img src={item.img} alt={item.title} style={{ maxHeight: '136px', transform: 'translateY(14px)' }} />
+                <div className="w-full flex items-end justify-end" style={{ height: '98px', overflow: 'hidden' }}>
+                  <img src={item.img} alt={item.title} style={{ width: '120px', height: '120px', objectFit: 'contain', transform: 'translateY(14px)' }} />
                 </div>
               </button>
             ))}
