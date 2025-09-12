@@ -304,7 +304,7 @@ const ToolDetailPage: React.FC = () => {
           </div>
           
           {/* 오른쪽: 이미지 갤러리 */}
-          <div className="w-96 flex-shrink-0 rounded-xl p-2 mt-6" style={{ backgroundColor: '#F2EEFB', border: '1px solid #E4E0F3' }}>
+          <div className="w-96 flex-shrink-0 rounded-xl p-3 mt-6" style={{ backgroundColor: '#F2EEFB', border: '1px solid #E4E0F3' }}>
             <img 
               src={toolDetail.serviceImageUrl}
               alt={`${toolDetail.serviceName} 서비스 이미지`}
