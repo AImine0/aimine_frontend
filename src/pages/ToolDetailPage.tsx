@@ -165,7 +165,7 @@ const ToolDetailPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
           <p className="text-gray-600">AI 서비스 정보를 불러오는 중...</p>
@@ -176,7 +176,7 @@ const ToolDetailPage: React.FC = () => {
 
   if (error || !toolDetail) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-white">
         <Header tabs={[]} activeTab="" onTabChange={() => {}} />
         <div className="flex items-center justify-center pt-20">
           <div className="text-center max-w-md">
@@ -204,12 +204,12 @@ const ToolDetailPage: React.FC = () => {
 
 
   return (
-    <div className="min-h-screen bg-gray-50" style={{ fontFamily: 'Pretendard' }}>
+    <div className="min-h-screen bg-white" style={{ fontFamily: 'Pretendard' }}>
       <Header tabs={[]} activeTab="" onTabChange={() => {}} />
       
       <main>
         {/* 헤더 섹션 */}
-        <div className="relative pt-16 pb-24 mb-0 " style={{ backgroundColor: '#F2EEFB' }}>
+        <div className="relative pt-[30px] pb-24 mb-3 " style={{ backgroundColor: '#F2EEFB' }}>
           <div className="max-w-6xl mx-auto px-4">
             <div className="-mb-2">
               <Breadcrumb items={breadcrumbItems} />
@@ -217,7 +217,7 @@ const ToolDetailPage: React.FC = () => {
           </div>
         </div>
         
-        <div className="max-w-6xl mx-auto px-4 pt-6">
+        <div className="max-w-6xl mx-auto px-4 pt-6 bg-white">
         
         {/* 메인 히어로 섹션 */}
         <div className="flex items-start gap-12 mb-12">
@@ -304,7 +304,7 @@ const ToolDetailPage: React.FC = () => {
           </div>
           
           {/* 오른쪽: 이미지 갤러리 */}
-          <div className="w-80 flex-shrink-0 rounded-2xl p-4" style={{ backgroundColor: '#F2EEFB', border: '1px solid #E4E0F3' }}>
+          <div className="w-96 flex-shrink-0 rounded-xl p-2" style={{ backgroundColor: '#F2EEFB', border: '1px solid #E4E0F3' }}>
             <img 
               src={toolDetail.serviceImageUrl}
               alt={`${toolDetail.serviceName} 서비스 이미지`}
