@@ -257,7 +257,7 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
         <div className="max-w-6xl mx-auto px-4 pt-6 bg-white">
         
         {/* 메인 히어로 섹션 */}
-        <div className="flex items-start gap-12 mb-12">
+        <div className="flex items-start justify-between gap-20 mb-12">
           {/* 왼쪽: 도구 정보 */}
           <div className="flex-1 max-w-2xl">
             {/* 로고: 배너와 본문 경계에 반쯤 겹치게 */}
@@ -271,15 +271,15 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
                 />
               </div>
             </div>
-            {/* 서비스명과 액션 버튼: 로고 바로 아래, 가로 정렬 */}
-            <div className="flex items-center justify-between mt-1 mb-2">
+            {/* 서비스명과 액션 버튼: 양쪽 끝에 배치 */}
+            <div className="flex items-center justify-between mt-1 mb-4">
               <h1 className="text-3xl md:text-4xl" style={{ fontWeight: 600, color: '#202020' }}>{toolDetail.serviceName}</h1>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
                 <button 
                   onClick={handleBookmarkToggle}
                   disabled={bookmarkLoading}
                   className={`w-10 h-10 flex items-center justify-center transition-colors ${bookmarkLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-                  style={{ border: '1px solid #7E50D1', borderRadius: 8, background: 'transparent', margin: '4px 8px' }}
+                  style={{ border: '1px solid #7E50D1', borderRadius: 8, background: 'transparent', margin: 0 }}
                   onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = '#E9DFFB'; }}
                   onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; }}
                 >
@@ -298,7 +298,7 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="flex items-center"
-                  style={{ backgroundColor: '#7E50D1', color: '#FFFFFF', borderRadius: 8, padding: '8px 12px', margin: '4px 12px 4px 8px' }}
+                  style={{ backgroundColor: '#7E50D1', color: '#FFFFFF', borderRadius: 8, padding: '8px 12px', margin: 0 }}
                   onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#6238AE'; }}
                   onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#7E50D1'; }}
                 >
@@ -309,19 +309,19 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
             </div>
             {/* 모바일에서 버튼 노출은 위 공통 버튼으로 대체 */}
             
-            <p className="text-base text-gray-700 mb-6">{toolDetail.description}</p>
+            <p className="text-base text-gray-700 mb-6" style={{ fontWeight: 500 }}>{toolDetail.description}</p>
             
             {/* 평점 정보 */}
             <div className="flex items-center gap-8 mb-8">
               <div className="flex items-center gap-2">
                 <span style={{ color: '#202020', fontWeight: 600 }}>사용자 평점</span>
                 <span className="text-gray-500">★</span>
-                <span className="text-lg" style={{ color: '#202020', fontWeight: 600 }}>{formatRating(toolDetail.overallRating)}</span>
+                <span className="text-lg" style={{ color: '#202020', fontWeight: 700 }}>{formatRating(toolDetail.overallRating)}</span>
               </div>
               <div className="flex items-center gap-2">
                 <span style={{ color: '#202020', fontWeight: 600 }}>AI 평점</span>
                 <span className="text-purple-500">★</span>
-                <span className="text-lg" style={{ color: '#202020', fontWeight: 600 }}>
+                <span className="text-lg" style={{ color: '#202020', fontWeight: 700 }}>
                   {formatRating(aiScore)}
                 </span>
               </div>
@@ -330,13 +330,13 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
             
             {/* 주요 기능 */}
             <div className="mb-8">
-              <h3 className="mb-3" style={{ color: '#202020', fontWeight: 600 }}>주요 기능</h3>
-              <div className="flex flex-wrap gap-2">
+              <h3 className="mb-3" style={{ color: '#202020', fontWeight: 700 }}>주요 기능</h3>
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2">
                 {toolDetail.keywords.map((keyword, index) => (
                   <span
                     key={index}
-                    className="inline-block px-3 py-1 rounded-full text-sm font-medium"
-                    style={{ backgroundColor: '#F2EEFB', color: '#512E8F' }}
+                    className="block w-full text-center px-3 py-1 rounded-full text-sm"
+                    style={{ backgroundColor: '#F2EEFB', color: '#512E8F', fontWeight: 700 }}
                   >
                     {keyword}
                   </span>
@@ -394,7 +394,7 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
             </a>
           </div>
           
-          <p className="mb-6" style={{ color: '#9B9B9B', fontWeight: 500, lineHeight: 1.6, fontSize: '14px' }}>
+           <p className="mb-6" style={{ color: '#9B9B9B', fontWeight: 600, lineHeight: 1.6, fontSize: '14px' }}>
             본 정보는 게시 시점을 기준으로 제공되며, 실제 가격은 변동될 수 있습니다. 최신 내용은 공식 홈페이지에서 확인해 주세요.
           </p>
           
