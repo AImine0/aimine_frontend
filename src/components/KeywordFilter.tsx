@@ -148,7 +148,7 @@ const KeywordFilter: React.FC<KeywordFilterProps> = ({
   }
 
   return (
-    <div className="bg-purple-50 rounded-2xl p-6 mb-8 border border-purple-200" style={{ borderColor: '#DBCBF9', fontFamily: 'Pretendard' }}>
+    <div className="p-6 mb-8" style={{ backgroundColor: '#F2EEFB', border: 'none', borderRadius: '20px', fontFamily: 'Pretendard' }}>
       
       {/* API 키워드를 사용하는 경우 상단 컨트롤 */}
       {keywordData.length > 0 && (
@@ -218,15 +218,14 @@ const KeywordFilter: React.FC<KeywordFilterProps> = ({
               <button
                 key={typeof item === 'string' ? item : item.id}
                 onClick={() => onKeywordToggle(keyword)}
-                className={`px-4 py-2 rounded-full font-semibold transition-all duration-200 border-2 flex items-center gap-1.5 hover:shadow-sm ${
-                  isActive
-                    ? 'bg-white shadow-sm transform scale-105'
-                    : 'bg-transparent hover:bg-white hover:bg-opacity-50'
-                }`}
+                className={`px-4 py-2 rounded-full transition-all duration-200 flex items-center gap-1.5 hover:shadow-sm`}
                 style={{ 
                   fontSize: '14px',
-                  borderColor: isActive ? '#7E50D1' : '#A987E8',
-                  color: isActive ? '#6238AE' : '#512E8F',
+                  backgroundColor: isActive ? '#ffffff' : '#F2EEFB',
+                  border: '1px solid #A987E8',
+                  borderRadius: '20px',
+                  color: '#7242C9',
+                  fontWeight: isActive ? 700 : 600,
                   fontFamily: 'Pretendard'
                 }}
               >
@@ -271,22 +270,7 @@ const KeywordFilter: React.FC<KeywordFilterProps> = ({
           </button>
         )}
 
-        {/* 초기화 버튼 */}
-        <button 
-          onClick={() => {
-            onReset();
-            setSearchQuery('');
-            setSelectedType('ALL');
-            setShowAll(false);
-          }}
-          className="ml-auto text-sm font-normal flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-white hover:bg-opacity-50 transition-colors"
-          style={{ color: '#6238AE', fontSize: '14px', fontFamily: 'Pretendard' }}
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-          </svg>
-          초기화
-        </button>
+        
       </div>
     </div>
   );

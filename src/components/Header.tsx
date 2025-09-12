@@ -179,9 +179,7 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
                     onClick={() => handleSearch()}
                     className="absolute inset-y-0 right-0 pr-3 flex items-center"
                   >
-                    <svg className="h-4 w-4 text-purple-500 hover:text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
+                    <img src="/images/Icon/Magnifier/20.svg" alt="검색" width={20} height={20} />
                   </button>
                 </div>
 
