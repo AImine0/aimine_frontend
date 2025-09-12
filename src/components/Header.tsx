@@ -224,11 +224,7 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
                   className="flex items-center gap-2 p-1 rounded-full hover:bg-gray-100 transition-colors"
                   aria-label="사용자 메뉴 열기"
                 >
-                  <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                    <span className="text-sm font-medium text-purple-600">
-                      {user?.name?.charAt(0) || 'U'}
-                    </span>
-                  </div>
+                  <img src="/images/Icon/Login/36.svg" alt="사용자" width={36} height={36} />
                 </button>
 
                 {showUserMenu && (
@@ -241,9 +237,7 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
                       className="flex items-center gap-2 px-4 py-3 text-sm text-gray-800 hover:bg-[#ECECEC]"
                       onClick={() => setShowUserMenu(false)}
                     >
-                      <svg className="h-4 w-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5v14a2 2 0 002 2h10a2 2 0 002-2V5M9 3h6m-6 8h6M9 13h4" />
-                      </svg>
+                      <img src="/images/Icon/Save/24/Black_Empty.svg" alt="저장" width={24} height={24} />
                       저장한 AI 보기
                     </Link>
 
@@ -251,9 +245,7 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
                       onClick={handleLogout}
                       className="flex items-center gap-2 w-full px-4 py-3 text-sm text-gray-800 hover:bg-[#ECECEC]"
                     >
-                      <svg className="h-4 w-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                      </svg>
+                      <img src="/images/Icon/Logout/24.svg" alt="로그아웃" width={24} height={24} />
                       로그아웃
                     </button>
                   </div>

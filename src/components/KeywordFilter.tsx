@@ -230,9 +230,7 @@ const KeywordFilter: React.FC<KeywordFilterProps> = ({
                 }}
               >
                 {isActive && (
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                  </svg>
+                  <img src="/images/Icon/Check/20.svg" alt="선택됨" width={20} height={20} />
                 )}
                 
                 <span>{keyword}</span>
@@ -270,6 +268,22 @@ const KeywordFilter: React.FC<KeywordFilterProps> = ({
           </button>
         )}
 
+        {/* 초기화 버튼: '전체' 외 키워드가 선택된 경우에만 표시 */}
+        {activeKeywords.some(k => k !== '전체') && (
+          <button 
+            onClick={() => {
+              onReset();
+              setSearchQuery('');
+              setSelectedType('ALL');
+              setShowAll(false);
+            }}
+            className="ml-auto text-sm font-normal flex items-center gap-1 px-3 py-2 rounded-lg transition-colors"
+            style={{ color: '#6238AE', fontSize: '14px', fontFamily: 'Pretendard' }}
+          >
+            <img src="/images/Icon/Reset/20.svg" alt="초기화" width={20} height={20} />
+            초기화
+          </button>
+        )}
         
       </div>
     </div>
