@@ -274,16 +274,7 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
               {bookmarkLoading ? (
                 <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
               ) : (
-                <svg 
-                  className="w-4 h-4" 
-                  fill={isBookmarked ? 'currentColor' : 'none'} 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24" 
-                  strokeWidth="2" 
-                  style={{ color: isBookmarked ? '#7E50D1' : '#6B7280' }}
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-                </svg>
+                <img src="/images/Icon/Save/Filled/32/Purple_Filled.svg" alt="북마크" width={20} height={20} />
               )}
             </button>
           )}

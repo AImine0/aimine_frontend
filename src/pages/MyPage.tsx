@@ -205,47 +205,40 @@ const MyPage: React.FC = () => {
           >
             저장한 AI들을 카테고리별로 모아서 비교해보세요!
           </p>
-          {/* 카테고리 필터 칩 */}
-          <div className="mt-8 flex flex-wrap gap-2">
-            {categoryChips.map((chip) => {
-              const isActive = activeCategory === chip.id;
-              return (
-                <button
-                  key={chip.id}
-                  onClick={() => setActiveCategory(chip.id)}
-                  className="inline-flex items-center px-5 py-2 rounded-[12px] transition-colors"
-                  style={{
-                    borderWidth: '1px',
-                    borderColor: isActive ? '#A987E8' : '#BCBCBC',
-                    backgroundColor: isActive ? '#F2EEFB' : '#FFFFFF'
-                  }}
-                >
-                  {isActive && (
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      style={{ marginRight: '6px' }}
-                    >
-                      <path d="M20 6L9 17L4 12" stroke="#7242C9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  )}
-                  <span
+          {/* 카테고리 필터 칩: 저장한 AI가 하나도 없으면 숨김 */}
+          {bookmarkedTools.length > 0 && (
+            <div className="mt-8 flex flex-wrap gap-2">
+              {categoryChips.map((chip) => {
+                const isActive = activeCategory === chip.id;
+                return (
+                  <button
+                    key={chip.id}
+                    onClick={() => setActiveCategory(chip.id)}
+                    className="inline-flex items-center px-5 py-2 rounded-[12px] transition-colors"
                     style={{
-                      fontFamily: 'Pretendard',
-                      fontWeight: isActive ? 700 : 500,
-                      fontSize: '14px',
-                      color: isActive ? '#7242C9' : '#5B5B5B'
+                      borderWidth: '1px',
+                      borderColor: isActive ? '#A987E8' : '#BCBCBC',
+                      backgroundColor: isActive ? '#F2EEFB' : '#FFFFFF'
                     }}
                   >
-                    {chip.label}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
+                    {isActive && (
+                      <img src="/images/Icon/Check/20.svg" alt="선택됨" width={20} height={20} style={{ marginRight: '6px' }} />
+                    )}
+                    <span
+                      style={{
+                        fontFamily: 'Pretendard',
+                        fontWeight: isActive ? 700 : 500,
+                        fontSize: '14px',
+                        color: isActive ? '#7242C9' : '#5B5B5B'
+                      }}
+                    >
+                      {chip.label}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* 저장한 AI 섹션 */}
@@ -260,30 +253,61 @@ const MyPage: React.FC = () => {
                   alt="저장된 AI 없음"
                   style={{ width: '80px', height: '80px', marginBottom: '16px' }}
                 />
-                <div
-                  style={{
-                    fontFamily: 'Pretendard',
-                    fontWeight: 600,
-                    fontSize: '18px',
-                    color: '#202020',
-                    marginBottom: '8px'
-                  }}
-                >
-                  저장된 AI가 없습니다.
-                </div>
-                <div
-                  style={{
-                    fontFamily: 'Pretendard',
-                    fontWeight: 400,
-                    fontSize: '16px',
-                    color: '#202020',
-                    lineHeight: 1.6
-                  }}
-                >
-                  AIMine에서 마음에 드는 AI만 모아
-                  <br />
-                  한눈에 비교해보세요!
-                </div>
+                {bookmarkedTools.length === 0 || activeCategory !== 'all' ? (
+                  <>
+                    <div
+                      style={{
+                        fontFamily: 'Pretendard',
+                        fontWeight: 600,
+                        fontSize: '18px',
+                        color: '#202020',
+                        marginBottom: '8px'
+                      }}
+                    >
+                      저장된 AI가 없습니다.
+                    </div>
+                    <div
+                      style={{
+                        fontFamily: 'Pretendard',
+                        fontWeight: 400,
+                        fontSize: '16px',
+                        color: '#202020',
+                        lineHeight: 1.6
+                      }}
+                    >
+                      해당 카테고리에 저장된 AI가 없습니다.
+                      <br />
+                      다른 카테고리를 선택해보세요.
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div
+                      style={{
+                        fontFamily: 'Pretendard',
+                        fontWeight: 600,
+                        fontSize: '18px',
+                        color: '#202020',
+                        marginBottom: '8px'
+                      }}
+                    >
+                      저장된 AI가 없습니다.
+                    </div>
+                    <div
+                      style={{
+                        fontFamily: 'Pretendard',
+                        fontWeight: 400,
+                        fontSize: '16px',
+                        color: '#202020',
+                        lineHeight: 1.6
+                      }}
+                    >
+                      AIMine에서 마음에 드는 AI만 모아
+                      <br />
+                      한눈에 비교해보세요!
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           ) : (
