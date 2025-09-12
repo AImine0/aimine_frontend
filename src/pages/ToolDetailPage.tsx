@@ -209,7 +209,7 @@ const ToolDetailPage: React.FC = () => {
       
       <main>
         {/* 헤더 섹션 */}
-        <div className="relative pt-[30px] pb-24 mb-3 " style={{ backgroundColor: '#F2EEFB' }}>
+        <div className="relative pt-[30px] pb-[64px] mb-3 " style={{ backgroundColor: '#F2EEFB' }}>
           <div className="max-w-6xl mx-auto px-4">
             <div className="-mb-2">
               <Breadcrumb items={breadcrumbItems} />
@@ -236,7 +236,7 @@ const ToolDetailPage: React.FC = () => {
             </div>
             {/* 서비스명과 액션 버튼: 로고 바로 아래, 가로 정렬 */}
             <div className="flex items-center justify-between mt-1 mb-4">
-              <h1 className="text-2xl md:text-3xl font-bold text-black">{toolDetail.serviceName}</h1>
+              <h1 className="text-3xl md:text-4xl font-extrabold text-black">{toolDetail.serviceName}</h1>
               <div className="flex items-center gap-3">
                 <button 
                   onClick={handleBookmarkToggle}
@@ -304,7 +304,7 @@ const ToolDetailPage: React.FC = () => {
           </div>
           
           {/* 오른쪽: 이미지 갤러리 */}
-          <div className="w-96 flex-shrink-0 rounded-xl p-2" style={{ backgroundColor: '#F2EEFB', border: '1px solid #E4E0F3' }}>
+          <div className="w-96 flex-shrink-0 rounded-xl p-2 mt-6" style={{ backgroundColor: '#F2EEFB', border: '1px solid #E4E0F3' }}>
             <img 
               src={toolDetail.serviceImageUrl}
               alt={`${toolDetail.serviceName} 서비스 이미지`}

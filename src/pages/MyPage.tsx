@@ -253,7 +253,34 @@ const MyPage: React.FC = () => {
                   alt="저장된 AI 없음"
                   style={{ width: '80px', height: '80px', marginBottom: '16px' }}
                 />
-                {bookmarkedTools.length === 0 || activeCategory !== 'all' ? (
+                {bookmarkedTools.length === 0 ? (
+                  <>
+                    <div
+                      style={{
+                        fontFamily: 'Pretendard',
+                        fontWeight: 600,
+                        fontSize: '18px',
+                        color: '#202020',
+                        marginBottom: '8px'
+                      }}
+                    >
+                      저장된 AI가 없습니다.
+                    </div>
+                    <div
+                      style={{
+                        fontFamily: 'Pretendard',
+                        fontWeight: 400,
+                        fontSize: '16px',
+                        color: '#202020',
+                        lineHeight: 1.6
+                      }}
+                    >
+                      AIMine에서 마음에 드는 AI만 모아
+                      <br />
+                      한눈에 비교해보세요!
+                    </div>
+                  </>
+                ) : activeCategory !== 'all' ? (
                   <>
                     <div
                       style={{
@@ -281,32 +308,7 @@ const MyPage: React.FC = () => {
                     </div>
                   </>
                 ) : (
-                  <>
-                    <div
-                      style={{
-                        fontFamily: 'Pretendard',
-                        fontWeight: 600,
-                        fontSize: '18px',
-                        color: '#202020',
-                        marginBottom: '8px'
-                      }}
-                    >
-                      저장된 AI가 없습니다.
-                    </div>
-                    <div
-                      style={{
-                        fontFamily: 'Pretendard',
-                        fontWeight: 400,
-                        fontSize: '16px',
-                        color: '#202020',
-                        lineHeight: 1.6
-                      }}
-                    >
-                      AIMine에서 마음에 드는 AI만 모아
-                      <br />
-                      한눈에 비교해보세요!
-                    </div>
-                  </>
+                  <></>
                 )}
               </div>
             </div>
