@@ -6,6 +6,7 @@ import { apiService } from '../services';
 import type { AIToolDetail, ReviewListResponse } from '../types';
 import { handleImageError } from '../utils/imageMapping';
 
+
 const ToolDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [toolDetail, setToolDetail] = useState<AIToolDetail | null>(null);
@@ -170,7 +171,9 @@ const ToolDetailPage: React.FC = () => {
     scrollToSection(key);
   };
 
-  const formatRating = (value: number) => (value === 0 ? '0' : value.toFixed(1));
+  const formatRating = (value?: number | null) =>
+    Number.isFinite(value as number) ? ((value as number) === 0 ? '0' : (value as number).toFixed(1)) : '-';
+  
 
   if (loading) {
     return (
@@ -210,6 +213,11 @@ const ToolDetailPage: React.FC = () => {
     { label: toolDetail.category.name },
     { label: toolDetail.serviceName }
   ];
+
+  // AI 평점: recommendationScore가 오면 우선 사용, 없으면 overallRating 사용
+const aiScoreRaw = toolDetail.recommendationScore ?? toolDetail.overallRating;
+// BE에서 BigDecimal이 문자열로 올 수도 있으니 방어
+const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScoreRaw;
 
 
   return (
@@ -293,8 +301,11 @@ const ToolDetailPage: React.FC = () => {
               <div className="flex items-center gap-2">
                 <span style={{ color: '#202020', fontWeight: 600 }}>AI 평점</span>
                 <span className="text-purple-500">★</span>
-                <span className="text-lg" style={{ color: '#202020', fontWeight: 600 }}>{formatRating(Number((toolDetail as any).recommendationScore ?? toolDetail.overallRating))}</span>
+                <span className="text-lg" style={{ color: '#202020', fontWeight: 600 }}>
+                  {formatRating(aiScore)}
+                </span>
               </div>
+
             </div>
             
             {/* 주요 기능 */}
