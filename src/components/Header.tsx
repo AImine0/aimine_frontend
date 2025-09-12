@@ -149,6 +149,13 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
               >
                 직업별
               </Link>
+              <Link 
+                to="/prompt" 
+                className={`px-3 py-2 text-sm font-semibold transition-colors hover:text-[#7E50D1]`}
+                style={{ color: location.pathname === '/prompt' ? '#7E50D1' : '#202020' }}
+              >
+                프롬프트
+              </Link>
               
             </nav>
           </div>
