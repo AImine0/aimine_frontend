@@ -21,9 +21,9 @@ const HomePage: React.FC = () => {
       <Header tabs={[]} activeTab="" onTabChange={() => {}} />
       <main className="mx-auto px-4 sm:px-6 lg:px-8" style={{ maxWidth: '1280px' }}>
         <section className="text-center" style={{ paddingTop: '56px', paddingBottom: '32px' }}>
-          <div className="text-gray-900 font-bold" style={{ fontSize: '32px', lineHeight: '40px' }}>나에게 꼭 맞는 AI,</div>
-          <div className="text-gray-900 font-extrabold" style={{ fontSize: '36px', lineHeight: '44px', marginTop: '8px' }}>AIMine에서 찾아보세요</div>
-          <div className="text-gray-500" style={{ fontSize: '12px', lineHeight: '18px', marginTop: '12px' }}>
+          <div className="text-gray-900" style={{ color: '#202020', fontSize: '32px', lineHeight: '40px', fontWeight: 600 }}>나에게 꼭 맞는 AI,</div>
+          <div className="text-gray-900" style={{ color: '#202020', fontSize: '36px', lineHeight: '44px', marginTop: '8px', fontWeight: 600 }}>AIMine에서 찾아보세요</div>
+          <div className="text-gray-500" style={{ color: '#424242', fontSize: '18px', lineHeight: '28px', marginTop: '12px', fontWeight: 400 }}>
             기능별, 직업별로 정리된 AI 서비스 큐레이션으로
             <br />
             당신에게 필요한 도구만 골라보세요!
@@ -36,12 +36,12 @@ const HomePage: React.FC = () => {
               <button
                 key={item.id}
                 onClick={() => navigate(item.to)}
-                className="bg-white rounded-2xl border transition-shadow text-left"
-                style={{ borderColor: '#E6EAF2', padding: '18px', height: '156px' }}
+                className="rounded-2xl transition-shadow text-left"
+                style={{ backgroundColor: '#F2EEFB', padding: '18px', height: '156px', overflow: 'hidden' }}
               >
-                <div className="text-gray-700" style={{ fontSize: '14px', fontWeight: 600 }}>{item.title}</div>
-                <div className="w-full flex items-center justify-center" style={{ height: '110px' }}>
-                  <img src={item.img} alt={item.title} style={{ maxHeight: '104px' }} />
+                <div style={{ color: '#202020', fontSize: '22px', fontWeight: 600, marginTop: '12px', marginLeft: '12px' }}>{item.title}</div>
+                <div className="w-full flex items-end justify-end" style={{ height: '110px', overflow: 'hidden' }}>
+                  <img src={item.img} alt={item.title} style={{ maxHeight: '136px', transform: 'translateY(14px)' }} />
                 </div>
               </button>
             ))}
