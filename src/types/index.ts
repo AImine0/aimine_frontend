@@ -332,6 +332,7 @@ export interface AIToolDetail {
   pricingInfo?: string;
   pricingLink?: string;
   overallRating: number;
+  recommendationScore?: number;
   viewCount?: number;
   bookmarkCount?: number;
   keywords: string[]; // 문자열 배열로 통일

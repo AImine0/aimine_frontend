@@ -680,6 +680,7 @@ class ApiService {
         pricingInfo: '',
         pricingLink: '',
         overallRating: Number(toolData.overallRating) || 0,
+        recommendationScore: Number((toolData as any).recommendationScore ?? (toolData as any).recommendation_score ?? 0) || undefined,
         viewCount: 0,
         bookmarkCount: 0,
         keywords: toolData.keywords?.map(k => k.keyword) || [],
