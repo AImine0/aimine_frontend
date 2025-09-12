@@ -282,7 +282,7 @@ const ToolDetailPage: React.FC = () => {
               <div className="flex items-center gap-2">
                 <span className="text-gray-700 font-medium">AI 평점</span>
                 <span className="text-purple-500">★</span>
-                <span className="font-bold text-lg">{toolDetail.overallRating.toFixed(1)}</span>
+                <span className="font-bold text-lg">{(Number((toolDetail as any).recommendationScore ?? toolDetail.overallRating)).toFixed(1)}</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-gray-700 font-medium">리뷰</span>
@@ -295,7 +295,11 @@ const ToolDetailPage: React.FC = () => {
               <h3 className="text-gray-700 font-medium mb-3">주요 기능</h3>
               <div className="flex flex-wrap gap-2">
                 {toolDetail.keywords.map((keyword, index) => (
-                  <span key={index} className="inline-block px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium">
+                  <span
+                    key={index}
+                    className="inline-block px-3 py-1 rounded-full text-sm font-medium"
+                    style={{ backgroundColor: '#F2EEFB', color: '#512E8F' }}
+                  >
                     {keyword}
                   </span>
                 ))}
@@ -304,7 +308,7 @@ const ToolDetailPage: React.FC = () => {
           </div>
           
           {/* 오른쪽: 이미지 갤러리 */}
-          <div className="w-96 flex-shrink-0 rounded-xl p-3 mt-6" style={{ backgroundColor: '#F2EEFB', border: '1px solid #E4E0F3' }}>
+          <div className="w-96 flex-shrink-0 rounded-xl p-2 mt-6" style={{ backgroundColor: '#F2EEFB', border: '1px solid #E4E0F3' }}>
             <img 
               src={toolDetail.serviceImageUrl}
               alt={`${toolDetail.serviceName} 서비스 이미지`}

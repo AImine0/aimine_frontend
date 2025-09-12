@@ -226,6 +226,8 @@ export interface ServiceDetailResponse {
     };
     pricingType: string;
     overallRating: number;
+    recommendationScore?: number; // AI 추천 점수 (camelCase)
+    recommendation_score?: number; // 백엔드 snake_case 호환
     keywords: Array<{
       id: number;
       keyword: string;
@@ -387,6 +389,7 @@ export interface AIToolDetail {
   pricingInfo?: string;
   pricingLink?: string;
   overallRating: number;
+  recommendationScore?: number;
   viewCount?: number;
   bookmarkCount?: number;
   keywords: string[];
