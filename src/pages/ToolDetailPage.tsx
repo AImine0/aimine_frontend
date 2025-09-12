@@ -163,6 +163,15 @@ const ToolDetailPage: React.FC = () => {
     }
   };
 
+  // 탭 상태 (가격 정보 / 서비스 리뷰)
+  const [activeTabKey, setActiveTabKey] = useState<'pricing' | 'reviews'>('pricing');
+  const handleTabClick = (key: 'pricing' | 'reviews') => {
+    setActiveTabKey(key);
+    scrollToSection(key);
+  };
+
+  const formatRating = (value: number) => (value === 0 ? '0' : value.toFixed(1));
+
   if (loading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
@@ -235,36 +244,38 @@ const ToolDetailPage: React.FC = () => {
               </div>
             </div>
             {/* 서비스명과 액션 버튼: 로고 바로 아래, 가로 정렬 */}
-            <div className="flex items-center justify-between mt-1 mb-4">
-              <h1 className="text-3xl md:text-4xl font-extrabold text-black">{toolDetail.serviceName}</h1>
+            <div className="flex items-center justify-between mt-1 mb-2">
+              <h1 className="text-3xl md:text-4xl" style={{ fontWeight: 600, color: '#202020' }}>{toolDetail.serviceName}</h1>
               <div className="flex items-center gap-3">
                 <button 
                   onClick={handleBookmarkToggle}
                   disabled={bookmarkLoading}
-                  className={`w-12 h-12 border rounded-lg flex items-center justify-center transition-colors ${
-                    isBookmarked 
-                      ? 'border-purple-600 bg-purple-50 text-purple-600' 
-                      : 'border-gray-300 text-gray-700 hover:bg-gray-50'
-                  } ${bookmarkLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  className={`w-10 h-10 flex items-center justify-center transition-colors ${bookmarkLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  style={{ border: '1px solid #7E50D1', borderRadius: 8, background: 'transparent', margin: '4px 8px' }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = '#E9DFFB'; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; }}
                 >
                   {bookmarkLoading ? (
                     <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
                   ) : (
-                    <svg className="w-6 h-6" fill={isBookmarked ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-                    </svg>
+                    isBookmarked ? (
+                      <img src="/images/Icon/Save/Filled/32/Purple_Filled.svg" alt="북마크됨" width={24} height={24} />
+                    ) : (
+                      <img src="/images/Icon/Save/24/Purple_Empty.svg" alt="북마크" width={24} height={24} />
+                    )
                   )}
                 </button>
                 <a 
                   href={toolDetail.websiteUrl} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="px-5 py-2.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium flex items-center gap-2 text-sm"
+                  className="flex items-center"
+                  style={{ backgroundColor: '#7E50D1', color: '#FFFFFF', borderRadius: 8, padding: '8px 12px', margin: '4px 12px 4px 8px' }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#6238AE'; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#7E50D1'; }}
                 >
-                  바로가기
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                  </svg>
+                  <img src="/images/Icon/Visit/24/White.svg" alt="바로가기" width={24} height={24} style={{ marginRight: 4 }} />
+                  <span style={{ fontWeight: 500 }}>바로가기</span>
                 </a>
               </div>
             </div>
@@ -275,24 +286,20 @@ const ToolDetailPage: React.FC = () => {
             {/* 평점 정보 */}
             <div className="flex items-center gap-8 mb-8">
               <div className="flex items-center gap-2">
-                <span className="text-gray-700 font-medium">사용자 평점</span>
+                <span style={{ color: '#202020', fontWeight: 600 }}>사용자 평점</span>
                 <span className="text-gray-500">★</span>
-                <span className="font-bold text-lg">{toolDetail.overallRating.toFixed(1)}</span>
+                <span className="text-lg" style={{ color: '#202020', fontWeight: 600 }}>{formatRating(toolDetail.overallRating)}</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-gray-700 font-medium">AI 평점</span>
+                <span style={{ color: '#202020', fontWeight: 600 }}>AI 평점</span>
                 <span className="text-purple-500">★</span>
-                <span className="font-bold text-lg">{(Number((toolDetail as any).recommendationScore ?? toolDetail.overallRating)).toFixed(1)}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-gray-700 font-medium">리뷰</span>
-                <span className="font-bold text-lg">{reviews?.total_count || 0}개</span>
+                <span className="text-lg" style={{ color: '#202020', fontWeight: 600 }}>{formatRating(Number((toolDetail as any).recommendationScore ?? toolDetail.overallRating))}</span>
               </div>
             </div>
             
             {/* 주요 기능 */}
             <div className="mb-8">
-              <h3 className="text-gray-700 font-medium mb-3">주요 기능</h3>
+              <h3 className="mb-3" style={{ color: '#202020', fontWeight: 600 }}>주요 기능</h3>
               <div className="flex flex-wrap gap-2">
                 {toolDetail.keywords.map((keyword, index) => (
                   <span
@@ -319,17 +326,19 @@ const ToolDetailPage: React.FC = () => {
         </div>
         
         {/* 탭 네비게이션 */}
-        <div className="border-b border-gray-200 mb-12">
+        <div className="mb-12" style={{ borderBottomWidth: '2px', borderBottomColor: '#ECECEC', borderBottomStyle: 'solid' }}>
           <nav className="flex gap-8">
             <button
-              onClick={() => scrollToSection('pricing')}
-              className="pb-4 text-black font-medium border-b-2 border-black text-sm"
+              onClick={() => handleTabClick('pricing')}
+              className="pb-4 text-base"
+              style={{ color: activeTabKey === 'pricing' ? '#202020' : '#8C8C8C', fontWeight: 600, borderBottom: activeTabKey === 'pricing' ? '2px solid #202020' : '2px solid transparent', marginBottom: '-2px' }}
             >
               가격 정보
             </button>
             <button
-              onClick={() => scrollToSection('reviews')}
-              className="pb-4 text-gray-500 font-medium hover:text-black text-sm"
+              onClick={() => handleTabClick('reviews')}
+              className="pb-4 text-base"
+              style={{ color: activeTabKey === 'reviews' ? '#202020' : '#8C8C8C', fontWeight: 600, borderBottom: activeTabKey === 'reviews' ? '2px solid #202020' : '2px solid transparent', marginBottom: '-2px' }}
             >
               서비스 리뷰
             </button>
@@ -338,21 +347,24 @@ const ToolDetailPage: React.FC = () => {
         
         {/* 가격 정보 섹션 */}
         <section id="pricing" className="mb-16">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl font-bold text-black">가격 정보</h2>
+          <div className="flex items-center justify-between mb-0" style={{ marginBottom: '1px' }}>
+            <h2 className="text-2xl" style={{ color: '#000000', fontWeight: 700, fontSize: '18px' }}>가격 정보</h2>
             <a 
-              href={toolDetail.websiteUrl}
-              target="_blank"
+              href={toolDetail.websiteUrl} 
+              target="_blank" 
               rel="noopener noreferrer"
-              className="px-6 py-3 border border-purple-600 text-purple-600 rounded-lg hover:bg-purple-50 font-medium"
+              className="flex items-center"
+              style={{ backgroundColor: '#7E50D1', color: '#FFFFFF', borderRadius: 8, padding: '8px 12px', margin: '4px 12px 4px 8px' }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#6238AE'; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#7E50D1'; }}
             >
-              공식 사이트 바로가기
+              <img src="/images/Icon/Visit/24/White.svg" alt="바로가기" width={24} height={24} style={{ marginRight: 4 }} />
+              <span style={{ fontWeight: 500 }}>바로가기</span>
             </a>
           </div>
           
-          <p className="text-gray-700 mb-12 leading-relaxed text-lg">
-            해당 정보는 게시 시점을 기준으로 제공되며, 실제 가격은 상이할 수 있습니다.
-            정확한 가격은 공식 사이트에서 확인해주세요.
+          <p className="mb-6" style={{ color: '#9B9B9B', fontWeight: 500, lineHeight: 1.6, fontSize: '14px' }}>
+            본 정보는 게시 시점을 기준으로 제공되며, 실제 가격은 변동될 수 있습니다. 최신 내용은 공식 홈페이지에서 확인해 주세요.
           </p>
           
           {/* 가격 플랜 이미지 */}
@@ -374,7 +386,7 @@ const ToolDetailPage: React.FC = () => {
         
         {/* 서비스 리뷰 섹션 */}
         <section id="reviews" className="mb-16">
-          <h2 className="text-2xl font-bold text-black mb-8">서비스 리뷰</h2>
+          <h2 className="text-2xl mb-8" style={{ color: '#000000', fontWeight: 700, fontSize: '18px' }}>서비스 리뷰</h2>
           
           <div className="bg-white rounded-lg border border-gray-200 p-8">
             {/* 리뷰 헤더 */}
