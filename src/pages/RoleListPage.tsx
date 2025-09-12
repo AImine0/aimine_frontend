@@ -209,11 +209,11 @@ const RoleListPage: React.FC = () => {
                 className="absolute"
                 style={{
                   top: '50%',
-                  left: `max(${containerLeft - 16}px, 8px)`,
+                  left: `max(${containerLeft - 24}px, 8px)`,
                   transform: 'translateY(-50%)',
                   zIndex: 50,
-                  width: 28,
-                  height: 79,
+                  width: 40,
+                  height: 90,
                   background: 'none',
                   border: 'none',
                   padding: 0,
@@ -223,9 +223,7 @@ const RoleListPage: React.FC = () => {
                 }}
                 aria-label="이전"
               >
-                <svg width="28" height="79" viewBox="0 0 28 79" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <polyline points="20,10 8,39.5 20,69" stroke="#DBCBF9" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+                <img src="/images/Icon/Arrow/Left40x90.svg" alt="이전" width={40} height={90} />
               </button>
             )}
 
@@ -353,11 +351,11 @@ const RoleListPage: React.FC = () => {
                 className="absolute"
                 style={{
                   top: '50%',
-                  right: `max(${containerRight - 16}px, 8px)`,
+                  right: `max(${containerRight - 24}px, 8px)`,
                   transform: 'translateY(-50%)',
                   zIndex: 50,
-                  width: 28,
-                  height: 79,
+                  width: 40,
+                  height: 90,
                   background: 'none',
                   border: 'none',
                   padding: 0,
@@ -367,9 +365,7 @@ const RoleListPage: React.FC = () => {
                 }}
                 aria-label="다음"
               >
-                <svg width="28" height="79" viewBox="0 0 28 79" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <polyline points="8,10 20,39.5 8,69" stroke="#DBCBF9" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+                <img src="/images/Icon/Arrow/Right40x90.svg" alt="다음" width={40} height={90} />
               </button>
             )}
           </div>
@@ -500,7 +496,7 @@ const RoleListPage: React.FC = () => {
                                   width: 40,
                                   height: 40,
                                   borderRadius: '50%',
-                                  background: '#DBCBF9',
+                                  background: '#E9DFFB',
                                   display: 'flex',
                                   alignItems: 'center',
                                   justifyContent: 'center',
@@ -511,8 +507,8 @@ const RoleListPage: React.FC = () => {
                                   pointerEvents: 'auto'
                                 }}
                                 aria-label="이전"
-                                onMouseEnter={(e) => { e.currentTarget.style.background = '#C4B5F0'; }}
-                                onMouseLeave={(e) => { e.currentTarget.style.background = '#DBCBF9'; }}
+                                onMouseEnter={(e) => { e.currentTarget.style.background = '#E9DFFB'; }}
+                                onMouseLeave={(e) => { e.currentTarget.style.background = '#E9DFFB'; }}
                               >
                                 <svg width="10" height="16" viewBox="0 0 10 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                                   <polyline points="9,1 1,8 9,15" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -550,12 +546,8 @@ const RoleListPage: React.FC = () => {
                                   pointerEvents: 'auto'
                                 }}
                                 aria-label="다음"
-                                onMouseEnter={(e) => { e.currentTarget.style.background = '#C4B5F0'; }}
-                                onMouseLeave={(e) => { e.currentTarget.style.background = '#DBCBF9'; }}
                               >
-                                <svg width="10" height="16" viewBox="0 0 10 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                  <polyline points="1,1 9,8 1,15" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                </svg>
+                                <img src="/images/Icon/Arrow/Right36.svg" alt="다음" width={36} height={36} />
                               </button>
                             )}
                           </div>

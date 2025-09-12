@@ -206,19 +206,16 @@ const FilterBar: React.FC<FilterBarProps> = ({
               {/* 추천순 정보 버튼 - 추천순이 선택된 경우에만 표시 */}
               {sortType === 'popular' && (
                 <div className="relative">
-                  <div
+                  <button
                     onMouseEnter={() => setShowTooltip(true)}
                     onMouseLeave={() => setShowTooltip(false)}
                     onClick={(e) => e.stopPropagation()}
-                    className="flex items-center justify-center w-3.5 h-3.5 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors"
-                    style={{
-                      fontSize: '7px',
-                      fontWeight: 'bold',
-                      color: '#666'
-                    }}
+                    className="flex items-center justify-center"
+                    style={{ width: '18px', height: '18px' }}
+                    aria-label="추천순 정보"
                   >
-                    i
-                  </div>
+                    <img src="/images/Icon/InfoTooltip/18.svg" alt="정보" width={18} height={18} />
+                  </button>
 
                   {/* 툴팁 */}
                   {showTooltip && (
@@ -240,16 +237,13 @@ const FilterBar: React.FC<FilterBarProps> = ({
           </div>
           
           {/* 오른쪽: 드롭다운 화살표만 */}
-          <svg 
-            className={`w-4 h-4 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`}
-            fill="none" 
-            stroke="currentColor" 
-            viewBox="0 0 24 24" 
-            strokeWidth={2} 
-            style={{ color: '#636363' }}
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-          </svg>
+          <img 
+            src="/images/Icon/Arrow/Dropdown18.svg" 
+            alt="드롭다운"
+            className={`${isDropdownOpen ? 'rotate-180' : ''}`}
+            width={18}
+            height={18}
+          />
         </button>
 
         {/* 드롭다운 메뉴 */}
