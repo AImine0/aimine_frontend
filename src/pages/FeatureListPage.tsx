@@ -178,8 +178,30 @@ const PRICING_TYPE_MAP: Record<FilterType, string | undefined> = {
 const FeatureListPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams(); // 추가
   
-  // URL에서 tab 파라미터 읽어서 초기값 설정
-  const initialTab = searchParams.get('tab') || 'chatbot';
+  // URL에서 tab 파라미터 읽어서 초기값 설정 (한글/영문/슬러그 모두 허용)
+  const normalizeTab = (value: string | null): string => {
+    if (!value) return 'chatbot';
+    const v = decodeURIComponent(value).trim();
+    // 한글 → 내부 탭 id 매핑
+    const mapKoToTab: Record<string, string> = {
+      '챗봇': 'chatbot',
+      '텍스트': 'writing',
+      '이미지': 'image',
+      '비디오': 'video',
+      '오디오/음악': 'audio',
+      '오디오': 'audio',
+      '코드': 'code',
+      '생산성': 'productivity',
+      '3D': '3d',
+      '3d': '3d'
+    };
+    if (mapKoToTab[v]) return mapKoToTab[v];
+    // 이미 내부 id 형태면 그대로 사용
+    if (TAB_TO_CATEGORY[v as keyof typeof TAB_TO_CATEGORY]) return v;
+    return 'chatbot';
+  };
+  // 하위호환: tab 또는 category(한글) 모두 허용
+  const initialTab = normalizeTab(searchParams.get('tab') || searchParams.get('category'));
   const [activeTab, setActiveTab] = useState(initialTab);
   
   const [activeKeywords, setActiveKeywords] = useState<string[]>(['전체']);
@@ -331,7 +353,17 @@ const FeatureListPage: React.FC = () => {
     // 탭 변경 시 키워드 초기화
     setActiveKeywords(['전체']);
     // URL 파라미터 업데이트
-    setSearchParams({ tab });
+    const tabToKo: Record<string, string> = {
+      chatbot: '챗봇',
+      writing: '텍스트',
+      image: '이미지',
+      video: '비디오',
+      audio: '오디오/음악',
+      code: '코드',
+      productivity: '생산성',
+      '3d': '3D'
+    };
+    setSearchParams({ category: tabToKo[tab] || '챗봇' });
   };
 
   // BEST 1,2,3는 상위 3개

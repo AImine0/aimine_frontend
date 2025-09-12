@@ -208,9 +208,29 @@ const ToolDetailPage: React.FC = () => {
   }
 
   // 이미지 매핑 가져오기
+  // 카테고리 한글 라벨 매핑
+  const mapCategoryToKorean = (value: string): string => {
+    const v = (value || '').toLowerCase();
+    const map: Record<string, string> = {
+      chatbot: '챗봇',
+      chat: '챗봇',
+      writing: '텍스트',
+      text: '텍스트',
+      image: '이미지',
+      video: '비디오',
+      audio: '오디오/음악',
+      code: '코드',
+      productivity: '생산성',
+      '3d': '3D'
+    };
+    return map[v] || value;
+  };
+
+  const categoryDisplayKo = mapCategoryToKorean(toolDetail.category.slug || toolDetail.category.name);
+
   const breadcrumbItems = [
-    { label: '기능별' },
-    { label: toolDetail.category.name },
+    { label: '기능별', href: '/features?category=' + encodeURIComponent(categoryDisplayKo) },
+    { label: categoryDisplayKo, href: '/features?category=' + encodeURIComponent(categoryDisplayKo) },
     { label: toolDetail.serviceName }
   ];
 

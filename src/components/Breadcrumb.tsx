@@ -1,6 +1,7 @@
 // [브레드크럼 컴포넌트] 페이지 경로 표시 - 현재 위치와 네비게이션 경로 안내
 // src/components/Breadcrumb.tsx
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 interface BreadcrumbItem {
   label: string;
@@ -17,9 +18,9 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ items }) => {
       <ol className="flex items-center space-x-0.5">
         <li>
           <div className="flex items-center">
-            <a href="/" className="text-sm font-medium" style={{ color: '#9B9B9B', fontFamily: 'Pretendard' }}>
+            <Link to="/" className="text-sm font-medium" style={{ color: '#9B9B9B', fontFamily: 'Pretendard' }}>
               홈
-            </a>
+            </Link>
           </div>
         </li>
         {items.map((item, index) => (
@@ -39,13 +40,13 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ items }) => {
                 />
               </svg>
               {item.href ? (
-                <a
-                  href={item.href}
+                <Link
+                  to={item.href}
                   className="text-sm font-medium hover:text-gray-700"
                   style={{ color: '#9B9B9B', fontFamily: 'Pretendard' }}
                 >
                   {item.label}
-                </a>
+                </Link>
               ) : (
                 <span className="text-sm font-medium" style={{ color: '#9B9B9B', fontFamily: 'Pretendard' }}>
                   {item.label}
