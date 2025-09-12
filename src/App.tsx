@@ -8,6 +8,7 @@ import HomePage from './pages/HomePage';
 import RoleListPage from './pages/RoleListPage';
 import ToolDetailPage from './pages/ToolDetailPage';
 import SearchPage from './pages/SearchPage';
+import PromptPage from './pages/PromptPage';
 import MyPage from './pages/MyPage';
 import AuthCallbackPage from './pages/AuthCallbackPage'; // 새로 추가
 
@@ -20,6 +21,7 @@ const App: React.FC = () => {
           <Route path="/" element={<HomePage />} />
           <Route path="/features" element={<FeatureListPage />} />
           <Route path="/role" element={<RoleListPage />} />
+          <Route path="/prompt" element={<PromptPage />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/tool/:id" element={<ToolDetailPage />} />
           
