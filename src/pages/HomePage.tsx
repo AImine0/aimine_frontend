@@ -36,8 +36,19 @@ const HomePage: React.FC = () => {
               <button
                 key={item.id}
                 onClick={() => navigate(item.to)}
-                className="rounded-2xl transition-shadow text-left"
-                style={{ backgroundColor: '#F2EEFB', padding: '18px', height: '144px', overflow: 'hidden' }}
+                className="rounded-2xl transition-all duration-200 text-left"
+                style={{ 
+                  backgroundColor: '#F2EEFB', 
+                  padding: '18px', 
+                  height: '144px', 
+                  overflow: 'hidden' 
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#E9DFFB';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = '#F2EEFB';
+                }}
               >
                 <div style={{ color: '#202020', fontSize: '22px', fontWeight: 600, marginTop: '12px', marginLeft: '12px' }}>{item.title}</div>
                 <div className="w-full flex items-end justify-end" style={{ height: '98px', overflow: 'hidden' }}>

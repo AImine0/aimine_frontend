@@ -20,8 +20,14 @@ const PromptPage: React.FC = () => {
           </div>
           <button
             onClick={() => navigate('/')}
-            className="mt-8 inline-flex items-center justify-center"
+            className="mt-8 inline-flex items-center justify-center transition-colors"
             style={{ backgroundColor: '#7E50D1', color: '#FFFFFF', borderRadius: 8, padding: '10px 16px' }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#6238AE';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#7E50D1';
+            }}
           >
             <img src="/images/Icon/Home/24.svg" alt="홈" width={24} height={24} style={{ marginRight: 8 }} />
             <span style={{ fontWeight: 500, fontSize: 14 }}>홈으로 가기</span>

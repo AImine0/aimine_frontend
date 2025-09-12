@@ -114,7 +114,39 @@ const CATEGORY_KEYWORDS: Record<string, string[]> = {
     '취업 도우미'
   ],
   // 코드 탭은 제공된 세부 목록이 없어 기본값만 표시
-  code: ['전체']
+  code: [
+    '전체',
+    '생성',
+    '분석',
+    '디버깅',
+    '리팩터링',
+    '테스트',
+    '문서화',
+    '보안',
+    '가상 머신(VM)',
+    '협업'
+  ]
+};
+
+// 한국어 키워드를 데이터 내 영문/관련 표현으로 확장 매핑 (특히 code 탭)
+const KEYWORD_SYNONYMS: Record<string, string[]> = {
+  // 공통
+  '전체': ['전체'],
+  // 챗봇 탭
+  '개발자 특화': [
+    '개발자', 'developer', 'developers', 'dev', 'coding', 'programming', 'software', 'engineer', 'engineering', 'code',
+    'copilot', 'github copilot', 'chatgpt', 'gpt', 'openai', 'claude', 'gemini', 'llama', 'code assistant', 'ai assistant'
+  ],
+  // code 탭 전용
+  '생성': ['생성', 'generate', 'generation', 'create', 'creating', 'code generation', 'synthesize'],
+  '분석': ['분석', 'analyze', 'analysis', 'insight', 'lint', 'static analysis'],
+  '디버깅': ['디버깅', 'debug', 'debugging'],
+  '리팩터링': ['리팩터링', 'refactor', 'refactoring'],
+  '테스트': ['테스트', 'test', 'testing', 'unit test', 'integration test', 'e2e'],
+  '문서화': ['문서화', 'doc', 'docs', 'documentation', 'readme', 'guide'],
+  '보안': ['보안', 'security', 'secure', 'vulnerability', 'scan', 'sast', 'dast'],
+  '가상 머신(VM)': ['가상 머신', 'vm', 'virtual machine', 'container', 'docker', 'kubernetes', 'k8s', 'sandbox'],
+  '협업': ['협업', 'collaboration', 'collaborate', 'team', 'review', 'code review', 'pull request', 'pr']
 };
 
 // 카테고리 매핑 (탭 → API category 파라미터)
@@ -146,8 +178,30 @@ const PRICING_TYPE_MAP: Record<FilterType, string | undefined> = {
 const FeatureListPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams(); // 추가
   
-  // URL에서 tab 파라미터 읽어서 초기값 설정
-  const initialTab = searchParams.get('tab') || 'chatbot';
+  // URL에서 tab 파라미터 읽어서 초기값 설정 (한글/영문/슬러그 모두 허용)
+  const normalizeTab = (value: string | null): string => {
+    if (!value) return 'chatbot';
+    const v = decodeURIComponent(value).trim();
+    // 한글 → 내부 탭 id 매핑
+    const mapKoToTab: Record<string, string> = {
+      '챗봇': 'chatbot',
+      '텍스트': 'writing',
+      '이미지': 'image',
+      '비디오': 'video',
+      '오디오/음악': 'audio',
+      '오디오': 'audio',
+      '코드': 'code',
+      '생산성': 'productivity',
+      '3D': '3d',
+      '3d': '3d'
+    };
+    if (mapKoToTab[v]) return mapKoToTab[v];
+    // 이미 내부 id 형태면 그대로 사용
+    if (TAB_TO_CATEGORY[v as keyof typeof TAB_TO_CATEGORY]) return v;
+    return 'chatbot';
+  };
+  // 하위호환: tab 또는 category(한글) 모두 허용
+  const initialTab = normalizeTab(searchParams.get('tab') || searchParams.get('category'));
   const [activeTab, setActiveTab] = useState(initialTab);
   
   const [activeKeywords, setActiveKeywords] = useState<string[]>(['전체']);
@@ -159,11 +213,35 @@ const FeatureListPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // 탭 변경 시 카테고리별 고정 키워드 반영
+  // 탭 변경 시 카테고리별 고정 키워드 반영 + 사용 가능한 키워드만 노출
   useEffect(() => {
     const legacy = CATEGORY_KEYWORDS[activeTab] || ['전체'];
-    setKeywords(legacy);
-  }, [activeTab]);
+    // 현 탭의 전체 데이터 기준으로 가용 키워드만 남김 (0개 결과 키워드는 숨김)
+    const available = (() => {
+      if (!Array.isArray(baseTools) || baseTools.length === 0) return legacy;
+      // 각 키워드에 대해 동의어 포함 매칭 테스트
+      const prepared = baseTools.map(tool => {
+        const featureText = (tool.features || []).join(' ');
+        const tagText = Array.isArray(tool.tags) ? tool.tags.join(' ') : String(tool.tags || '');
+        return [tool.name, tool.description, tool.categoryLabel, featureText, tagText]
+          .filter(Boolean)
+          .join(' ')
+          .toLowerCase();
+      });
+
+      const hasMatch = (keyword: string) => {
+        if (keyword === '전체') return true;
+        const expanded = [keyword, ...(KEYWORD_SYNONYMS[keyword] || [])].map(k => k.toLowerCase());
+        return prepared.some(hay => expanded.some(kw => hay.includes(kw)));
+      };
+
+      const filtered = legacy.filter(k => hasMatch(k));
+      // 최소한 '전체'는 항상 포함
+      return filtered.length > 0 ? Array.from(new Set(['전체', ...filtered.filter(k => k !== '전체')])) : ['전체'];
+    })();
+
+    setKeywords(available);
+  }, [activeTab, baseTools]);
 
   // 간단 캐시: 탭/가격/정렬 조합 → 데이터
   const listCacheRef = useRef<Record<string, AITool[]>>({});
@@ -230,8 +308,16 @@ const FeatureListPage: React.FC = () => {
 
     // 1) 키워드 필터
     if (selected.length > 0) {
-      const normalizedSelected = selected.map(k => k.toLowerCase());
-      list = list.filter(item => normalizedSelected.some(kw => item.haystack.includes(kw)));
+      const normalizedSelected = selected
+        .flatMap(k => {
+          const synonyms = KEYWORD_SYNONYMS[k] || [];
+          return [k, ...synonyms];
+        })
+        .map(k => k.toLowerCase());
+
+      list = list.filter(item =>
+        normalizedSelected.some(kw => item.haystack.includes(kw))
+      );
     }
 
     // 2) 가격 필터
@@ -253,7 +339,9 @@ const FeatureListPage: React.FC = () => {
       const next = prev.includes(keyword)
         ? prev.filter(k => k !== keyword)
         : [...prev.filter(k => k !== '전체'), keyword];
-      return next.length === 0 ? ['전체'] : next.filter(k => k !== '전체');
+      // 현재 키워드가 가용 목록에 없는 경우 선택 불가 처리
+      const validNext = next.filter(k => keywords.includes(k));
+      return validNext.length === 0 ? ['전체'] : validNext.filter(k => k !== '전체');
     });
   };
 
@@ -265,7 +353,17 @@ const FeatureListPage: React.FC = () => {
     // 탭 변경 시 키워드 초기화
     setActiveKeywords(['전체']);
     // URL 파라미터 업데이트
-    setSearchParams({ tab });
+    const tabToKo: Record<string, string> = {
+      chatbot: '챗봇',
+      writing: '텍스트',
+      image: '이미지',
+      video: '비디오',
+      audio: '오디오/음악',
+      code: '코드',
+      productivity: '생산성',
+      '3d': '3D'
+    };
+    setSearchParams({ category: tabToKo[tab] || '챗봇' });
   };
 
   // BEST 1,2,3는 상위 3개

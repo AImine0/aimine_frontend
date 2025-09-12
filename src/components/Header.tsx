@@ -137,22 +137,58 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
             <nav className="hidden md:flex items-center space-x-6 ml-8">
               <Link 
                 to="/features" 
-                className={`px-3 py-2 text-sm font-semibold transition-colors hover:text-[#7E50D1]`}
-                style={{ color: location.pathname.startsWith('/features') ? '#7E50D1' : '#202020' }}
+                className={`px-3 py-2 text-sm font-semibold transition-colors`}
+                style={{ 
+                  color: location.pathname.startsWith('/features') ? '#7E50D1' : '#202020' 
+                }}
+                onMouseEnter={(e) => {
+                  if (!location.pathname.startsWith('/features')) {
+                    e.currentTarget.style.color = '#A987E8';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!location.pathname.startsWith('/features')) {
+                    e.currentTarget.style.color = '#202020';
+                  }
+                }}
               >
                 기능별
               </Link>
               <Link 
                 to="/role" 
-                className={`px-3 py-2 text-sm font-semibold transition-colors hover:text-[#7E50D1]`}
-                style={{ color: location.pathname === '/role' ? '#7E50D1' : '#202020' }}
+                className={`px-3 py-2 text-sm font-semibold transition-colors`}
+                style={{ 
+                  color: location.pathname === '/role' ? '#7E50D1' : '#202020' 
+                }}
+                onMouseEnter={(e) => {
+                  if (location.pathname !== '/role') {
+                    e.currentTarget.style.color = '#A987E8';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (location.pathname !== '/role') {
+                    e.currentTarget.style.color = '#202020';
+                  }
+                }}
               >
                 직업별
               </Link>
               <Link 
                 to="/prompt" 
-                className={`px-3 py-2 text-sm font-semibold transition-colors hover:text-[#7E50D1]`}
-                style={{ color: location.pathname === '/prompt' ? '#7E50D1' : '#202020' }}
+                className={`px-3 py-2 text-sm font-semibold transition-colors`}
+                style={{ 
+                  color: location.pathname === '/prompt' ? '#7E50D1' : '#202020' 
+                }}
+                onMouseEnter={(e) => {
+                  if (location.pathname !== '/prompt') {
+                    e.currentTarget.style.color = '#A987E8';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (location.pathname !== '/prompt') {
+                    e.currentTarget.style.color = '#202020';
+                  }
+                }}
               >
                 프롬프트
               </Link>
@@ -262,8 +298,14 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
               /* 로그인 안된 상태 */
               <button
                 onClick={handleLogin}
-                className="px-4 py-2 text-white rounded-lg text-sm font-medium"
+                className="px-4 py-2 text-white rounded-lg text-sm font-medium transition-colors"
                 style={{ fontFamily: 'Pretendard', backgroundColor: '#7E50D1' }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#6238AE';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = '#7E50D1';
+                }}
               >
                 로그인
               </button>
@@ -288,17 +330,63 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
           <div className="px-4 py-4 space-y-2">
             <Link
               to="/features"
-              className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-purple-600"
+              className="block px-3 py-2 text-base font-medium transition-colors"
+              style={{ 
+                color: location.pathname.startsWith('/features') ? '#7E50D1' : '#374151' 
+              }}
               onClick={() => setShowMobileMenu(false)}
+              onMouseEnter={(e) => {
+                if (!location.pathname.startsWith('/features')) {
+                  e.currentTarget.style.color = '#A987E8';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!location.pathname.startsWith('/features')) {
+                  e.currentTarget.style.color = '#374151';
+                }
+              }}
             >
               기능별
             </Link>
             <Link
               to="/role"
-              className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-purple-600"
+              className="block px-3 py-2 text-base font-medium transition-colors"
+              style={{ 
+                color: location.pathname === '/role' ? '#7E50D1' : '#374151' 
+              }}
               onClick={() => setShowMobileMenu(false)}
+              onMouseEnter={(e) => {
+                if (location.pathname !== '/role') {
+                  e.currentTarget.style.color = '#A987E8';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (location.pathname !== '/role') {
+                  e.currentTarget.style.color = '#374151';
+                }
+              }}
             >
               직업별
+            </Link>
+            <Link
+              to="/prompt"
+              className="block px-3 py-2 text-base font-medium transition-colors"
+              style={{ 
+                color: location.pathname === '/prompt' ? '#7E50D1' : '#374151' 
+              }}
+              onClick={() => setShowMobileMenu(false)}
+              onMouseEnter={(e) => {
+                if (location.pathname !== '/prompt') {
+                  e.currentTarget.style.color = '#A987E8';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (location.pathname !== '/prompt') {
+                  e.currentTarget.style.color = '#374151';
+                }
+              }}
+            >
+              프롬프트
             </Link>
             {isAuthenticated && (
               <Link

@@ -40,7 +40,6 @@ const RoleListPage: React.FC = () => {
   const [jobSituations, setJobSituations] = useState<JobSituation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [expandedSituations, setExpandedSituations] = useState<Set<number>>(new Set());
   const [situationSlides, setSituationSlides] = useState<Record<number, number>>({});
   const activeRoleName = roleTabs.find(tab => tab.id === activeRole)?.name || '';
 
@@ -517,7 +516,7 @@ const RoleListPage: React.FC = () => {
                                   pointerEvents: 'auto'
                                 }}
                                 aria-label="이전"
-                                onMouseEnter={(e) => { e.currentTarget.style.background = '#E9DFFB'; }}
+                                onMouseEnter={(e) => { e.currentTarget.style.background = '#DBCBF9'; }}
                                 onMouseLeave={(e) => { e.currentTarget.style.background = '#E9DFFB'; }}
                               >
                                 <svg width="10" height="16" viewBox="0 0 10 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -545,7 +544,7 @@ const RoleListPage: React.FC = () => {
                                   width: 40,
                                   height: 40,
                                   borderRadius: '50%',
-                                  background: '#DBCBF9',
+                                  background: '#E9DFFB',
                                   display: 'flex',
                                   alignItems: 'center',
                                   justifyContent: 'center',
@@ -556,6 +555,8 @@ const RoleListPage: React.FC = () => {
                                   pointerEvents: 'auto'
                                 }}
                                 aria-label="다음"
+                                onMouseEnter={(e) => { e.currentTarget.style.background = '#DBCBF9'; }}
+                                onMouseLeave={(e) => { e.currentTarget.style.background = '#E9DFFB'; }}
                               >
                                 <img src="/images/Icon/Arrow/Right36.svg" alt="다음" width={36} height={36} />
                               </button>
