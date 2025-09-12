@@ -446,8 +446,18 @@ const RoleListPage: React.FC = () => {
               const showArrows = tools.length > 3;
               const currentSlide = situationSlides[situationData.id] || 0;
               const toolsPerSlide = 3;
-              const totalSlides = Math.ceil(tools.length / toolsPerSlide);
-              const startIndex = currentSlide * toolsPerSlide;
+              // 슬라이드 시작 인덱스 계산: 3개씩 끊되, 나머지가 있으면 마지막 슬라이드는 겹쳐서 항상 3개 표시
+              const fullGroups = Math.floor(tools.length / toolsPerSlide);
+              const hasRemainder = tools.length % toolsPerSlide !== 0;
+              const slideStartIndices: number[] = [];
+              for (let i = 0; i < fullGroups; i++) {
+                slideStartIndices.push(i * toolsPerSlide);
+              }
+              if (hasRemainder && tools.length >= toolsPerSlide) {
+                slideStartIndices.push(Math.max(0, tools.length - toolsPerSlide));
+              }
+              const totalSlides = slideStartIndices.length || 1;
+              const startIndex = slideStartIndices[Math.min(currentSlide, totalSlides - 1)] || 0;
               const visibleTools = tools.slice(startIndex, startIndex + toolsPerSlide);
               
               return (
