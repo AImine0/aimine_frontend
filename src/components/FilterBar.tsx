@@ -147,12 +147,21 @@ const FilterBar: React.FC<FilterBarProps> = ({
                 <button
                   onClick={() => onFilterChange(filter.key)}
                   disabled={!hasCount && !loading}
-                  className={`text-sm transition-all duration-200 hover:underline disabled:opacity-40 disabled:cursor-not-allowed ${
-                    isActive ? 'font-semibold' : 'font-normal'
-                  }`}
+                  className={`text-sm transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed`}
                   style={{
-                    color: isActive ? '#7E50D1' : '#6F6E6E',
+                    color: isActive ? '#7248BD' : '#6F6E6E',
+                    fontWeight: isActive ? 600 : 400,
                     fontFamily: 'Pretendard'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isActive && !e.currentTarget.disabled) {
+                      e.currentTarget.style.color = '#A987E8';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isActive && !e.currentTarget.disabled) {
+                      e.currentTarget.style.color = '#6F6E6E';
+                    }
                   }}
                 >
                   {filter.label}

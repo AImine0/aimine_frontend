@@ -137,7 +137,7 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
             <nav className="hidden md:flex items-center space-x-6 ml-8">
               <Link 
                 to="/features" 
-                className={`px-3 py-2 text-sm font-semibold transition-colors`}
+                className={`px-3 py-2 text-base font-semibold transition-colors`}
                 style={{ 
                   color: location.pathname.startsWith('/features') ? '#7E50D1' : '#202020' 
                 }}
@@ -156,7 +156,7 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
               </Link>
               <Link 
                 to="/role" 
-                className={`px-3 py-2 text-sm font-semibold transition-colors`}
+                className={`px-3 py-2 text-base font-semibold transition-colors`}
                 style={{ 
                   color: location.pathname === '/role' ? '#7E50D1' : '#202020' 
                 }}
@@ -175,7 +175,7 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
               </Link>
               <Link 
                 to="/prompt" 
-                className={`px-3 py-2 text-sm font-semibold transition-colors`}
+                className={`px-3 py-2 text-base font-semibold transition-colors`}
                 style={{ 
                   color: location.pathname === '/prompt' ? '#7E50D1' : '#202020' 
                 }}
@@ -413,16 +413,28 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
                 <button
                   key={tab.id}
                   onClick={() => onTabChange(tab.id)}
-                  className={`py-4 px-1 font-semibold text-base whitespace-nowrap transition-colors ${
+                  className={`py-4 px-1 text-sm whitespace-nowrap transition-colors ${
                     activeTab === tab.id
-                      ? 'border-b-2 border-purple-600 text-purple-700 bg-white rounded-t-lg'
-                      : 'text-gray-500 hover:text-purple-700'
+                      ? 'border-b-2 bg-white rounded-t-lg'
+                      : 'hover:border-b-2 hover:border-transparent'
                   }`}
                   style={{ 
-                    color: activeTab === tab.id ? '#7E50D1' : '#6A7685',
+                    color: activeTab === tab.id ? '#7E50D1' : '#6F6E6E',
+                    fontWeight: activeTab === tab.id ? 700 : 600,
+                    borderBottomColor: activeTab === tab.id ? '#7E50D1' : 'transparent',
                     borderBottomWidth: activeTab === tab.id ? '2px' : '0',
                     background: activeTab === tab.id ? '#fff' : 'transparent',
                     fontFamily: 'Pretendard'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (activeTab !== tab.id) {
+                      e.currentTarget.style.color = '#A987E8';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (activeTab !== tab.id) {
+                      e.currentTarget.style.color = '#6F6E6E';
+                    }
                   }}
                 >
                   <span>{tab.name}</span>

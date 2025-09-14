@@ -219,6 +219,16 @@ const KeywordFilter: React.FC<KeywordFilterProps> = ({
                 key={typeof item === 'string' ? item : item.id}
                 onClick={() => onKeywordToggle(keyword)}
                 className={`px-4 py-2 rounded-full transition-all duration-200 flex items-center gap-1.5 hover:shadow-sm`}
+                onMouseEnter={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.backgroundColor = '#E9DFFB';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.backgroundColor = '#F2EEFB';
+                  }
+                }}
                 style={{ 
                   fontSize: '14px',
                   backgroundColor: isActive ? '#ffffff' : '#F2EEFB',
