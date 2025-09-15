@@ -258,13 +258,13 @@ const RoleListPage: React.FC = () => {
                         const regex = new RegExp(`(${aiNames.map(n => n.replace(/([.*+?^=!:${}()|[\]\/\\])/g, "\\$1")).join('|')}|[.,])`, 'g');
                         return combos[comboIdx].description.split(regex).map((part, i) => {
                           if (aiNames.includes(part)) {
-                            return <span key={i} style={{ color: '#7E50D1', fontWeight: 500, fontSize: 14, fontFamily: 'Pretendard' }}>{part}</span>;
+                            return <span key={`ai-name-${i}`} style={{ color: '#7E50D1', fontWeight: 500, fontSize: 14, fontFamily: 'Pretendard' }}>{part}</span>;
                           } else if (part === ',' || part === '.') {
-                            return <><span key={i} style={{ color: '#202020', fontWeight: 500, fontSize: 14, fontFamily: 'Pretendard' }}>{part}</span><br key={i} /></>;
+                            return <><span key={`punct-${i}`} style={{ color: '#202020', fontWeight: 500, fontSize: 14, fontFamily: 'Pretendard' }}>{part}</span><br key={`br-${i}`} /></>;
                           } else if (part.trim() === '') {
                             return null;
                           } else {
-                            return <span key={i} style={{ color: '#202020', fontWeight: 500, fontSize: 14, fontFamily: 'Pretendard' }}>{part}</span>;
+                            return <span key={`text-${i}`} style={{ color: '#202020', fontWeight: 500, fontSize: 14, fontFamily: 'Pretendard' }}>{part}</span>;
                           }
                         });
                       })()}
@@ -297,11 +297,11 @@ const RoleListPage: React.FC = () => {
                               />
                             )}
                             {centers.map((cx, idx) => (
-                              <circle key={idx} cx={cx} cy={dotSize / 2} r={dotSize / 2} fill="#7E50D1" />
+                              <circle key={`combo-circle-${comboIdx}-${idx}`} cx={cx} cy={dotSize / 2} r={dotSize / 2} fill="#7E50D1" />
                             ))}
                           </svg>
                           <div className="flex justify-end" style={{ gap: `${gap}px`, position: 'relative', zIndex: 1 }}>
-                            {combos[comboIdx].aiList.map((ai) => {
+                            {combos[comboIdx].aiList.map((ai, aiIdx) => {
                               const categoryMap: Record<string, string> = {
                                 'ChatGPT': 'chat', 'Claude': 'chat', 'Gemini': 'chat',
                                 'DALL-E': 'image', 'Midjourney': 'image', 'Stable Diffusion': 'image', 'PromptoMANIA': 'product', 'Leonardo.ai': 'image', 'Adobe Firefly': 'image',
@@ -317,7 +317,7 @@ const RoleListPage: React.FC = () => {
                               const imageMapping = getImageMapping(ai, category);
                               
                               return (
-                                <div key={ai} className="flex flex-col items-center" style={{ width: flexItemWidth }}>
+                                <div key={`combo-ai-${comboIdx}-${aiIdx}-${ai}`} className="flex flex-col items-center" style={{ width: flexItemWidth }}>
                                   <div style={{ height: dotSize + 8 }} />
                                   <span style={{ color: '#7E50D1', fontWeight: 600, fontSize: 14, fontFamily: 'Pretendard', marginBottom: 16 }}>{ai}</span>
                                   <div className="flex items-center justify-center bg-white" style={{ width: 160, height: 160, borderRadius: 40, border: '0.89px solid #DBCBF9' }}>
@@ -385,7 +385,7 @@ const RoleListPage: React.FC = () => {
                 현재 이용 가능한 직업 분야:
                 <div className="mt-2 flex flex-wrap justify-center gap-2">
                   {[...new Set(jobSituations.map(s => s.category))].map(cat => (
-                    <span key={cat} className="px-2 py-1 bg-gray-200 text-gray-700 rounded-full text-xs">
+                    <span key={`available-category-${cat}`} className="px-2 py-1 bg-gray-200 text-gray-700 rounded-full text-xs">
                       {cat}
                     </span>
                   ))}
@@ -460,7 +460,7 @@ const RoleListPage: React.FC = () => {
               const visibleTools = tools.slice(startIndex, startIndex + toolsPerSlide);
               
               return (
-                <div key={situationData.id || situationIdx} className="mb-16">
+                <div key={`situation-${situationData.category}-${situationData.id}-${situationIdx}`} className="mb-16">
                   <div className="flex items-center mb-2" style={{ justifyContent: 'flex-start' }}>
                     <span className="font-semibold" style={{ fontFamily: 'Pretendard', color: '#000000', fontSize: 24, fontWeight: 600 }}>
                       {title}
@@ -481,9 +481,11 @@ const RoleListPage: React.FC = () => {
                   ) : (
                     <div className="grid grid-cols-3 gap-6 w-full">
                       {visibleTools.map((tool, idx) => {
+                        const startIdx = currentSlide * toolsPerSlide;
+                        const globalToolIdx = startIdx + idx;
                         const isLast = showArrows && idx === visibleTools.length - 1;
                         return (
-                          <div key={tool.id || idx} className="relative h-full">
+                          <div key={`situation-${situationData.id}-tool-${tool.id}-${globalToolIdx}`} className="relative h-full">
                             <ToolCard tool={tool} className="h-full" />
                             {/* 왼쪽(이전) 화살표 */}
                             {showArrows && idx === 0 && currentSlide > 0 && (
@@ -566,7 +568,7 @@ const RoleListPage: React.FC = () => {
                       })}
                       {/* 3개 미만일 때 빈 칸 채우기 */}
                       {Array.from({ length: 3 - visibleTools.length }).map((_, i) => (
-                        <div key={`empty-${i}`} />
+                        <div key={`situation-${situationData.id}-empty-${currentSlide}-${i}`} />
                       ))}
                     </div>
                   )}
