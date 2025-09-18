@@ -17,7 +17,6 @@ const ToolDetailPage: React.FC = () => {
   const [bookmarkLoading, setBookmarkLoading] = useState(false);
   
   // 리뷰 작성 상태
-  const [reviewFormVisible, setReviewFormVisible] = useState(false);
   const [reviewRating, setReviewRating] = useState(5);
   const [reviewContent, setReviewContent] = useState('');
   const [reviewSubmitting, setReviewSubmitting] = useState(false);
@@ -126,7 +125,6 @@ const ToolDetailPage: React.FC = () => {
       setReviews(updatedReviews);
       
       // 폼 초기화
-      setReviewFormVisible(false);
       setReviewContent('');
       setReviewRating(5);
       
@@ -159,13 +157,12 @@ const ToolDetailPage: React.FC = () => {
 
   // 탭 상태 (가격 정보 / 서비스 리뷰)
   const [activeTabKey, setActiveTabKey] = useState<'pricing' | 'reviews'>('pricing');
-  const handleTabClick = (key: 'pricing' | 'reviews', e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    // 스크롤 방지
-    e.nativeEvent.preventDefault();
-    e.nativeEvent.stopPropagation();
+  const handleTabClick = (key: 'pricing' | 'reviews') => {
     setActiveTabKey(key);
+    const el = document.getElementById(key);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
 
   const formatRating = (value?: number | null) =>
@@ -357,14 +354,14 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
         <div className="mb-12" style={{ borderBottomWidth: '2px', borderBottomColor: '#ECECEC', borderBottomStyle: 'solid' }}>
           <nav className="flex gap-8">
             <button
-              onClick={(e) => handleTabClick('pricing', e)}
+              onClick={() => handleTabClick('pricing')}
               className="pb-4 text-base"
               style={{ color: activeTabKey === 'pricing' ? '#202020' : '#8C8C8C', fontWeight: 600, borderBottom: activeTabKey === 'pricing' ? '2px solid #202020' : '2px solid transparent', marginBottom: '-2px' }}
             >
               가격 정보
             </button>
             <button
-              onClick={(e) => handleTabClick('reviews', e)}
+              onClick={() => handleTabClick('reviews')}
               className="pb-4 text-base"
               style={{ color: activeTabKey === 'reviews' ? '#202020' : '#8C8C8C', fontWeight: 600, borderBottom: activeTabKey === 'reviews' ? '2px solid #202020' : '2px solid transparent', marginBottom: '-2px' }}
             >
@@ -373,9 +370,9 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
           </nav>
         </div>
         
-        {/* 가격 정보 섹션 */}
-        {activeTabKey === 'pricing' && (
-          <section id="pricing" className="mb-16">
+        {/* 가격 정보 섹션: 리뷰 탭일 때는 숨김 */}
+        {activeTabKey !== 'reviews' && (
+        <section id="pricing" className="mb-16">
             <div className="flex items-center justify-between mb-0" style={{ marginBottom: '1px' }}>
               <h2 className="text-2xl" style={{ color: '#000000', fontWeight: 700, fontSize: '18px' }}>가격 정보</h2>
               <a 
@@ -414,101 +411,70 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
           </section>
         )}
         
-        {/* 서비스 리뷰 섹션 */}
-        {activeTabKey === 'reviews' && (
-          <section id="reviews" className="mb-16">
-            <h2 className="text-2xl mb-8" style={{ color: '#000000', fontWeight: 700, fontSize: '18px' }}>서비스 리뷰</h2>
-            
-            <div className="bg-white rounded-lg border border-gray-200 p-8">
-              {/* 리뷰 헤더 */}
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-4">
-                  <h3 className="text-xl font-semibold">{toolDetail.serviceName}</h3>
-                  <div className="flex items-center gap-2">
-                    <div className="flex text-yellow-400">
-                      {Array.from({ length: 5 }, (_, i) => (
-                        <span key={i} className={i < Math.round(reviews?.average_rating || 0) ? "text-yellow-400" : "text-gray-300"}>
-                          ★
-                        </span>
-                      ))}
-                    </div>
+        {/* 서비스 리뷰 섹션: 항상 표시 (리뷰 탭에서는 가격 섹션만 숨김) */}
+        <section id="reviews" className="mb-16">
+            <h2 className="text-sm mb-2" style={{ color: '#4B5563', fontWeight: 600 }}>서비스 리뷰</h2>
+
+            <div className="bg-white">
+              {/* 리뷰 헤더: 서비스명 + 보라 별 + 평점 */}
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <h3 className="text-2xl font-semibold">{toolDetail.serviceName}</h3>
+                  <div className="flex items-center gap-1">
+                    <span className="text-purple-600">★</span>
                     <span className="font-bold text-lg">{(reviews?.average_rating || 0).toFixed(1)}</span>
-                    <span className="text-gray-500">({reviews?.total_count || 0}개 리뷰)</span>
                   </div>
                 </div>
-                
-                <button
-                  onClick={() => setReviewFormVisible(!reviewFormVisible)}
-                  className="px-4 py-2 border border-purple-600 text-purple-600 rounded-lg hover:bg-purple-50 font-medium"
-                >
-                  리뷰 작성
-                </button>
               </div>
               
               {/* 리뷰 작성 폼 */}
-              {reviewFormVisible && (
-                <form onSubmit={handleReviewSubmit} className="border border-gray-200 rounded-lg p-4 mb-6">
-                  <div className="mb-3">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">평점</label>
-                    <div className="flex gap-1">
-                      {[1, 2, 3, 4, 5].map(star => (
-                        <button
-                          key={star}
-                          type="button"
-                          onClick={() => setReviewRating(star)}
-                          className={`text-2xl ${star <= reviewRating ? 'text-yellow-400' : 'text-gray-300'}`}
-                        >
-                          ★
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">리뷰 내용</label>
-                    <textarea
-                      value={reviewContent}
-                      onChange={(e) => setReviewContent(e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
-                      rows={4}
-                      placeholder="이 서비스에 대한 솔직한 후기를 작성해주세요..."
-                      required
-                    />
-                  </div>
-                  
-                  <div className="flex gap-2">
+              <form onSubmit={handleReviewSubmit} className="border border-gray-200 rounded-2xl p-4 mb-6">
+                {/* 상단 좌측: 회색 별점 (선택 시 보라색) */}
+                <div className="flex items-center gap-1 mb-2">
+                  {[1, 2, 3, 4, 5].map(star => (
                     <button
-                      type="submit"
-                      disabled={reviewSubmitting || !reviewContent.trim()}
-                      className="px-4 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {reviewSubmitting ? '등록 중...' : '등록'}
-                    </button>
-                    <button
+                      key={star}
                       type="button"
-                      onClick={() => setReviewFormVisible(false)}
-                      className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                      onClick={() => setReviewRating(star)}
+                      className={`text-xl ${star <= reviewRating ? 'text-purple-600' : 'text-gray-300'}`}
+                      aria-label={`${star}점`}
                     >
-                      취소
+                      ★
                     </button>
-                  </div>
-                </form>
-              )}
+                  ))}
+                </div>
+                {/* 텍스트 영역 + 우측 하단 등록 버튼 */}
+                <div className="relative">
+                  <textarea
+                    value={reviewContent}
+                    onChange={(e) => setReviewContent(e.target.value)}
+                    className="w-full p-0 pt-1 pr-20 border-0 bg-transparent outline-none focus:ring-0 resize-none placeholder:text-gray-400"
+                    rows={3}
+                    placeholder="이 서비스는 어땠나요?"
+                    required
+                  />
+                  <button
+                    type="submit"
+                    disabled={reviewSubmitting || !reviewContent.trim()}
+                    className="absolute right-0 bottom-0 translate-y-1 px-3 py-1.5 bg-purple-600 text-white rounded-md text-sm font-medium hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {reviewSubmitting ? '등록 중...' : '등록'}
+                  </button>
+                </div>
+              </form>
               
               {/* 리뷰 목록 */}
               <div className="space-y-6">
-                <h4 className="font-medium">
-                  {serviceReviews.length > 0 ? `${serviceReviews.length}개의 리뷰` : '리뷰'}
-                </h4>
+                <h4 className="font-medium">{serviceReviews.length > 0 ? `${serviceReviews.length}개의 리뷰` : '리뷰'}</h4>
                 
                 {serviceReviews.length > 0 ? (
                   serviceReviews.map((review) => (
                     <div key={review.id} className="border-b border-gray-100 pb-4 last:border-b-0">
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-3">
-                          <div className="flex text-yellow-400">
+                          <div className="flex text-purple-600">
                             {Array.from({ length: 5 }, (_, i) => (
-                              <span key={i} className={i < Math.round(review.rating) ? "text-yellow-400" : "text-gray-300"}>
+                              <span key={i} className={i < Math.round(review.rating) ? "text-purple-600" : "text-gray-300"}>
                                 ★
                               </span>
                             ))}
@@ -539,7 +505,6 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
               </div>
             </div>
           </section>
-        )}
         </div>
       </main>
     </div>
