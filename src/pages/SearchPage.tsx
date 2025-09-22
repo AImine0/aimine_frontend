@@ -183,94 +183,83 @@ const SearchPage: React.FC = () => {
     <div className="min-h-screen bg-white">
       <Header tabs={[]} activeTab="" onTabChange={() => {}} />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Breadcrumb items={breadcrumbItems} />
+        {/* 검색어가 없을 때만 브레드크럼 표시 */}
+        {!searchQuery && <Breadcrumb items={breadcrumbItems} />}
 
-        {/* 검색 헤더 */}
-        <div className="mb-8">
-          <h1 className="font-semibold mb-4" style={{ color: '#000000', fontSize: '32px', fontFamily: 'Pretendard' }}>
-            AI 서비스 검색
-          </h1>
-
-          {/* 검색바 */}
-          <div className="flex gap-4 mb-6">
-            <div className="flex-1">
-              <div className="relative">
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter') {
-                      handleNewSearch(searchQuery);
-                    }
-                  }}
-                  placeholder="찾고 있는 AI 서비스를 입력하세요..."
-                  className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-lg"
-                  style={{ fontFamily: 'Pretendard' }}
-                />
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                </div>
-              </div>
-            </div>
-            
-            <button
-              onClick={() => handleNewSearch(searchQuery)}
-              className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium"
-              style={{ fontFamily: 'Pretendard' }}
+        {/* 검색 결과 제목 */}
+        {searchQuery && (
+          <div className="mb-8">
+            <h1 
+              className="font-semibold" 
+              style={{ 
+                color: '#202020', 
+                fontWeight: 600, 
+                fontSize: '24px', 
+                fontFamily: 'Pretendard' 
+              }}
             >
-              검색
-            </button>
-          </div>
-
-          {/* 카테고리 필터 */}
-          <div className="flex flex-wrap gap-2 mb-4">
-            {categoryOptions.map((category) => (
-              <button
-                key={category.key}
-                onClick={() => handleCategoryFilter(category.key)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                  selectedCategory === category.key
-                    ? 'bg-purple-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-                style={{ fontFamily: 'Pretendard' }}
-              >
-                {category.name}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* 추천 키워드 */}
-        {suggestedKeywords.length > 0 && (
-          <div className="mb-6 p-4 bg-purple-50 rounded-lg border border-purple-200">
-            <h3 className="text-sm font-medium text-purple-800 mb-2">추천 키워드</h3>
-            <div className="flex flex-wrap gap-2">
-              {suggestedKeywords.slice(0, 8).map((keyword, index) => (
-                <button
-                  key={index}
-                  onClick={() => handleNewSearch(keyword)}
-                  className="px-3 py-1 bg-white text-purple-700 rounded-full text-sm font-medium hover:bg-purple-100 transition-colors border border-purple-200"
-                  style={{ fontFamily: 'Pretendard' }}
-                >
-                  {keyword}
-                </button>
-              ))}
-            </div>
+              '{searchQuery}'에 대한 검색 결과
+            </h1>
           </div>
         )}
 
-        {/* 에러 메시지 */}
-        {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-            <div className="flex items-center">
-              <svg className="h-5 w-5 text-red-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-              </svg>
-              <p className="text-red-700 text-sm">{error}</p>
+        {/* 검색 헤더 - 검색어가 없을 때만 표시 */}
+        {!searchQuery && (
+          <div className="mb-8">
+            <h1 className="font-semibold mb-4" style={{ color: '#000000', fontSize: '32px', fontFamily: 'Pretendard' }}>
+              AI 서비스 검색
+            </h1>
+
+            {/* 검색바 */}
+            <div className="flex gap-4 mb-6">
+              <div className="flex-1">
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        handleNewSearch(searchQuery);
+                      }
+                    }}
+                    placeholder="찾고 있는 AI 서비스를 입력하세요..."
+                    className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-lg"
+                    style={{ fontFamily: 'Pretendard' }}
+                  />
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              
+              <button
+                onClick={() => handleNewSearch(searchQuery)}
+                className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium"
+                style={{ fontFamily: 'Pretendard' }}
+              >
+                검색
+              </button>
+            </div>
+
+            {/* 카테고리 필터 */}
+            <div className="flex flex-wrap gap-2 mb-4">
+              {categoryOptions.map((category) => (
+                <button
+                  key={category.key}
+                  onClick={() => handleCategoryFilter(category.key)}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                    selectedCategory === category.key
+                      ? 'bg-purple-600 text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                  style={{ fontFamily: 'Pretendard' }}
+                >
+                  {category.name}
+                </button>
+              ))}
             </div>
           </div>
         )}
@@ -278,18 +267,17 @@ const SearchPage: React.FC = () => {
         {/* 검색 결과가 있는 경우 */}
         {searchQuery && (
           <>
-            {/* 필터바 */}
-            <FilterBar
-              totalCount={counts.total}
-              freeCount={counts.free}
-              paidCount={counts.paid}
-              freemiumCount={counts.freemium}
-              activeFilter={activeFilter}
-              onFilterChange={handleFilterChange}
-              sortType={sortType}
-              onSortChange={handleSortChange}
-              loading={loading}
-            />
+            {/* 에러 메시지 */}
+            {error && (
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <div className="flex items-center">
+                  <svg className="h-5 w-5 text-red-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  </svg>
+                  <p className="text-red-700 text-sm">{error}</p>
+                </div>
+              </div>
+            )}
 
             {/* 로딩 상태 */}
             {loading && (

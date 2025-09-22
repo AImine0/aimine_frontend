@@ -343,11 +343,11 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
             {/* 주요 기능 */}
             <div className="mb-8">
               <h3 className="mb-3" style={{ color: '#202020', fontWeight: 700 }}>주요 기능</h3>
-              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2">
+              <div className="flex flex-wrap gap-2">
                 {toolDetail.keywords.map((keyword, index) => (
                   <span
                     key={index}
-                    className="block w-full text-center px-3 py-1 rounded-full text-sm"
+                    className="inline-block text-center px-3 py-1 rounded-full text-sm whitespace-nowrap"
                     style={{ backgroundColor: '#F2EEFB', color: '#512E8F', fontWeight: 700 }}
                   >
                     {keyword}
