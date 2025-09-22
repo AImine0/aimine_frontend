@@ -31,6 +31,7 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
   const [searchSuggestions, setSearchSuggestions] = useState<string[]>([]);
   const [showSearchSuggestions, setShowSearchSuggestions] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showRecommendedKeywords, setShowRecommendedKeywords] = useState(false);
   
   // Refs
   const searchRef = useRef<HTMLDivElement>(null);
@@ -44,6 +45,7 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
       }
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
         setShowSearchSuggestions(false);
+        setShowRecommendedKeywords(false);
       }
     };
 
@@ -58,16 +60,20 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
         try {
           const response = await apiService.search({ q: searchQuery, size: 5 });
           setSearchSuggestions(response.suggested_keywords || []);
+          setShowRecommendedKeywords(false);
         } catch (error) {
           console.error('검색 자동완성 실패:', error);
         }
       } else {
         setSearchSuggestions([]);
+        if (isSearchFocused) {
+          setShowRecommendedKeywords(true);
+        }
       }
     }, 300);
 
     return () => clearTimeout(debounceTimer);
-  }, [searchQuery]);
+  }, [searchQuery, isSearchFocused]);
 
   // 검색 실행
   const handleSearch = (query: string = searchQuery) => {
@@ -75,6 +81,7 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
       navigate(`/search?q=${encodeURIComponent(query.trim())}`);
       setSearchQuery('');
       setShowSearchSuggestions(false);
+      setShowRecommendedKeywords(false);
       setIsSearchFocused(false);
     }
   };
@@ -114,9 +121,22 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
       handleSearch();
     } else if (e.key === 'Escape') {
       setShowSearchSuggestions(false);
+      setShowRecommendedKeywords(false);
       setIsSearchFocused(false);
     }
   };
+
+  // 추천 검색어 데이터
+  const recommendedKeywords = [
+    '챗봇',
+    'ChatGPT', 
+    '이미지 생성',
+    '콘텐츠 작성',
+    '업무 자동화',
+    '교육/연구',
+    '기획/마케팅',
+    'AI 코드 어시스턴트'
+  ];
 
   // 현재 페이지 확인
   const isSearchPage = location.pathname === '/search';
@@ -201,7 +221,7 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
           {/* 오른쪽: 검색 + 사용자 메뉴 */}
           <div className="flex items-center gap-4">
             {/* 데스크톱 검색바 (로그인 버튼 왼쪽) */}
-            <div className="hidden md:flex w-72" ref={searchRef}>
+            <div className="hidden md:flex" style={{ width: '359px' }} ref={searchRef}>
               <div className="relative w-full">
                 <div className="relative">
                   <input
@@ -210,12 +230,20 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onFocus={() => {
                       setIsSearchFocused(true);
-                      setShowSearchSuggestions(true);
+                      if (searchQuery.length > 1) {
+                        setShowSearchSuggestions(true);
+                      } else {
+                        setShowRecommendedKeywords(true);
+                      }
                     }}
                     onKeyPress={handleKeyPress}
                     placeholder="원하는 AI 서비스를 검색해보세요."
-                    className="w-full pl-4 pr-4 py-2 border rounded-full focus:outline-none focus:ring-0 focus:border-[#BCBCBC] text-sm placeholder:font-normal placeholder-[#9B9B9B]"
-                    style={{ fontFamily: 'Pretendard', borderColor: '#BCBCBC' }}
+                    className="w-full pl-4 pr-4 py-2 border focus:outline-none focus:ring-0 focus:border-[#BCBCBC] text-sm placeholder:font-normal placeholder-[#9B9B9B]"
+                    style={{ 
+                      fontFamily: 'Pretendard', 
+                      borderColor: '#8C8C8C',
+                      borderRadius: showRecommendedKeywords || showSearchSuggestions ? '20px 20px 0 0' : '20px'
+                    }}
                   />
                   {/* 왼쪽 검색 아이콘 제거 */}
                   <button
@@ -228,7 +256,7 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
 
                 {/* 검색 자동완성 */}
                 {showSearchSuggestions && searchSuggestions.length > 0 && (
-                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-50">
+                  <div className="absolute top-full left-0 right-0 bg-white shadow-lg py-2 z-50" style={{ borderRadius: '0 0 20px 20px', border: '1px solid #8C8C8C', borderTop: 'none' }}>
                     {searchSuggestions.slice(0, 5).map((suggestion, index) => (
                       <button
                         key={index}
@@ -244,6 +272,64 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
                         </div>
                       </button>
                     ))}
+                  </div>
+                )}
+
+                {/* 추천 검색어 드롭다운 */}
+                {showRecommendedKeywords && searchQuery.length <= 1 && (
+                  <div className="absolute top-full left-0 right-0 bg-white shadow-lg py-4 z-50" style={{ marginTop: '0px', borderRadius: '0 0 20px 20px', border: '1px solid #8C8C8C', borderTop: 'none' }}>
+                    {/* 추천 검색어 제목 */}
+                    <div className="px-4 mb-3">
+                      <h3 
+                        className="text-sm font-bold"
+                        style={{ 
+                          color: '#202020', 
+                          fontWeight: 700, 
+                          fontSize: '12px',
+                          fontFamily: 'Pretendard'
+                        }}
+                      >
+                        추천 검색어
+                      </h3>
+                    </div>
+                    
+                    {/* 추천 검색어 버튼들 */}
+                    <div className="px-4 flex flex-wrap gap-2">
+                      {recommendedKeywords.map((keyword, index) => (
+                        <button
+                          key={index}
+                          onClick={() => handleSearch(keyword)}
+                          className="flex items-center gap-2 rounded-full text-xs font-medium transition-colors whitespace-nowrap"
+                          style={{
+                            backgroundColor: '#F2EEFB',
+                            borderRadius: '20px',
+                            paddingTop: '4px',
+                            paddingRight: '12px',
+                            paddingBottom: '4px',
+                            paddingLeft: '8px',
+                            color: '#202020',
+                            fontWeight: 500,
+                            fontSize: '12px',
+                            fontFamily: 'Pretendard',
+                            width: 'fit-content'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = '#E9DFFB';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = '#F2EEFB';
+                          }}
+                        >
+                          <img 
+                            src="/images/Icon/Magnifier/18/Purple.svg" 
+                            alt="검색" 
+                            width={18} 
+                            height={18} 
+                          />
+                          <span>{keyword}</span>
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
