@@ -7,7 +7,17 @@ import Breadcrumb from '../components/Breadcrumb';
 import FilterBar from '../components/FilterBar';
 import ToolCard from '../components/ToolCard';
 import { apiService } from '../services';
-import type { FilterType, AITool, SearchParams } from '../types';
+import type { FilterType, AITool } from '../types';
+
+// SearchParams 인터페이스를 직접 정의
+interface SearchApiParams {
+  q?: string;
+  category?: string;
+  pricing?: string;
+  sort?: string;
+  page?: number;
+  size?: number;
+}
 
 const SearchPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -61,7 +71,7 @@ const SearchPage: React.FC = () => {
         setLoading(true);
         setError(null);
 
-        const searchApiParams: SearchParams = {
+        const searchApiParams: SearchApiParams = {
           q: searchQuery,
           category: selectedCategory || undefined,
           pricing: activeFilter === 'all' ? undefined : activeFilter.toUpperCase(),
@@ -71,33 +81,43 @@ const SearchPage: React.FC = () => {
 
         const response = await apiService.search(searchApiParams);
         
-        // 검색 결과를 AITool 형식으로 변환
-        const tools: AITool[] = response.tools.map(tool => ({
-          id: tool.id.toString(),
-          name: tool.service_name,
-          category: selectedCategory || 'search',
-          description: tool.description,
-          features: tool.keywords || [],
-          rating: tool.overall_rating,
-          tags: tool.keywords || [],
-          url: '',
-          releaseDate: '',
-          company: 'Unknown',
-          pricing: (tool.pricing_type?.toLowerCase() || 'freemium') as 'free' | 'paid' | 'freemium',
-          featured: false,
-          categoryLabel: tool.category_name,
-          roles: [],
-          userCount: 0,
-          aiRating: tool.overall_rating,
-          logoUrl: tool.logo_url,
-          serviceImageUrl: tool.logo_url,
-          priceImageUrl: tool.logo_url,
-          searchbarLogoUrl: tool.logo_url
-        }));
+        // 백엔드 camelCase 응답에 맞게 필드명 변경
+        const tools: AITool[] = response.tools.map(tool => {
+          // 가격 타입 변환
+          const getPricingType = (pricingType: string): 'free' | 'paid' | 'freemium' => {
+            const type = pricingType?.toLowerCase();
+            if (type === 'free') return 'free';
+            if (type === 'paid') return 'paid';
+            return 'freemium';
+          };
+
+          return {
+            id: tool.id.toString(),
+            name: tool.serviceName,
+            category: selectedCategory || 'search',
+            description: tool.description,
+            features: tool.keywords || [],
+            rating: Number(tool.overallRating) || 0,
+            tags: tool.keywords || [],
+            url: '',
+            releaseDate: '',
+            company: 'Unknown',
+            pricing: getPricingType(tool.pricingType),
+            featured: false,
+            categoryLabel: tool.categoryName,
+            roles: [],
+            userCount: 0,
+            aiRating: Number(tool.overallRating) || 0,
+            logoUrl: tool.logoUrl || '/images/Logo/Logo_FINAL.svg',
+            serviceImageUrl: tool.logoUrl || '/images/Logo/Logo_FINAL.svg',
+            priceImageUrl: tool.logoUrl || '/images/Logo/Logo_FINAL.svg',
+            searchbarLogoUrl: tool.logoUrl || '/images/Logo/Logo_FINAL.svg'
+          };
+        });
 
         setSearchResults(tools);
-        setTotalCount(response.total_count);
-        setSuggestedKeywords(response.suggested_keywords || []);
+        setTotalCount(response.totalCount || 0);
+        setSuggestedKeywords(response.suggestedKeywords || []);
 
         // 가격별 카운트 계산
         const newCounts = {

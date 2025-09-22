@@ -170,18 +170,18 @@ export interface KeywordByTypeResponse {
 // ================================
 export interface SearchResponse {
   query: string;
-  total_count: number;
+  totalCount: number;      
   tools: Array<{
     id: number;
-    service_name: string;
+    serviceName: string;  
     description: string;
-    logo_url: string;
-    category_name: string;
-    pricing_type: string;
-    overall_rating: number;
+    logoUrl: string;       
+    categoryName: string;  
+    pricingType: string;   
+    overallRating: number; 
     keywords: string[];
   }>;
-  suggested_keywords: string[];
+  suggestedKeywords: string[]; 
 }
 
 // ================================

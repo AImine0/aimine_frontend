@@ -555,7 +555,7 @@ class ApiService {
       if (params.sort) queryParams.append('sort', params.sort);
       if (params.page !== undefined) queryParams.append('page', params.page.toString());
       if (params.size !== undefined) queryParams.append('size', params.size.toString());
-
+  
       const queryString = queryParams.toString();
       const endpoint = queryString ? `/search?${queryString}` : '/search';
       
@@ -564,7 +564,15 @@ class ApiService {
         method: 'GET'
       });
       
-      console.log('검색 완료, 결과 수:', response.total_count);
+      console.log('검색 완료, 결과 수:', response.totalCount);
+      console.log('백엔드 응답 구조:', {
+        query: response.query,
+        totalCount: response.totalCount,
+        toolsCount: response.tools?.length,
+        firstTool: response.tools?.[0],
+        suggestedKeywords: response.suggestedKeywords
+      });
+      
       return response;
     } catch (error) {
       console.error('검색 실패:', error);
