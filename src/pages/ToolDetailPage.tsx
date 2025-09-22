@@ -167,6 +167,14 @@ const ToolDetailPage: React.FC = () => {
 
   const formatRating = (value?: number | null) =>
     Number.isFinite(value as number) ? ((value as number) === 0 ? '0' : (value as number).toFixed(1)) : '-';
+
+  // 평점을 0.5 단위로 반올림하여 해당하는 별 아이콘 경로를 반환하는 함수
+  const getRatingIconPath = (rating?: number | null): string => {
+    if (!Number.isFinite(rating as number)) return '/images/Icon/Star/18/0.svg';
+    
+    const roundedRating = Math.round((rating as number) * 2) / 2; // 0.5 단위로 반올림
+    return `/images/Icon/Star/18/${roundedRating}.svg`;
+  };
   
 
   if (loading) {
@@ -309,12 +317,22 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
             <div className="flex items-center gap-8 mb-8">
               <div className="flex items-center gap-2">
                 <span style={{ color: '#202020', fontWeight: 600 }}>사용자 평점</span>
-                <span className="text-gray-500">★</span>
+                <img 
+                  src={getRatingIconPath(toolDetail.overallRating)} 
+                  alt="사용자 평점" 
+                  className="w-4 h-4"
+                  onError={(e) => handleImageError(e, '/images/Icon/Star/18/0.svg')}
+                />
                 <span className="text-lg" style={{ color: '#202020', fontWeight: 700 }}>{formatRating(toolDetail.overallRating)}</span>
               </div>
               <div className="flex items-center gap-2">
                 <span style={{ color: '#202020', fontWeight: 600 }}>AI 평점</span>
-                <span className="text-purple-500">★</span>
+                <img 
+                  src={getRatingIconPath(aiScore)} 
+                  alt="AI 평점" 
+                  className="w-4 h-4"
+                  onError={(e) => handleImageError(e, '/images/Icon/Star/18/0.svg')}
+                />
                 <span className="text-lg" style={{ color: '#202020', fontWeight: 700 }}>
                   {formatRating(aiScore)}
                 </span>
@@ -421,7 +439,12 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
                 <div className="flex items-center gap-2">
                   <h3 className="text-2xl font-semibold">{toolDetail.serviceName}</h3>
                   <div className="flex items-center gap-1">
-                    <span className="text-purple-600">★</span>
+                    <img 
+                      src={getRatingIconPath(reviews?.average_rating)} 
+                      alt="평균 평점" 
+                      className="w-5 h-5"
+                      onError={(e) => handleImageError(e, '/images/Icon/Star/18/0.svg')}
+                    />
                     <span className="font-bold text-lg">{(reviews?.average_rating || 0).toFixed(1)}</span>
                   </div>
                 </div>
@@ -436,10 +459,15 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
                       key={star}
                       type="button"
                       onClick={() => setReviewRating(star)}
-                      className={`text-xl ${star <= reviewRating ? 'text-purple-600' : 'text-gray-300'}`}
+                      className="w-5 h-5 flex items-center justify-center"
                       aria-label={`${star}점`}
                     >
-                      ★
+                      <img 
+                        src={star <= reviewRating ? '/images/Icon/Star/20/5.svg' : '/images/Icon/Star/20/0.svg'} 
+                        alt={`${star}점`} 
+                        className="w-full h-full"
+                        onError={(e) => handleImageError(e, '/images/Icon/Star/20/0.svg')}
+                      />
                     </button>
                   ))}
                 </div>
@@ -472,13 +500,12 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
                     <div key={review.id} className="border-b border-gray-100 pb-4 last:border-b-0">
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-3">
-                          <div className="flex text-purple-600">
-                            {Array.from({ length: 5 }, (_, i) => (
-                              <span key={i} className={i < Math.round(review.rating) ? "text-purple-600" : "text-gray-300"}>
-                                ★
-                              </span>
-                            ))}
-                          </div>
+                          <img 
+                            src={getRatingIconPath(review.rating).replace('/Star/18/', '/Star/24/')} 
+                            alt={`${review.rating}점`} 
+                            className="w-6 h-6"
+                            onError={(e) => handleImageError(e, '/images/Icon/Star/24/0.svg')}
+                          />
                           <span className="font-medium">{review.user_nickname}</span>
                           <span className="text-sm text-gray-500">
                             {new Date(review.created_at).toLocaleDateString()}
