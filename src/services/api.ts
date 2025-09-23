@@ -581,6 +581,68 @@ class ApiService {
   }
 
   // ================================
+  // 검색어 이력 관리 
+  // ================================
+  
+  /**
+   * 최근 검색어 목록 조회
+   */
+  async getSearchHistory(): Promise<string[]> {
+    try {
+      console.log('최근 검색어 조회 요청');
+      
+      const response = await this.request<string[]>('/search/history', {
+        method: 'GET'
+      });
+      
+      console.log('최근 검색어 조회 완료, 개수:', response.length);
+      return response;
+    } catch (error) {
+      console.error('최근 검색어 조회 실패:', error);
+      return [];
+    }
+  }
+
+  /**
+   * 특정 검색어 삭제
+   */
+  async deleteSearchQuery(query: string): Promise<void> {
+    try {
+      console.log('검색어 삭제 요청:', query);
+      
+      const queryParams = new URLSearchParams();
+      queryParams.append('query', query);
+      
+      await this.request(`/search/history?${queryParams.toString()}`, {
+        method: 'DELETE'
+      });
+      
+      console.log('검색어 삭제 완료:', query);
+    } catch (error) {
+      console.error('검색어 삭제 실패:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * 모든 검색어 이력 삭제
+   */
+  async deleteAllSearchHistory(): Promise<void> {
+    try {
+      console.log('모든 검색어 이력 삭제 요청');
+      
+      await this.request('/search/history/all', {
+        method: 'DELETE'
+      });
+      
+      console.log('모든 검색어 이력 삭제 완료');
+    } catch (error) {
+      console.error('모든 검색어 이력 삭제 실패:', error);
+      throw error;
+    }
+  }
+
+  // ================================
   // AI 서비스 관리
   // ================================
   
