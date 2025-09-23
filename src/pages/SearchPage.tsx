@@ -403,7 +403,7 @@ const SearchPage: React.FC = () => {
                           border: '1px solid #E5E7EB'
                         }}
                         onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = '#F9FAFB';
+                          e.currentTarget.style.backgroundColor = '#DBCBF9';
                         }}
                         onMouseLeave={(e) => {
                           e.currentTarget.style.backgroundColor = '#FFFFFF';
