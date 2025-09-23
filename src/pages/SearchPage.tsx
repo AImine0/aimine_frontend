@@ -327,7 +327,7 @@ const SearchPage: React.FC = () => {
 
             {/* 검색 결과 없음 */}
             {!loading && searchQuery && searchResults.length === 0 && !error && (
-              <div className="text-center py-12">
+              <div className="text-center py-12 mt-32">
                 <h3 
                   className="mb-2"
                   style={{ 
@@ -340,7 +340,7 @@ const SearchPage: React.FC = () => {
                   '{searchQuery}'에 대한 검색 결과가 없습니다.
                 </h3>
                 <p 
-                  className="mb-8"
+                  className="mb-12"
                   style={{ 
                     color: '#202020', 
                     fontWeight: 400, 
@@ -409,9 +409,11 @@ const SearchPage: React.FC = () => {
                           e.currentTarget.style.backgroundColor = '#FFFFFF';
                         }}
                       >
-                        <svg className="h-3 w-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
+                        <img 
+                          src="/images/Icon/Magnifier/18/Purple.svg" 
+                          alt="검색" 
+                          style={{ width: '18px', height: '18px' }}
+                        />
                         <span>{keyword}</span>
                       </button>
                     ))}
