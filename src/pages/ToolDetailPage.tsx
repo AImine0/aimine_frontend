@@ -77,6 +77,8 @@ const ToolDetailPage: React.FC = () => {
   // 리뷰 목록 렌더링 부분에서 불필요한 필터링 제거
   const serviceReviews = reviews?.reviews || []; // 이미 특정 서비스의 리뷰만 조회했으므로 추가 필터링 불필요
 
+  // 더미 리뷰 제거: 실제 서비스 리뷰만 표시
+
   // 북마크 토글 핸들러
   const handleBookmarkToggle = async () => {
     if (!id || !toolDetail || bookmarkLoading) return;
@@ -137,23 +139,7 @@ const ToolDetailPage: React.FC = () => {
     }
   };
 
-  // 리뷰 삭제 핸들러 
-  const handleReviewDelete = async (reviewId: number) => {
-    if (!confirm('정말 삭제하시겠습니까?')) return;
-
-    try {
-      await apiService.deleteReview(reviewId);
-      
-      // 🔥 수정: 특정 서비스의 리뷰만 새로고침 (serviceId 파라미터 전달)
-      const updatedReviews = await apiService.getReviews(parseInt(id!)); // serviceId 전달
-      setReviews(updatedReviews);
-      
-      alert('리뷰가 삭제되었습니다.');
-    } catch (error) {
-      console.error('리뷰 삭제 실패:', error);
-      alert('리뷰 삭제 중 오류가 발생했습니다.');
-    }
-  };
+  // (임시) 삭제 기능은 더미 리뷰 UI 확인 단계에서는 미사용
 
   // 탭 상태 (가격 정보 / 서비스 리뷰)
   const [activeTabKey, setActiveTabKey] = useState<'pricing' | 'reviews'>('pricing');
@@ -174,6 +160,19 @@ const ToolDetailPage: React.FC = () => {
     
     const roundedRating = Math.round((rating as number) * 2) / 2; // 0.5 단위로 반올림
     return `/images/Icon/Star/18/${roundedRating}.svg`;
+  };
+
+  // 날짜 포맷터: YYYY.MM.DD
+  const formatDate = (iso: string) => {
+    try {
+      const d = new Date(iso);
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}.${m}.${day}`;
+    } catch {
+      return iso;
+    }
   };
   
 
@@ -256,7 +255,7 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
           </div>
         </div>
         
-        <div className="max-w-6xl mx-auto px-4 pt-6 bg-white">
+        <div className="max-w-6xl mx-auto px-4 pt-6 pb-48 bg-white">
         
         {/* 메인 히어로 섹션 */}
         <div className="flex items-start justify-between gap-20 mb-12">
@@ -430,13 +429,13 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
         )}
         
         {/* 서비스 리뷰 섹션: 항상 표시 (리뷰 탭에서는 가격 섹션만 숨김) */}
-        <section id="reviews" className="mb-16">
+        <section id="reviews" className="mb-36">
             <h2 className="text-sm mb-2" style={{ color: '#4B5563', fontWeight: 600 }}>서비스 리뷰</h2>
 
             <div className="bg-white">
               {/* 리뷰 헤더: 서비스명 + 보라 별 + 평점 */}
               <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-4">
                   <h3 className="text-2xl font-semibold">{toolDetail.serviceName}</h3>
                   <div className="flex items-center gap-1">
                     <img 
@@ -494,36 +493,36 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
               {/* 리뷰 목록 */}
               <div className="space-y-6">
                 <h4 className="font-medium">{serviceReviews.length > 0 ? `${serviceReviews.length}개의 리뷰` : '리뷰'}</h4>
-                
-                {serviceReviews.length > 0 ? (
-                  serviceReviews.map((review) => (
+                <div className="border-b border-gray-200" />
+
+                {serviceReviews.length > 0 ? serviceReviews.map((review) => {
+                  const rounded = Math.round((review.rating || 0) * 2) / 2;
+                  return (
                     <div key={review.id} className="border-b border-gray-100 pb-4 last:border-b-0">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-3">
-                          <img 
-                            src={getRatingIconPath(review.rating).replace('/Star/18/', '/Star/24/')} 
-                            alt={`${review.rating}점`} 
-                            className="w-6 h-6"
+                      {/* 별점 (보라색 5개) */}
+                      <div className="flex items-center gap-1 mb-2">
+                        {[1,2,3,4,5].map((i) => (
+                          <img
+                            key={i}
+                            src={i <= rounded ? '/images/Icon/Star/24/5.svg' : '/images/Icon/Star/24/0.svg'}
+                            alt={i <= rounded ? '채워진 별' : '빈 별'}
+                            className="w-5 h-5"
                             onError={(e) => handleImageError(e, '/images/Icon/Star/24/0.svg')}
                           />
-                          <span className="font-medium">{review.user_nickname}</span>
-                          <span className="text-sm text-gray-500">
-                            {new Date(review.created_at).toLocaleDateString()}
-                          </span>
-                        </div>
-                        
-                        {/* 현재 사용자의 리뷰인 경우 삭제 버튼 표시 (실제로는 사용자 인증 정보와 비교) */}
-                        { <button
-                          onClick={() => handleReviewDelete(review.id)}
-                          className="text-red-500 hover:text-red-700 text-sm"
-                        >
-                          삭제
-                        </button> }
+                        ))}
                       </div>
-                      <p className="text-gray-700 leading-relaxed">{review.content}</p>
+
+                      {/* 내용 */}
+                      <p className="text-gray-700 leading-relaxed mb-2">{review.content}</p>
+
+                      {/* 작성자 + 날짜 */}
+                      <div className="flex items-center gap-3">
+                        <span className="font-medium">{review.user_nickname}</span>
+                        <span className="text-sm text-gray-500">{formatDate(review.created_at)}</span>
+                      </div>
                     </div>
-                  ))
-                ) : (
+                  );
+                }) : (
                   <div className="text-center text-gray-500 py-8">
                     <p>아직 리뷰가 없습니다.</p>
                     <p className="text-sm mt-2">첫 번째 리뷰를 작성해보세요!</p>
