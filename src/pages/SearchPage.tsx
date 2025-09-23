@@ -81,8 +81,12 @@ const SearchPage: React.FC = () => {
 
         const response = await apiService.search(searchApiParams);
         
+        console.log('검색 API 응답:', response);
+        console.log('response.tools:', response.tools);
+        console.log('response.tools 길이:', response.tools?.length);
+        
         // 백엔드 camelCase 응답에 맞게 필드명 변경
-        const tools: AITool[] = response.tools.map(tool => {
+        const tools: AITool[] = (response.tools || []).map(tool => {
           // 가격 타입 변환
           const getPricingType = (pricingType: string): 'free' | 'paid' | 'freemium' => {
             const type = pricingType?.toLowerCase();
@@ -118,6 +122,9 @@ const SearchPage: React.FC = () => {
         setSearchResults(tools);
         setTotalCount(response.totalCount || 0);
         setSuggestedKeywords(response.suggestedKeywords || []);
+        
+        console.log('최종 tools 배열:', tools);
+        console.log('tools 길이:', tools.length);
 
         // 가격별 카운트 계산
         const newCounts = {
@@ -310,7 +317,7 @@ const SearchPage: React.FC = () => {
             )}
 
             {/* 검색 결과 */}
-            {!loading && searchResults.length > 0 && (
+            {!loading && searchQuery && searchResults.length > 0 && (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {searchResults.map((tool) => (
                   <ToolCard key={tool.id} tool={tool} />
@@ -321,15 +328,94 @@ const SearchPage: React.FC = () => {
             {/* 검색 결과 없음 */}
             {!loading && searchQuery && searchResults.length === 0 && !error && (
               <div className="text-center py-12">
-                <div className="text-6xl mb-4">🔍</div>
-                <h3 className="text-xl font-semibold text-gray-800 mb-2">검색 결과가 없습니다</h3>
-                <p className="text-gray-600 mb-4">
-                  "{searchQuery}"에 대한 AI 서비스를 찾을 수 없습니다.
+                <h3 
+                  className="mb-2"
+                  style={{ 
+                    color: '#202020', 
+                    fontWeight: 600, 
+                    fontSize: '18px',
+                    fontFamily: 'Pretendard'
+                  }}
+                >
+                  '{searchQuery}'에 대한 검색 결과가 없습니다.
+                </h3>
+                <p 
+                  className="mb-8"
+                  style={{ 
+                    color: '#202020', 
+                    fontWeight: 400, 
+                    fontSize: '16px',
+                    fontFamily: 'Pretendard'
+                  }}
+                >
+                  검색어를 다시 한 번 확인해주세요.
                 </p>
-                <div className="text-sm text-gray-500">
-                  <p>• 다른 키워드로 검색해보세요</p>
-                  <p>• 검색어의 철자를 확인해보세요</p>
-                  <p>• 더 일반적인 용어를 사용해보세요</p>
+                
+                {/* 추천키워드 컨테이너 */}
+                <div 
+                  className="mx-auto max-w-2xl"
+                  style={{
+                    backgroundColor: '#F2EEFB',
+                    borderRadius: '12px',
+                    padding: '16px'
+                  }}
+                >
+                  <p 
+                    className="mb-4"
+                    style={{ 
+                      fontWeight: 600, 
+                      fontSize: '16px',
+                      fontFamily: 'Pretendard'
+                    }}
+                  >
+                    <span style={{ color: '#8B5CF6' }}>추천키워드</span>
+                    <span style={{ color: '#202020' }}>로 검색해보세요!</span>
+                  </p>
+                  
+                  {/* 추천 검색어 버튼들 */}
+                  <div className="flex flex-wrap justify-center gap-2">
+                    {[
+                      '챗봇',
+                      'ChatGPT', 
+                      '이미지 생성',
+                      '콘텐츠 작성',
+                      '업무 자동화',
+                      '교육/연구',
+                      '기획/마케팅',
+                      'AI 코드 어시스턴트'
+                    ].map((keyword, index) => (
+                      <button
+                        key={index}
+                        onClick={() => handleNewSearch(keyword)}
+                        className="flex items-center gap-2 rounded-full text-xs font-medium transition-colors whitespace-nowrap"
+                        style={{
+                          backgroundColor: '#FFFFFF',
+                          borderRadius: '20px',
+                          paddingTop: '4px',
+                          paddingRight: '12px',
+                          paddingBottom: '4px',
+                          paddingLeft: '8px',
+                          color: '#202020',
+                          fontWeight: 500,
+                          fontSize: '12px',
+                          fontFamily: 'Pretendard',
+                          width: 'fit-content',
+                          border: '1px solid #E5E7EB'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = '#F9FAFB';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = '#FFFFFF';
+                        }}
+                      >
+                        <svg className="h-3 w-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <span>{keyword}</span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
             )}
