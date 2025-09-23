@@ -446,3 +446,27 @@ export interface ServiceListParams {
   sort?: string; // 더 유연하게 변경
   pricing?: string; // 더 유연하게 변경
 }
+
+// 연관검색어 관련 타입
+export interface SearchSuggestionsResponse {
+  suggestions: SearchSuggestion[];
+}
+
+export interface SearchSuggestion {
+  type: 'AI_SERVICE' | 'CATEGORY' | 'KEYWORD';
+  id?: number;
+  text: string;
+  logoUrl?: string;
+  tag?: string; 
+  categoryPath?: string;
+}
+
+// 기존 SearchParams 인터페이스가 없다면 추가
+export interface SearchParams {
+  q?: string;
+  category?: string;
+  pricing?: string;
+  sort?: string;
+  page?: number;
+  size?: number;
+}
