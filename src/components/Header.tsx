@@ -23,7 +23,7 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
   const location = useLocation();
   const { isAuthenticated, user, logout } = useAuth();
   
-  // 상태 관리 (인증 관련 제거)
+  // 상태 관리
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -32,12 +32,41 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
   const [showSearchSuggestions, setShowSearchSuggestions] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRecommendedKeywords, setShowRecommendedKeywords] = useState(false);
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
   
   // Refs
   const searchRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
-  // 외부 클릭 감지 (메뉴 닫기)
+  // 최근 검색어 로드
+  const loadRecentSearches = async () => {
+    if (isAuthenticated) {
+      try {
+        const searches = await apiService.getSearchHistory();
+        setRecentSearches(searches);
+      } catch (error) {
+        console.error('최근 검색어 로드 실패:', error);
+      }
+    }
+  };
+
+  // 컴포넌트 마운트 시 최근 검색어 로드
+  useEffect(() => {
+    loadRecentSearches();
+  }, [isAuthenticated]);
+
+  // 최근 검색어 삭제
+  const handleDeleteRecentSearch = async (query: string, event: React.MouseEvent) => {
+    event.stopPropagation();
+    try {
+      await apiService.deleteSearchQuery(query);
+      setRecentSearches(prev => prev.filter(search => search !== query));
+    } catch (error) {
+      console.error('검색어 삭제 실패:', error);
+    }
+  };
+
+  // 외부 클릭 감지
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
@@ -59,7 +88,7 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
       if (searchQuery.length > 1) {
         try {
           const response = await apiService.search({ q: searchQuery, size: 5 });
-          setSearchSuggestions(response.suggested_keywords || []);
+          setSearchSuggestions(response.suggestedKeywords || []);
           setShowRecommendedKeywords(false);
         } catch (error) {
           console.error('검색 자동완성 실패:', error);
@@ -83,6 +112,13 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
       setShowSearchSuggestions(false);
       setShowRecommendedKeywords(false);
       setIsSearchFocused(false);
+      
+      // 검색 후 최근 검색어 업데이트
+      if (isAuthenticated) {
+        setTimeout(() => {
+          loadRecentSearches();
+        }, 500);
+      }
     }
   };
 
@@ -94,13 +130,12 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
   // 로그인 성공 처리
   const handleLoginSuccess = () => {
     setShowLoginModal(false);
-    // 필요시 특정 페이지로 리다이렉트
+    loadRecentSearches();
   };
 
   // 로그인 오류 처리
   const handleLoginError = (error: string) => {
     console.error('로그인 오류:', error);
-    // 오류 처리 로직
   };
 
   // 로그아웃 처리
@@ -108,6 +143,7 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
     try {
       await logout();
       setShowUserMenu(false);
+      setRecentSearches([]);
       navigate('/');
     } catch (error) {
       console.error('로그아웃 실패:', error);
@@ -137,10 +173,6 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
     '기획/마케팅',
     'AI 코드 어시스턴트'
   ];
-
-  // 현재 페이지 확인
-  const isSearchPage = location.pathname === '/search';
-  const isMyPage = location.pathname === '/mypage';
 
   return (
     <header className="bg-white sticky top-0 z-40" style={{ fontFamily: 'Pretendard', borderBottom: '1px solid #ECECEC' }}>
@@ -212,15 +244,12 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
               >
                 프롬프트
               </Link>
-              
             </nav>
           </div>
 
-          {/* 중앙 영역 제거 (검색바를 우측으로 이동) */}
-
           {/* 오른쪽: 검색 + 사용자 메뉴 */}
           <div className="flex items-center gap-4">
-            {/* 데스크톱 검색바 (로그인 버튼 왼쪽) */}
+            {/* 데스크톱 검색바 */}
             <div className="hidden md:flex" style={{ width: '359px' }} ref={searchRef}>
               <div className="relative w-full">
                 <div className="relative">
@@ -245,7 +274,6 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
                       borderRadius: showRecommendedKeywords || showSearchSuggestions ? '20px 20px 0 0' : '20px'
                     }}
                   />
-                  {/* 왼쪽 검색 아이콘 제거 */}
                   <button
                     onClick={() => handleSearch()}
                     className="absolute inset-y-0 right-0 pr-3 flex items-center"
@@ -275,9 +303,71 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
                   </div>
                 )}
 
-                {/* 추천 검색어 드롭다운 */}
+                {/* 최근 검색어 + 추천 검색어 드롭다운 */}
                 {showRecommendedKeywords && searchQuery.length <= 1 && (
                   <div className="absolute top-full left-0 right-0 bg-white shadow-lg py-4 z-50" style={{ marginTop: '0px', borderRadius: '0 0 20px 20px', border: '1px solid #8C8C8C', borderTop: 'none' }}>
+                    
+                    {/* 최근 검색어 섹션 */}
+                    {isAuthenticated && recentSearches.length > 0 && (
+                      <div className="mb-4">
+                        <div className="px-4 mb-3">
+                          <h3 
+                            className="text-sm font-bold"
+                            style={{ 
+                              color: '#202020', 
+                              fontWeight: 700, 
+                              fontSize: '12px',
+                              fontFamily: 'Pretendard'
+                            }}
+                          >
+                            최근 검색어
+                          </h3>
+                        </div>
+                        
+                        <div className="px-4 space-y-1">
+                          {recentSearches.slice(0, 5).map((query, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center justify-between py-1 hover:bg-gray-50 rounded px-2 -mx-2"
+                            >
+                              <button
+                                onClick={() => handleSearch(query)}
+                                className="flex-1 text-left"
+                                style={{
+                                  color: '#202020',
+                                  fontWeight: 500,
+                                  fontSize: '12px',
+                                  fontFamily: 'Pretendard'
+                                }}
+                              >
+                                {query}
+                              </button>
+                              <button
+                                onClick={(e) => handleDeleteRecentSearch(query, e)}
+                                className="ml-2 p-1 hover:bg-gray-200 rounded"
+                              >
+                                <svg 
+                                  width="12" 
+                                  height="12" 
+                                  viewBox="0 0 12 12" 
+                                  fill="none"
+                                  className="text-gray-400 hover:text-gray-600"
+                                >
+                                  <path 
+                                    d="M9 3L3 9M3 3L9 9" 
+                                    stroke="currentColor" 
+                                    strokeWidth="1.5" 
+                                    strokeLinecap="round" 
+                                    strokeLinejoin="round"
+                                  />
+                                </svg>
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    
                     {/* 추천 검색어 제목 */}
                     <div className="px-4 mb-3">
                       <h3 
