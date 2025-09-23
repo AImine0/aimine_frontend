@@ -38,15 +38,58 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
   const searchRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
-  // 최근 검색어 로드
+  // 로컬스토리지 키와 설정
+  const LOCAL_SEARCH_HISTORY_KEY = 'aimine_search_history';
+  const MAX_LOCAL_HISTORY = 10;
+
+  // 로컬스토리지에서 검색어 이력 가져오기
+  const getLocalSearchHistory = (): string[] => {
+    try {
+      const stored = localStorage.getItem(LOCAL_SEARCH_HISTORY_KEY);
+      return stored ? JSON.parse(stored) : [];
+    } catch (error) {
+      console.error('로컬 검색어 이력 로드 실패:', error);
+      return [];
+    }
+  };
+
+  // 로컬스토리지에 검색어 저장
+  const saveToLocalSearchHistory = (query: string) => {
+    try {
+      const current = getLocalSearchHistory();
+      const updated = [query, ...current.filter(item => item !== query)].slice(0, MAX_LOCAL_HISTORY);
+      localStorage.setItem(LOCAL_SEARCH_HISTORY_KEY, JSON.stringify(updated));
+    } catch (error) {
+      console.error('로컬 검색어 저장 실패:', error);
+    }
+  };
+
+  // 로컬스토리지에서 특정 검색어 삭제
+  const removeFromLocalSearchHistory = (query: string) => {
+    try {
+      const current = getLocalSearchHistory();
+      const updated = current.filter(item => item !== query);
+      localStorage.setItem(LOCAL_SEARCH_HISTORY_KEY, JSON.stringify(updated));
+    } catch (error) {
+      console.error('로컬 검색어 삭제 실패:', error);
+    }
+  };
+
+  // 최근 검색어 로드 (로그인 상태에 따라 다른 소스 사용)
   const loadRecentSearches = async () => {
     if (isAuthenticated) {
+      // 로그인된 사용자: 서버에서 가져오기
       try {
         const searches = await apiService.getSearchHistory();
         setRecentSearches(searches);
       } catch (error) {
         console.error('최근 검색어 로드 실패:', error);
+        // 서버 실패 시 로컬스토리지에서 가져오기
+        setRecentSearches(getLocalSearchHistory());
       }
+    } else {
+      // 로그인되지 않은 사용자: 로컬스토리지에서 가져오기
+      setRecentSearches(getLocalSearchHistory());
     }
   };
 
@@ -58,11 +101,19 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
   // 최근 검색어 삭제
   const handleDeleteRecentSearch = async (query: string, event: React.MouseEvent) => {
     event.stopPropagation();
-    try {
-      await apiService.deleteSearchQuery(query);
+    
+    if (isAuthenticated) {
+      // 로그인된 사용자: 서버에서 삭제
+      try {
+        await apiService.deleteSearchQuery(query);
+        setRecentSearches(prev => prev.filter(search => search !== query));
+      } catch (error) {
+        console.error('검색어 삭제 실패:', error);
+      }
+    } else {
+      // 로그인되지 않은 사용자: 로컬스토리지에서 삭제
+      removeFromLocalSearchHistory(query);
       setRecentSearches(prev => prev.filter(search => search !== query));
-    } catch (error) {
-      console.error('검색어 삭제 실패:', error);
     }
   };
 
@@ -107,18 +158,25 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
   // 검색 실행
   const handleSearch = (query: string = searchQuery) => {
     if (query.trim()) {
-      navigate(`/search?q=${encodeURIComponent(query.trim())}`);
+      const trimmedQuery = query.trim();
+      
+      // 검색어 저장 (로그인 상태와 관계없이)
+      if (isAuthenticated) {
+        // 로그인된 사용자: 서버에 저장 (백엔드에서 자동 처리)
+        setTimeout(() => {
+          loadRecentSearches();
+        }, 500);
+      } else {
+        // 로그인되지 않은 사용자: 로컬스토리지에 저장
+        saveToLocalSearchHistory(trimmedQuery);
+        setRecentSearches(prev => [trimmedQuery, ...prev.filter(item => item !== trimmedQuery)].slice(0, MAX_LOCAL_HISTORY));
+      }
+
+      navigate(`/search?q=${encodeURIComponent(trimmedQuery)}`);
       setSearchQuery('');
       setShowSearchSuggestions(false);
       setShowRecommendedKeywords(false);
       setIsSearchFocused(false);
-      
-      // 검색 후 최근 검색어 업데이트
-      if (isAuthenticated) {
-        setTimeout(() => {
-          loadRecentSearches();
-        }, 500);
-      }
     }
   };
 
@@ -143,7 +201,8 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
     try {
       await logout();
       setShowUserMenu(false);
-      setRecentSearches([]);
+      // 로그아웃 후 로컬스토리지 검색어로 전환
+      setRecentSearches(getLocalSearchHistory());
       navigate('/');
     } catch (error) {
       console.error('로그아웃 실패:', error);
@@ -307,8 +366,8 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
                 {showRecommendedKeywords && searchQuery.length <= 1 && (
                   <div className="absolute top-full left-0 right-0 bg-white shadow-lg py-4 z-50" style={{ marginTop: '0px', borderRadius: '0 0 20px 20px', border: '1px solid #8C8C8C', borderTop: 'none' }}>
                     
-                    {/* 최근 검색어 섹션 */}
-                    {isAuthenticated && recentSearches.length > 0 && (
+                    {/* 최근 검색어 섹션 - 로그인 상태와 관계없이 표시 */}
+                    {recentSearches.length > 0 && (
                       <div className="mb-4">
                         <div className="px-4 mb-3">
                           <h3 
