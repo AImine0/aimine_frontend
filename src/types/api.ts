@@ -305,7 +305,7 @@ export interface SearchParams {
   q?: string;
   category?: string;
   pricing?: string;
-  sort?: 'rating' | 'latest' | 'popular';
+  sort?: string;
   page?: number;
   size?: number;
 }
@@ -317,6 +317,32 @@ export interface ServiceListParams {
   search?: string;
   sort?: 'rating' | 'latest' | 'popular';
   pricing?: 'FREE' | 'FREEMIUM' | 'PAID';
+}
+
+// ================================
+// 실시간 연관검색어 관리
+// ================================
+export interface SearchSuggestionsResponse {
+  suggestions: SearchSuggestion[];
+}
+
+export interface SearchSuggestion {
+  type: 'AI_SERVICE' | 'CATEGORY' | 'KEYWORD';
+  id?: number;
+  text: string;
+  logoUrl?: string;
+  tag?: string; 
+  categoryPath?: string;
+}
+
+// 기존 SearchParams가 없다면 추가
+export interface SearchParams {
+  q?: string;
+  category?: string;
+  pricing?: string;
+  sort?: string;
+  page?: number;
+  size?: number;
 }
 
 // ================================

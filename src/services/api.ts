@@ -17,6 +17,8 @@ import type {
   ServiceListResponse,
   ServiceDetailResponse,
   SearchParams,
+  SearchSuggestionsResponse,
+  SearchSuggestion,
   ServiceListParams,
   BookmarkCreateResponse,
   BookmarkDeleteResponse,
@@ -788,6 +790,32 @@ class ApiService {
         return 'freemium';
       default:
         return 'free';
+    }
+  }
+
+  /**
+ * 실시간 연관검색어 조회 
+ */
+  async getSearchSuggestions(query: string, limit: number = 10): Promise<SearchSuggestionsResponse> {
+    try {
+      console.log('연관검색어 조회 요청:', { query, limit });
+      
+      const queryParams = new URLSearchParams();
+      queryParams.append('q', query);
+      queryParams.append('limit', limit.toString());
+      
+      // 백엔드가 직접 SearchSuggestionsResponse를 반환 (ApiResponse 래핑 없음)
+      const response = await this.request<SearchSuggestionsResponse>(
+        `/search/suggestions?${queryParams.toString()}`, 
+        { method: 'GET' }
+      );
+      
+      console.log('연관검색어 조회 완료:', response);
+      return response;
+    } catch (error) {
+      console.error('연관검색어 조회 실패:', error);
+      // 오류 시 빈 배열 반환하여 UI가 깨지지 않도록 함
+      return { suggestions: [] };
     }
   }
 
