@@ -6,6 +6,8 @@ import { useAuth } from '../context/AuthContext';
 import GoogleLogin from './GoogleLogin';
 import LoginModal from './LoginModal';
 import { apiService } from '../services';
+import SearchSuggestions from './SearchSuggestions';
+import type { SearchSuggestion } from '../types/api';
 
 interface Tab {
   id: string;
@@ -33,6 +35,8 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRecommendedKeywords, setShowRecommendedKeywords] = useState(false);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
+  const [suggestions, setSuggestions] = useState<SearchSuggestion[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);  
   
   // Refs
   const searchRef = useRef<HTMLDivElement>(null);
@@ -93,6 +97,12 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
     }
   };
 
+  // 한글 완성 체크 함수
+  const isKoreanComplete = (text: string): boolean => {
+    const koreanRegex = /[ㄱ-ㅎㅏ-ㅣ]/;
+    return !koreanRegex.test(text.slice(-1));
+  };
+
   // 컴포넌트 마운트 시 최근 검색어 로드
   useEffect(() => {
     loadRecentSearches();
@@ -126,6 +136,7 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
         setShowSearchSuggestions(false);
         setShowRecommendedKeywords(false);
+        setShowSuggestions(false);
       }
     };
 
@@ -135,24 +146,28 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
 
   // 검색 자동완성
   useEffect(() => {
-    const debounceTimer = setTimeout(async () => {
-      if (searchQuery.length > 1) {
+    const timer = setTimeout(async () => {
+      if (searchQuery.length >= 1 && isKoreanComplete(searchQuery) && isSearchFocused) {
         try {
-          const response = await apiService.search({ q: searchQuery, size: 5 });
-          setSearchSuggestions(response.suggestedKeywords || []);
+          const result = await apiService.getSearchSuggestions(searchQuery);
+          setSuggestions(result.suggestions);
+          setShowSuggestions(true);
           setShowRecommendedKeywords(false);
         } catch (error) {
-          console.error('검색 자동완성 실패:', error);
+          console.error('연관검색어 조회 실패:', error);
+          setSuggestions([]);
+          setShowSuggestions(false);
         }
+      } else if (searchQuery.length === 0 && isSearchFocused) {
+        setShowSuggestions(false);
+        setShowRecommendedKeywords(true);
       } else {
-        setSearchSuggestions([]);
-        if (isSearchFocused) {
-          setShowRecommendedKeywords(true);
-        }
+        setSuggestions([]);
+        setShowSuggestions(false);
       }
     }, 300);
-
-    return () => clearTimeout(debounceTimer);
+    
+    return () => clearTimeout(timer);
   }, [searchQuery, isSearchFocused]);
 
   // 검색 실행
@@ -177,6 +192,26 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
       setShowSearchSuggestions(false);
       setShowRecommendedKeywords(false);
       setIsSearchFocused(false);
+    }
+  };
+
+  // 연관검색어 클릭 핸들러
+  const handleSuggestionClick = (suggestion: SearchSuggestion) => {
+    const queryText = suggestion.text;
+    setSearchQuery('');
+    setShowSuggestions(false);
+    setShowRecommendedKeywords(false);
+    setIsSearchFocused(false);
+    
+    navigate(`/search?q=${encodeURIComponent(queryText)}`);
+    
+    if (isAuthenticated) {
+      setTimeout(() => {
+        loadRecentSearches();
+      }, 500);
+    } else {
+      saveToLocalSearchHistory(queryText);
+      setRecentSearches(prev => [queryText, ...prev.filter(item => item !== queryText)].slice(0, MAX_LOCAL_HISTORY));
     }
   };
 
@@ -219,6 +254,15 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
       setShowRecommendedKeywords(false);
       setIsSearchFocused(false);
     }
+  };
+
+  // 검색바 blur 이벤트 핸들러
+  const handleSearchBlur = () => {
+    setTimeout(() => {
+      setIsSearchFocused(false);
+      setShowSuggestions(false);
+      setShowRecommendedKeywords(false);
+    }, 200); // 200ms 딜레이로 클릭 이벤트가 먼저 실행되도록
   };
 
   // 추천 검색어 데이터
@@ -324,13 +368,14 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
                         setShowRecommendedKeywords(true);
                       }
                     }}
+                    onBlur={handleSearchBlur}
                     onKeyPress={handleKeyPress}
                     placeholder="원하는 AI 서비스를 검색해보세요."
                     className="w-full pl-4 pr-4 py-2 border focus:outline-none focus:ring-0 focus:border-[#BCBCBC] text-sm placeholder:font-normal placeholder-[#9B9B9B]"
                     style={{ 
                       fontFamily: 'Pretendard', 
                       borderColor: '#8C8C8C',
-                      borderRadius: showRecommendedKeywords || showSearchSuggestions ? '20px 20px 0 0' : '20px'
+                      borderRadius: showRecommendedKeywords || showSearchSuggestions || showSuggestions ? '20px 20px 0 0' : '20px'
                     }}
                   />
                   <button
@@ -343,7 +388,7 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
 
                 {/* 검색 자동완성 */}
                 {showSearchSuggestions && searchSuggestions.length > 0 && (
-                  <div className="absolute top-full left-0 right-0 bg-white shadow-lg py-2 z-50" style={{ borderRadius: '0 0 20px 20px', border: '1px solid #8C8C8C', borderTop: 'none' }}>
+                  <div className="absolute top-full left-0 right-0 bg-white shadow-lg py-4 z-50" style={{ marginTop: '0px', borderRadius: '0 0 20px 20px', border: '1px solid #8C8C8C', borderTop: 'none' }}>
                     {searchSuggestions.slice(0, 5).map((suggestion, index) => (
                       <button
                         key={index}
@@ -361,6 +406,14 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
                     ))}
                   </div>
                 )}
+
+                {/* 연관검색어 드롭다운 */}
+                <SearchSuggestions
+                  suggestions={suggestions}
+                  searchQuery={searchQuery}
+                  onSuggestionClick={handleSuggestionClick}
+                  isVisible={showSuggestions}
+                />
 
                 {/* 최근 검색어 + 추천 검색어 드롭다운 */}
                 {showRecommendedKeywords && searchQuery.length <= 1 && (
