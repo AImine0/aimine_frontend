@@ -427,7 +427,6 @@ const RoleListPage: React.FC = () => {
 
         {/* 상황별 추천 섹션 */}
         <section>
-          <h2 className="text-2xl font-bold text-black mb-8">상황별 추천</h2>
 
           {!loading && filteredSituations.length === 0 ? (
             <div className="text-center py-12 bg-gray-50 rounded-lg">
