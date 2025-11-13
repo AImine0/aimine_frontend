@@ -213,12 +213,13 @@ const KeywordFilter: React.FC<KeywordFilterProps> = ({
             const isActive = activeKeywords.includes(keyword);
             const toolCount = typeof item === 'string' ? null : item.tool_count;
             const keywordType = typeof item === 'string' ? null : item.type;
+            const typographyClass = isActive ? 'text-body3 font-semibold' : 'text-body4 font-medium';
             
             return (
               <button
                 key={typeof item === 'string' ? item : item.id}
                 onClick={() => onKeywordToggle(keyword)}
-                className={`px-4 py-2 rounded-full transition-all duration-200 flex items-center gap-1.5 hover:shadow-sm`}
+                className={`px-4 py-2 rounded-full transition-all duration-200 flex items-center gap-1.5 hover:shadow-sm ${typographyClass}`}
                 onMouseEnter={(e) => {
                   if (!isActive) {
                     e.currentTarget.style.backgroundColor = '#E9DFFB';
@@ -230,12 +231,10 @@ const KeywordFilter: React.FC<KeywordFilterProps> = ({
                   }
                 }}
                 style={{ 
-                  fontSize: '14px',
                   backgroundColor: isActive ? '#ffffff' : '#F2EEFB',
                   border: '1px solid #A987E8',
                   borderRadius: '20px',
                   color: '#7242C9',
-                  fontWeight: isActive ? 700 : 600,
                   fontFamily: 'Pretendard'
                 }}
               >
