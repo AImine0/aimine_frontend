@@ -369,9 +369,12 @@ const RoleListPage: React.FC = () => {
                                       height: 160,
                                       borderRadius: 40,
                                       border: '0.89px solid #DBCBF9',
+                                      backgroundColor: '#FFFFFF',
                                       cursor: toolId ? 'pointer' : 'default'
                                     }}
                                     onClick={handleLogoClick}
+                                    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#E9DFFB'; }}
+                                    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#FFFFFF'; }}
                                   >
                                     <img 
                                       src={imageMapping.logo} 
