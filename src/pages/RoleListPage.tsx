@@ -221,6 +221,8 @@ const RoleListPage: React.FC = () => {
                   justifyContent: 'center',
                 }}
                 aria-label="이전"
+                onMouseEnter={(e) => { e.currentTarget.style.background = '#A987E8'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; }}
               >
                 <img src="/images/Icon/Arrow/Left40x90.svg" alt="이전" width={40} height={90} />
               </button>
@@ -363,6 +365,8 @@ const RoleListPage: React.FC = () => {
                   justifyContent: 'center',
                 }}
                 aria-label="다음"
+                onMouseEnter={(e) => { e.currentTarget.style.background = '#A987E8'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; }}
               >
                 <img src="/images/Icon/Arrow/Right40x90.svg" alt="다음" width={40} height={90} />
               </button>
