@@ -51,28 +51,28 @@ const RoleListPage: React.FC = () => {
     'Gamma': '239',
     'Zep Quiz': '249',
     'ChatGPT': '1',
-    'Animaker': '0',
-    'ElevenLabs': '0',
-    'Relume': '0',
-    'Galileo AI': '0',
-    'Uizard': '0',
-    'PromptoMANIA': '0',
+    'Animaker': '128',
+    'ElevenLabs': '143',
+    'Relume': '',
+    'Galileo AI': '284',
+    'Uizard': '283',
+    'PromptoMANIA': '289',
     'Midjourney': '72',
     'Kaedim': '0',
     'Meshy': '0',
     'Lumalabs AI': '0',
-    'Copy.ai': '0',
+    'Copy.ai': '58',
     'Pika': '0',
     'Typecast': '0',
     'AIVA': '136',
     'Soundful': '0',
-    'LALAL.AI': '0',
+    'LALAL.AI': '159',
     'Lumen5': '104',
     'Runway': '0',
     'Crayon': '0',
     'Miro AI': '275',
-    'Tome': '0',
-    'Scalenut': '0',
+    'Tome': '240',
+    'Scalenut': '274',
     'Magic Design': '0',
     'Make': '0',
     'Shiftee': '0',
@@ -257,8 +257,6 @@ const RoleListPage: React.FC = () => {
                   justifyContent: 'center',
                 }}
                 aria-label="이전"
-                onMouseEnter={(e) => { e.currentTarget.style.background = '#A987E8'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; }}
               >
                 <img src="/images/Icon/Arrow/Left40x90.svg" alt="이전" width={40} height={90} />
               </button>
@@ -417,8 +415,6 @@ const RoleListPage: React.FC = () => {
                   justifyContent: 'center',
                 }}
                 aria-label="다음"
-                onMouseEnter={(e) => { e.currentTarget.style.background = '#A987E8'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; }}
               >
                 <img src="/images/Icon/Arrow/Right40x90.svg" alt="다음" width={40} height={90} />
               </button>
