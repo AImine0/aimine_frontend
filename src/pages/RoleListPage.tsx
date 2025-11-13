@@ -1,4 +1,5 @@
 import React, { useState, useRef, useLayoutEffect, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Breadcrumb from '../components/Breadcrumb';
 import ToolCard from '../components/ToolCard';
@@ -36,12 +37,47 @@ const getCategorySlug = (categoryName: string): string => {
 };
 
 const RoleListPage: React.FC = () => {
+  const navigate = useNavigate();
   const [activeRole, setActiveRole] = useState('it');
   const [jobSituations, setJobSituations] = useState<JobSituation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [situationSlides, setSituationSlides] = useState<Record<number, number>>({});
   const activeRoleName = roleTabs.find(tab => tab.id === activeRole)?.name || '';
+  const toolIdMap: Record<string, string> = {
+    'Connected Papers': '70',
+    'SciSpace': '68',
+    'Jenni AI': '47',
+    'Gamma': '239',
+    'Zep Quiz': '249',
+    'ChatGPT': '1',
+    'Animaker': '0',
+    'ElevenLabs': '0',
+    'Relume': '0',
+    'Galileo AI': '0',
+    'Uizard': '0',
+    'PromptoMANIA': '0',
+    'Midjourney': '72',
+    'Kaedim': '0',
+    'Meshy': '0',
+    'Lumalabs AI': '0',
+    'Copy.ai': '0',
+    'Pika': '0',
+    'Typecast': '0',
+    'AIVA': '136',
+    'Soundful': '0',
+    'LALAL.AI': '0',
+    'Lumen5': '104',
+    'Runway': '0',
+    'Crayon': '0',
+    'Miro AI': '275',
+    'Tome': '0',
+    'Scalenut': '0',
+    'Magic Design': '0',
+    'Make': '0',
+    'Shiftee': '0',
+    'AlphaSense': '254'
+  };
 
   // API에서 직업/상황별 추천 가져오기
   useEffect(() => {
@@ -317,12 +353,28 @@ const RoleListPage: React.FC = () => {
                               
                               const category = categoryMap[ai] || 'chat';
                               const imageMapping = getImageMapping(ai, category);
+                              const toolId = toolIdMap[ai];
+                              const handleLogoClick = () => {
+                                if (toolId) {
+                                  navigate(`/tool/${toolId}`);
+                                }
+                              };
                               
                               return (
                                 <div key={`combo-ai-${comboIdx}-${aiIdx}-${ai}`} className="flex flex-col items-center" style={{ width: flexItemWidth }}>
                                   <div style={{ height: dotSize + 8 }} />
                                   <span style={{ color: '#7E50D1', fontWeight: 600, fontSize: 14, fontFamily: 'Pretendard', marginBottom: 16 }}>{ai}</span>
-                                  <div className="flex items-center justify-center bg-white" style={{ width: 160, height: 160, borderRadius: 40, border: '0.89px solid #DBCBF9' }}>
+                                  <div
+                                    className="flex items-center justify-center bg-white"
+                                    style={{
+                                      width: 160,
+                                      height: 160,
+                                      borderRadius: 40,
+                                      border: '0.89px solid #DBCBF9',
+                                      cursor: toolId ? 'pointer' : 'default'
+                                    }}
+                                    onClick={handleLogoClick}
+                                  >
                                     <img 
                                       src={imageMapping.logo} 
                                       alt={ai} 
