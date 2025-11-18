@@ -1,7 +1,7 @@
 // [AI 툴 카드 컴포넌트] 개별 AI 도구 정보 표시 - 이름, 설명, BEST 뱃지, 북마크, 평점, 링크 버튼
 
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import type { AITool } from '../types';
 import { handleImageError } from '../utils/imageMapping';
 import { apiService } from '../services';
@@ -18,6 +18,7 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [statusCheckAttempts, setStatusCheckAttempts] = useState(0);
   const location = useLocation();
+  const navigate = useNavigate();
 
   // MyPage인지 확인
   const isMyPage = location.pathname === '/mypage';
@@ -214,14 +215,21 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
     return tool.categoryLabel || 'AI 도구';
   };
 
+  const handleCardClick = () => {
+    if (!tool.id) return;
+    navigate(`/tool/${tool.id}`);
+  };
+
   return (
     <div className={`bg-white rounded-xl group ${className || ''}`} 
          style={{ 
            border: '1px solid #DBCBF9', 
            fontFamily: 'Pretendard', 
            padding: '20px', 
-           minHeight: '240px' 
+           minHeight: '240px',
+           cursor: 'pointer'
          }}
+         onClick={handleCardClick}
          onMouseEnter={(e) => {
            e.currentTarget.style.backgroundColor = '#F2EEFB';
            e.currentTarget.style.border = 'none';
@@ -360,11 +368,9 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
 
       {/* 중간: 제목과 설명 */}
       <div className="mb-4 text-left">
-        <Link to={`/tool/${tool.id}`} className="hover:text-purple-600 transition-colors">
-          <h3 className="text-title3 mb-2 line-clamp-1 text-left" style={{ color: '#000000' }}>
-            {tool.name}
-          </h3>
-        </Link>
+        <h3 className="text-title3 mb-2 line-clamp-1 text-left text-black transition-colors hover:text-purple-600">
+          {tool.name}
+        </h3>
         <p className="text-title1 line-clamp-2 text-left"
           style={{ 
             color: '#202020',
