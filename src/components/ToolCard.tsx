@@ -289,14 +289,12 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
           </div>
           
           {/* DB tags 컬럼 내용 표시 */}
-          <span className="inline-flex items-center px-3 py-1 rounded-full font-medium" 
+          <span className="inline-flex items-center px-3 py-1 text-body4 font-medium" 
                 data-tags
                 style={{ 
                   backgroundColor: '#E9DFFB',
-                  borderRadius: '20px',
-                  color: '#202020',
-                  fontSize: '12px',
-                  fontFamily: 'Pretendard',
+                  borderRadius: '100px',
+                  color: '#6238AE',
                   width: 'fit-content'
                 }}>
             {getDisplayTag()}
@@ -345,13 +343,13 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
           {/* 바로가기 버튼 - 외부 URL로 이동 */}
           <button
             onClick={handleExternalLink}
-            className="flex items-center justify-center" 
+            className="flex items-center justify-center"
             data-visit-button
             style={{ 
               backgroundColor: '#E9DFFB', 
               width: '32px', 
               height: '32px',
-              borderRadius: '3.56px'
+              borderRadius: '8px'
             }}
             title={`${tool.name} 공식 사이트로 이동`}
           >
@@ -363,18 +361,14 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
       {/* 중간: 제목과 설명 */}
       <div className="mb-4 text-left">
         <Link to={`/tool/${tool.id}`} className="hover:text-purple-600 transition-colors">
-          <h3 className="font-semibold mb-2 line-clamp-1 text-left" style={{ color: '#000000', fontSize: '20px', fontFamily: 'Pretendard' }}>
+          <h3 className="text-title3 mb-2 line-clamp-1 text-left" style={{ color: '#000000' }}>
             {tool.name}
           </h3>
         </Link>
-        <p className="leading-relaxed line-clamp-2 text-left" 
+        <p className="text-title1 line-clamp-2 text-left"
           style={{ 
-            fontSize: '14px', 
-            fontFamily: 'Pretendard', 
-            color: '#202020', 
-            fontWeight: '600',
-            height: '42px',        // 2줄 고정 높이 (14px * 1.5 line-height * 2줄 = 42px)
-            lineHeight: '1.5'      // line-height 명시적 설정
+            color: '#202020',
+            height: '56px'
           }}>
           {tool.description}
         </p>

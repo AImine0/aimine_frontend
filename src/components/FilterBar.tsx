@@ -220,7 +220,17 @@ const FilterBar: React.FC<FilterBarProps> = ({
                     onMouseLeave={() => setShowTooltip(false)}
                     onClick={(e) => e.stopPropagation()}
                     className="flex items-center justify-center"
-                    style={{ width: '18px', height: '18px' }}
+                    style={{ 
+                      width: '18px', 
+                      height: '18px',
+                      padding: 0,
+                      border: 'none',
+                      background: 'transparent',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      cursor: 'pointer'
+                    }}
                     aria-label="추천순 정보"
                   >
                     <img src="/images/Icon/InfoTooltip/18.svg" alt="정보" width={18} height={18} />
@@ -228,16 +238,49 @@ const FilterBar: React.FC<FilterBarProps> = ({
 
                   {/* 툴팁 */}
                   {showTooltip && (
-                    <div className="absolute top-8 right-0 w-80 p-3 bg-white rounded-lg border border-gray-200 z-[1001]">
+                    <div 
+                      className="absolute right-[-13px] bg-white z-[1001]"
+                      style={{ 
+                        top: 'calc(100% + 10px)',
+                        borderRadius: '12px',
+                        border: '1px solid #D9D9E1',
+                        boxShadow: '0px 12px 32px rgba(31, 35, 41, 0.12)',
+                        fontFamily: 'Pretendard',
+                        width: '375px',
+                        height: '144px',
+                        padding: '16px 20px'
+                      }}
+                    >
                       {/* 말풍선 꼬리 */}
-                      <div 
-                        className="absolute -top-1 right-3 w-2 h-2 bg-white border-t border-l border-gray-200"
-                        style={{ transform: 'rotate(45deg)' }}
+                      <div
+                        className="absolute"
+                        style={{
+                          top: '-12px',
+                          right: '22px',
+                          width: 0,
+                          height: 0,
+                          borderLeft: '10px solid transparent',
+                          borderRight: '10px solid transparent',
+                          borderBottom: '12px solid #D9D9E1'
+                        }}
                       />
-                      
-                      <div className="text-xs text-gray-700 leading-relaxed" style={{ fontFamily: 'Pretendard' }}>
-                        추천순은 AI의 <span className="font-semibold">사용성</span>(쉽고 직관적으로 사용할 수 있는가), <span className="font-semibold">유용성</span>(실제 문제 해결에 도움이 되는가), <span className="font-semibold">감성</span>(사용자에게 긍정적인 인상을 주는가) 측면에 대해 ChatGPT, Gemini, Claude가 평가한 점수를 기반으로 산정되었으며, 해당 점수는 각 서비스의 상세 페이지에서 AI 평점으로 확인하실 수 있습니다.
-                      </div>
+                      <div
+                        className="absolute"
+                        style={{
+                          top: '-11px',
+                          right: '23px',
+                          width: 0,
+                          height: 0,
+                          borderLeft: '9px solid transparent',
+                          borderRight: '9px solid transparent',
+                          borderBottom: '11px solid #FFFFFF',
+                          boxShadow: '-1px -1px 6px rgba(31, 35, 41, 0.06)'
+                        }}
+                      />
+
+                      <p className="text-body3 leading-relaxed text-left" style={{ color: '#202020', lineHeight: '22px' }}>
+                        추천순은 AI의 <span className="text-title6" style={{ color: '#202020', fontWeight: 700 }}>사용성</span>(쉽고 직관적으로 사용할 수 있는가), <span className="text-title6" style={{ color: '#202020', fontWeight: 700 }}>유용성</span>(실제 문제 해결에 도움이 되는가), <span className="text-title6" style={{ color: '#202020', fontWeight: 700 }}>감성</span>(사용자에게 긍정적인 인상을 주는가) 측면에 대해 ChatGPT, Gemini, Claude가 평가한 점수를 기반으로 산정되었으며, 해당 점수는 각 서비스의 상세 페이지에서 AI 평점으로 확인하실 수 있습니다.
+                      </p>
                     </div>
                   )}
                 </div>
