@@ -367,8 +367,8 @@ const RoleListPage: React.FC = () => {
                                     style={{
                                       width: 160,
                                       height: 160,
-                                      borderRadius: 40,
-                                      border: '0.89px solid #DBCBF9',
+                                      borderRadius: 20,
+                                      border: '1px solid #DBCBF9',
                                       backgroundColor: '#FFFFFF',
                                       cursor: toolId ? 'pointer' : 'default'
                                     }}
@@ -379,7 +379,7 @@ const RoleListPage: React.FC = () => {
                                     <img 
                                       src={imageMapping.logo} 
                                       alt={ai} 
-                                      style={{ width: 88, height: 88, objectFit: 'contain' }}
+                                      style={{ width: 160, height: 160, objectFit: 'contain' }}
                                       onError={(e) => {
                                         const target = e.target as HTMLImageElement;
                                         target.src = '/images/Logo/Logo_FINAL.svg';
@@ -516,12 +516,12 @@ const RoleListPage: React.FC = () => {
               return (
                 <div key={`situation-${situationData.category}-${situationData.id}-${situationIdx}`} className="mb-16">
                   <div className="flex items-center mb-2" style={{ justifyContent: 'flex-start' }}>
-                    <span className="font-semibold" style={{ fontFamily: 'Pretendard', color: '#000000', fontSize: 24, fontWeight: 600 }}>
+                    <span className="font-semibold" style={{ fontFamily: 'Pretendard', color: '#000000', fontSize: 24, fontWeight: 500 }}>
                       {title}
                     </span>
                   </div>
                   {description && (
-                    <div className="mb-6 text-left" style={{ color: '#000000', fontSize: '14px', fontWeight: 400, fontFamily: 'Pretendard' }}>
+                    <div className="mb-6 text-left" style={{ color: '#000000', fontSize: '14px', fontWeight: 300, fontFamily: 'Pretendard' }}>
                       {description}
                     </div>
                   )}
