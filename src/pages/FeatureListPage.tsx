@@ -175,6 +175,8 @@ const PRICING_TYPE_MAP: Record<FilterType, string | undefined> = {
   freemium: 'FREEMIUM'
 };
 
+const PAGE_HORIZONTAL_PADDING = 200;
+
 const FeatureListPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams(); // 추가
   
@@ -422,7 +424,10 @@ const FeatureListPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-white">
       <Header tabs={featureTabs} activeTab={activeTab} onTabChange={handleTabChange} />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main
+        className="mx-auto py-8"
+        style={{ paddingLeft: PAGE_HORIZONTAL_PADDING, paddingRight: PAGE_HORIZONTAL_PADDING }}
+      >
         <Breadcrumb items={breadcrumbItems} />
 
         <div className="mb-8">
