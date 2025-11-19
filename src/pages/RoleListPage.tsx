@@ -379,7 +379,7 @@ const RoleListPage: React.FC = () => {
                                     <img 
                                       src={imageMapping.logo} 
                                       alt={ai} 
-                                      style={{ width: 88, height: 88, objectFit: 'contain' }}
+                                      style={{ width: 160, height: 160, objectFit: 'contain' }}
                                       onError={(e) => {
                                         const target = e.target as HTMLImageElement;
                                         target.src = '/images/Logo/Logo_FINAL.svg';
