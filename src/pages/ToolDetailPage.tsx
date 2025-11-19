@@ -152,6 +152,33 @@ const ToolDetailPage: React.FC = () => {
     }
   };
 
+  // 섹션 가시성에 따라 네비게이션 상태 자동 전환
+  useEffect(() => {
+    const sectionIds: Array<'pricing' | 'reviews'> = ['pricing', 'reviews'];
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const id = entry.target.id as 'pricing' | 'reviews';
+            setActiveTabKey(id);
+          }
+        });
+      },
+      {
+        root: null,
+        threshold: 0.4,
+        rootMargin: '-20% 0px -45% 0px'
+      }
+    );
+
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   const formatRating = (value?: number | null) =>
     Number.isFinite(value as number) ? ((value as number) === 0 ? '0' : (value as number).toFixed(1)) : '-';
 
@@ -386,19 +413,29 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
         </div>
         
         {/* 탭 네비게이션 */}
-        <div className="mb-12" style={{ borderBottomWidth: '2px', borderBottomColor: '#ECECEC', borderBottomStyle: 'solid' }}>
+        <div className="mb-12" style={{ borderBottomWidth: '1px', borderBottomColor: '#E5E7EB', borderBottomStyle: 'solid' }}>
           <nav className="flex gap-8">
             <button
               onClick={() => handleTabClick('pricing')}
               className="pb-4 text-base"
-              style={{ color: activeTabKey === 'pricing' ? '#202020' : '#8C8C8C', fontWeight: 600, borderBottom: activeTabKey === 'pricing' ? '2px solid #202020' : '2px solid transparent', marginBottom: '-2px' }}
+              style={{
+                color: activeTabKey === 'pricing' ? '#111827' : '#6B7280',
+                fontWeight: 600,
+                borderBottom: activeTabKey === 'pricing' ? '2px solid #111827' : '2px solid transparent',
+                marginBottom: '-2px'
+              }}
             >
               가격 정보
             </button>
             <button
               onClick={() => handleTabClick('reviews')}
               className="pb-4 text-base"
-              style={{ color: activeTabKey === 'reviews' ? '#202020' : '#8C8C8C', fontWeight: 600, borderBottom: activeTabKey === 'reviews' ? '2px solid #202020' : '2px solid transparent', marginBottom: '-2px' }}
+              style={{
+                color: activeTabKey === 'reviews' ? '#111827' : '#6B7280',
+                fontWeight: 600,
+                borderBottom: activeTabKey === 'reviews' ? '2px solid #111827' : '2px solid transparent',
+                marginBottom: '-2px'
+              }}
             >
               서비스 리뷰
             </button>
@@ -509,16 +546,24 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
               </form>
               
               {/* 리뷰 목록 */}
-              <div className="space-y-6">
-                <h4 className="font-medium">{serviceReviews.length > 0 ? `${serviceReviews.length}개의 리뷰` : '리뷰'}</h4>
-                <div className="border-b border-gray-200" />
+              <div className="border-t border-gray-200">
+                <div className="py-4 border-b border-gray-200">
+                  <h4 className="font-medium">{serviceReviews.length > 0 ? `${serviceReviews.length}개의 리뷰` : '리뷰'}</h4>
+                </div>
 
-                {serviceReviews.length > 0 ? serviceReviews.map((review) => {
+                {serviceReviews.length > 0 ? serviceReviews.map((review, index) => {
                   const rounded = Math.round((review.rating || 0) * 2) / 2;
                   return (
-                    <div key={review.id} className="border-b border-gray-100 pb-4 last:border-b-0">
+                    <div
+                      key={review.id}
+                      className="py-6"
+                      style={{
+                        borderBottom: index === serviceReviews.length - 1 ? '1px solid #E5E7EB' : '1px solid #E5E7EB'
+                      }}
+                    >
+                      <div className="px-6">
                       {/* 별점 (보라색 5개) */}
-                      <div className="flex items-center gap-1 mb-2">
+                      <div className="flex items-center gap-1 mb-4">
                         {[1,2,3,4,5].map((i) => (
                           <img
                             key={i}
@@ -531,12 +576,13 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
                       </div>
 
                       {/* 내용 */}
-                      <p className="text-gray-700 leading-relaxed mb-2">{review.content}</p>
+                      <p className="text-gray-700 leading-relaxed mb-6">{review.content}</p>
 
                       {/* 작성자 + 날짜 */}
                       <div className="flex items-center gap-3">
                         <span className="font-medium">{review.user_nickname}</span>
                         <span className="text-sm text-gray-500">{formatDate(review.created_at)}</span>
+                      </div>
                       </div>
                     </div>
                   );
