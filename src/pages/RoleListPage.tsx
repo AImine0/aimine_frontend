@@ -1,4 +1,4 @@
-import React, { useState, useRef, useLayoutEffect, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Breadcrumb from '../components/Breadcrumb';
@@ -35,6 +35,9 @@ const getCategorySlug = (categoryName: string): string => {
   
   return categoryMap[categoryName] || 'chatbot';
 };
+
+const PAGE_HORIZONTAL_PADDING = 200;
+const BANNER_ARROW_SCREEN_GAP = 120;
 
 const RoleListPage: React.FC = () => {
   const navigate = useNavigate();
@@ -128,40 +131,6 @@ const RoleListPage: React.FC = () => {
     { label: activeRoleName }
   ];
 
-  const [containerLeft, setContainerLeft] = useState(0);
-  const [containerRight, setContainerRight] = useState(0);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  // ResizeObserver + 안전 여백 클램프
-  useLayoutEffect(() => {
-    function updatePos() {
-      if (!containerRef.current) return;
-      const rect = containerRef.current.getBoundingClientRect();
-      setContainerLeft(rect.left);
-      setContainerRight(window.innerWidth - rect.right);
-    }
-
-    updatePos();
-    window.addEventListener('resize', updatePos);
-
-    let ro: ResizeObserver | null = null;
-    if ('ResizeObserver' in window) {
-      ro = new ResizeObserver(() => updatePos());
-      if (containerRef.current) ro.observe(containerRef.current);
-    } else {
-      const t = setTimeout(updatePos, 50);
-      return () => {
-        window.removeEventListener('resize', updatePos);
-        clearTimeout(t);
-      };
-    }
-
-    return () => {
-      window.removeEventListener('resize', updatePos);
-      ro?.disconnect();
-    };
-  }, []);
-
   if (loading) {
     return (
       <div className="min-h-screen bg-white">
@@ -197,7 +166,10 @@ const RoleListPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-white">
       <Header tabs={roleTabs} activeTab={activeRole} onTabChange={setActiveRole} />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main
+        className="mx-auto py-8"
+        style={{ paddingLeft: PAGE_HORIZONTAL_PADDING, paddingRight: PAGE_HORIZONTAL_PADDING }}
+      >
         <Breadcrumb items={breadcrumbItems} />
         <div className="mb-8">
           <h1 className="font-semibold mb-2" style={{ color: '#000000', fontSize: '32px', fontFamily: 'Pretendard' }}>
@@ -244,7 +216,7 @@ const RoleListPage: React.FC = () => {
                 className="absolute"
                 style={{
                   top: '50%',
-                  left: `max(${containerLeft - 24}px, 8px)`,
+                  left: `${BANNER_ARROW_SCREEN_GAP}px`,
                   transform: 'translateY(-50%)',
                   zIndex: 50,
                   width: 40,
@@ -262,7 +234,10 @@ const RoleListPage: React.FC = () => {
               </button>
             )}
 
-            <div ref={containerRef} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div
+              className="mx-auto"
+              style={{ paddingLeft: PAGE_HORIZONTAL_PADDING, paddingRight: PAGE_HORIZONTAL_PADDING }}
+            >
               <div className="flex flex-row items-start py-8 justify-between">
                 {/* 왼쪽 텍스트 영역 */}
                 <div className="banner-left-text" style={{ textAlign: 'left' }}>
@@ -405,7 +380,7 @@ const RoleListPage: React.FC = () => {
                 className="absolute"
                 style={{
                   top: '50%',
-                  right: `max(${containerRight - 24}px, 8px)`,
+                  right: `${BANNER_ARROW_SCREEN_GAP}px`,
                   transform: 'translateY(-50%)',
                   zIndex: 50,
                   width: 40,
