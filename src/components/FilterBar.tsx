@@ -252,7 +252,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
                       }}
                     >
                       {/* 말풍선 꼬리 */}
-                      <div
+                      <div 
                         className="absolute"
                         style={{
                           top: '-12px',
@@ -277,7 +277,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
                           boxShadow: '-1px -1px 6px rgba(31, 35, 41, 0.06)'
                         }}
                       />
-
+                      
                       <p className="text-body3 leading-relaxed text-left" style={{ color: '#202020', lineHeight: '22px' }}>
                         추천순은 AI의 <span className="text-title6" style={{ color: '#202020', fontWeight: 700 }}>사용성</span>(쉽고 직관적으로 사용할 수 있는가), <span className="text-title6" style={{ color: '#202020', fontWeight: 700 }}>유용성</span>(실제 문제 해결에 도움이 되는가), <span className="text-title6" style={{ color: '#202020', fontWeight: 700 }}>감성</span>(사용자에게 긍정적인 인상을 주는가) 측면에 대해 ChatGPT, Gemini, Claude가 평가한 점수를 기반으로 산정되었으며, 해당 점수는 각 서비스의 상세 페이지에서 AI 평점으로 확인하실 수 있습니다.
                       </p>

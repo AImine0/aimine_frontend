@@ -371,7 +371,7 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
 
       {/* 중간: 제목과 설명 */}
       <div className="mb-4 text-left">
-        <h3 className="text-title3 mb-2 line-clamp-1 text-left text-black transition-colors hover:text-purple-600">
+        <h3 className="text-title3 mb-2 line-clamp-1 text-left text-black">
           {tool.name}
         </h3>
         <p className="text-title1 line-clamp-2 text-left"
