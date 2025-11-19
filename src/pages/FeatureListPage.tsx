@@ -413,7 +413,13 @@ const FeatureListPage: React.FC = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-white">
-        <Header tabs={featureTabs} activeTab={activeTab} onTabChange={handleTabChange} />
+        <Header
+          tabs={featureTabs}
+          activeTab={activeTab}
+          onTabChange={handleTabChange}
+          horizontalPadding={PAGE_HORIZONTAL_PADDING}
+          fullWidth
+        />
         <div className="flex items-center justify-center pt-20">
           <div className="text-lg text-gray-600">AI 서비스를 불러오는 중...</div>
         </div>
@@ -423,7 +429,13 @@ const FeatureListPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <Header tabs={featureTabs} activeTab={activeTab} onTabChange={handleTabChange} />
+      <Header
+        tabs={featureTabs}
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+        horizontalPadding={PAGE_HORIZONTAL_PADDING}
+        fullWidth
+      />
       <main
         className="mx-auto py-8"
         style={{ paddingLeft: PAGE_HORIZONTAL_PADDING, paddingRight: PAGE_HORIZONTAL_PADDING }}

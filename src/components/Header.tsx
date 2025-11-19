@@ -18,9 +18,11 @@ interface HeaderProps {
   tabs: Tab[];
   activeTab: string;
   onTabChange: (tab: string) => void;
+  horizontalPadding?: number;
+  fullWidth?: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
+const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange, horizontalPadding, fullWidth = false }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { isAuthenticated, user, logout } = useAuth();
@@ -277,9 +279,20 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
     'AI 코드 어시스턴트'
   ];
 
+  const containerStyle = horizontalPadding !== undefined
+    ? { paddingLeft: horizontalPadding, paddingRight: horizontalPadding }
+    : undefined;
+
+  const containerClassName = [
+    fullWidth ? 'w-full' : 'max-w-7xl mx-auto',
+    horizontalPadding === undefined ? 'px-4 sm:px-6 lg:px-8' : ''
+  ]
+    .join(' ')
+    .trim();
+
   return (
     <header className="bg-white sticky top-0 z-40" style={{ fontFamily: 'Pretendard', borderBottom: '1px solid #ECECEC' }}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className={containerClassName} style={containerStyle}>
         <div className="flex items-center justify-between h-16">
           
           {/* 왼쪽: 로고 + 네비게이션 */}
@@ -695,7 +708,7 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
       {/* 탭바 */}
       {tabs.length > 0 && (
         <div style={{ position: 'relative' }}>
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className={containerClassName} style={containerStyle}>
             <div className="flex space-x-8 overflow-x-auto">
               {tabs.map((tab) => (
                 <button
@@ -730,7 +743,15 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange }) => {
               ))}
             </div>
           </div>
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" style={{ height: '0px', background: 'transparent', marginTop: '0' }} />
+          <div
+            className={containerClassName}
+            style={{
+              ...containerStyle,
+              height: '0px',
+              background: 'transparent',
+              marginTop: '0'
+            }}
+          />
         </div>
       )}
 

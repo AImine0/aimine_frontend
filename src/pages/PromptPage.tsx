@@ -2,12 +2,23 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 
+const PAGE_HORIZONTAL_PADDING = 200;
+
 const PromptPage: React.FC = () => {
   const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-white" style={{ fontFamily: 'Pretendard' }}>
-      <Header tabs={[]} activeTab="" onTabChange={() => {}} />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <Header
+        tabs={[]}
+        activeTab=""
+        onTabChange={() => {}}
+        horizontalPadding={PAGE_HORIZONTAL_PADDING}
+        fullWidth
+      />
+      <main
+        className="mx-auto py-20"
+        style={{ paddingLeft: PAGE_HORIZONTAL_PADDING, paddingRight: PAGE_HORIZONTAL_PADDING }}
+      >
         <div className="flex flex-col items-center text-center">
           <img src="/images/GlassMorphism/Prompt_Sandglass.png" alt="준비중" style={{ width: 120, height: 120 }} />
           <div style={{ color: '#202020', fontWeight: 600, fontSize: 28, marginTop: 24 }}>서비스 준비중입니다.</div>

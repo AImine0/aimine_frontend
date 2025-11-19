@@ -134,7 +134,13 @@ const RoleListPage: React.FC = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-white">
-        <Header tabs={roleTabs} activeTab={activeRole} onTabChange={setActiveRole} />
+        <Header
+          tabs={roleTabs}
+          activeTab={activeRole}
+          onTabChange={setActiveRole}
+          horizontalPadding={PAGE_HORIZONTAL_PADDING}
+          fullWidth
+        />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <Breadcrumb items={breadcrumbItems} />
           <div className="flex items-center justify-center pt-20">
@@ -165,7 +171,13 @@ const RoleListPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <Header tabs={roleTabs} activeTab={activeRole} onTabChange={setActiveRole} />
+      <Header
+        tabs={roleTabs}
+        activeTab={activeRole}
+        onTabChange={setActiveRole}
+        horizontalPadding={PAGE_HORIZONTAL_PADDING}
+        fullWidth
+      />
       <main
         className="mx-auto py-8"
         style={{ paddingLeft: PAGE_HORIZONTAL_PADDING, paddingRight: PAGE_HORIZONTAL_PADDING }}
