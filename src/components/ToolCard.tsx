@@ -1,7 +1,7 @@
 // [AI 툴 카드 컴포넌트] 개별 AI 도구 정보 표시 - 이름, 설명, BEST 뱃지, 북마크, 평점, 링크 버튼
 
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import type { AITool } from '../types';
 import { handleImageError } from '../utils/imageMapping';
 import { apiService } from '../services';
@@ -19,6 +19,11 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
   const [statusCheckAttempts, setStatusCheckAttempts] = useState(0);
   const location = useLocation();
   const navigate = useNavigate();
+  const handleCardNavigation = () => {
+    if (tool.id) {
+      navigate(`/tool/${tool.id}`);
+    }
+  };
 
   // MyPage인지 확인
   const isMyPage = location.pathname === '/mypage';
@@ -227,9 +232,9 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
            fontFamily: 'Pretendard', 
            padding: '20px', 
            minHeight: '240px',
-           cursor: 'pointer'
+           cursor: 'pointer' 
          }}
-         onClick={handleCardClick}
+         onClick={handleCardNavigation}
          onMouseEnter={(e) => {
            e.currentTarget.style.backgroundColor = '#F2EEFB';
            e.currentTarget.style.border = 'none';
