@@ -38,6 +38,12 @@ const getCategorySlug = (categoryName: string): string => {
 
 const PAGE_HORIZONTAL_PADDING = 200;
 const BANNER_ARROW_SCREEN_GAP = 120;
+const BANNER_ARROW_WIDTH = 40;
+const BANNER_CONTENT_ARROW_GAP = 40;
+const BANNER_CONTENT_VERTICAL_PADDING = 40;
+const BANNER_CONTENT_SIDE_PADDING =
+  BANNER_ARROW_SCREEN_GAP + BANNER_ARROW_WIDTH + BANNER_CONTENT_ARROW_GAP;
+const BANNER_FIXED_HEIGHT = 293;
 
 const RoleListPage: React.FC = () => {
   const navigate = useNavigate();
@@ -47,6 +53,15 @@ const RoleListPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [situationSlides, setSituationSlides] = useState<Record<number, number>>({});
   const activeRoleName = roleTabs.find(tab => tab.id === activeRole)?.name || '';
+  const roleSubDescriptions: Record<string, string> = {
+    it: 'IT/기술',
+    edu: '교육자와 연구자를 위한 AI 서비스들을 상황별로 추천해드려요',
+    art: '아트/디자인',
+    media: '영상, 사운드, 마케팅까지. 콘텐츠 제작자들을 위한 AI 서비스들을 추천해드려요',
+    plan: '기획/마케팅',
+    manage: '경영/운영'
+  };
+  const activeRoleDescription = roleSubDescriptions[activeRole] || activeRoleName;
   const toolIdMap: Record<string, string> = {
     'Connected Papers': '70',
     'SciSpace': '68',
@@ -182,11 +197,27 @@ const RoleListPage: React.FC = () => {
         className="mx-auto py-8"
         style={{ paddingLeft: PAGE_HORIZONTAL_PADDING, paddingRight: PAGE_HORIZONTAL_PADDING }}
       >
-        <Breadcrumb items={breadcrumbItems} />
-        <div className="mb-8">
-          <h1 className="font-semibold mb-2" style={{ color: '#000000', fontSize: '32px', fontFamily: 'Pretendard' }}>
+        <div style={{ marginBottom: 10 }}>
+          <Breadcrumb items={breadcrumbItems} />
+        </div>
+        <div style={{ marginBottom: 48 }}>
+          <h1
+            className="font-semibold"
+            style={{ color: '#000000', fontSize: '32px', fontFamily: 'Pretendard', marginBottom: 0 }}
+          >
             {activeRoleName}
           </h1>
+          <p
+            style={{
+              marginTop: 6,
+              color: '#9B9B9B',
+              fontWeight: 400,
+              fontFamily: 'Pretendard',
+              fontSize: 14
+            }}
+          >
+            {activeRoleDescription}
+          </p>
         </div>
 
         {error && (
@@ -218,8 +249,8 @@ const RoleListPage: React.FC = () => {
         {/* 상황별 추천 조합 배너 (향후 API로 대체 예정) */}
         {combos.length > 0 && (
           <div
-            className="w-screen relative left-1/2 -translate-x-1/2 mb-10"
-            style={{ background: '#F6F0FF', borderRadius: 0, minHeight: 220, padding: 0 }}
+            className="w-screen relative left-1/2 -translate-x-1/2 mb-[72px]"
+            style={{ background: '#F6F0FF', borderRadius: 0, height: BANNER_FIXED_HEIGHT, padding: 0, boxSizing: 'border-box' }}
           >
             {/* 왼쪽 화살표 */}
             {combos.length > 1 && (
@@ -248,13 +279,20 @@ const RoleListPage: React.FC = () => {
 
             <div
               className="mx-auto"
-              style={{ paddingLeft: PAGE_HORIZONTAL_PADDING, paddingRight: PAGE_HORIZONTAL_PADDING }}
+              style={{
+                paddingLeft: BANNER_CONTENT_SIDE_PADDING,
+                paddingRight: BANNER_CONTENT_SIDE_PADDING,
+                paddingTop: BANNER_CONTENT_VERTICAL_PADDING,
+                paddingBottom: BANNER_CONTENT_VERTICAL_PADDING,
+                height: '100%',
+                boxSizing: 'border-box'
+              }}
             >
-              <div className="flex flex-row items-start py-8 justify-between">
+              <div className="flex flex-row items-start justify-between">
                 {/* 왼쪽 텍스트 영역 */}
                 <div className="banner-left-text" style={{ textAlign: 'left' }}>
                   <div className="flex flex-col justify-center items-start">
-                    <div className="flex items-center mb-2" style={{ justifyContent: 'flex-start' }}>
+                    <div className="flex items-center" style={{ justifyContent: 'flex-start', marginBottom: 4 }}>
                       <span
                         className="inline-block px-4 py-1 mr-2"
                         style={{
@@ -269,13 +307,13 @@ const RoleListPage: React.FC = () => {
                       >
                         {combos[comboIdx].situation}
                       </span>
-                      <span style={{ color: '#000000', fontWeight: 600, fontSize: 24, fontFamily: 'Pretendard' }}>을 위한</span>
+                      <span style={{ color: '#000000', fontWeight: 500, fontSize: 24, fontFamily: 'Pretendard' }}>을 위한</span>
                     </div>
-                    <div className="mb-2" style={{ textAlign: 'left' }}>
-                      <span style={{ color: '#7F50D2', fontWeight: 600, fontSize: 24, fontFamily: 'Pretendard' }}>AIMine</span>
-                      <span style={{ color: '#000000', fontWeight: 600, fontSize: 24, fontFamily: 'Pretendard', marginLeft: 8 }}>의 추천 조합!</span>
+                    <div className="mb-[76px]" style={{ textAlign: 'left' }}>
+                      <span style={{ color: '#7F50D2', fontWeight: 500, fontSize: 24, fontFamily: 'Pretendard' }}>AIMine</span>
+                      <span style={{ color: '#000000', fontWeight: 500, fontSize: 24, fontFamily: 'Pretendard', marginLeft: 8 }}>의 추천 조합!</span>
                     </div>
-                    <div className="text-base leading-relaxed mt-12" style={{ fontFamily: 'Pretendard', textAlign: 'left' }}>
+                    <div className="text-base leading-relaxed" style={{ fontFamily: 'Pretendard', textAlign: 'left' }}>
                       {(() => {
                         const aiNames = combos[comboIdx].aiList;
                         const regex = new RegExp(`(${aiNames.map(n => n.replace(/([.*+?^=!:${}()|[\]\/\\])/g, "\\$1")).join('|')}|[.,])`, 'g');
@@ -296,7 +334,7 @@ const RoleListPage: React.FC = () => {
                 </div>
 
                 {/* 오른쪽 AI 도구 indicator */}
-                <div className="ai-indicator-set flex justify-end items-center" style={{ position: 'relative', zIndex: 1 }}>
+                <div className="ai-indicator-set flex justify-end items-center" style={{ position: 'relative', zIndex: 1, marginTop: '2px' }}>
                   <div className="flex flex-col items-end justify-center">
                     {(() => {
                       const dotSize = 15;
@@ -308,7 +346,7 @@ const RoleListPage: React.FC = () => {
                       const centers = Array.from({ length: n }, (_, i) => i * (flexItemWidth + gap) + flexItemWidth / 2);
                       return (
                         <>
-                          <svg width={totalWidth} height={40} style={{ position: 'absolute', left: 0, top: 0, zIndex: 0 }}>
+                          <svg width={totalWidth} height={40} style={{ position: 'absolute', left: 0, top: 0, zIndex: 0, marginBottom: 4 }}>
                             {n > 1 && (
                               <line
                                 x1={centers[0]}
@@ -323,7 +361,7 @@ const RoleListPage: React.FC = () => {
                               <circle key={`combo-circle-${comboIdx}-${idx}`} cx={cx} cy={dotSize / 2} r={dotSize / 2} fill="#7E50D1" />
                             ))}
                           </svg>
-                          <div className="flex justify-end" style={{ gap: `${gap}px`, position: 'relative', zIndex: 1 }}>
+                          <div className="flex justify-end" style={{ gap: `${gap}px`, position: 'relative', zIndex: 1, marginTop: 4 }}>
                             {combos[comboIdx].aiList.map((ai, aiIdx) => {
                               const categoryMap: Record<string, string> = {
                                 'ChatGPT': 'chat', 'Claude': 'chat', 'Gemini': 'chat',
@@ -348,7 +386,7 @@ const RoleListPage: React.FC = () => {
                               return (
                                 <div key={`combo-ai-${comboIdx}-${aiIdx}-${ai}`} className="flex flex-col items-center" style={{ width: flexItemWidth }}>
                                   <div style={{ height: dotSize + 8 }} />
-                                  <span style={{ color: '#7E50D1', fontWeight: 600, fontSize: 14, fontFamily: 'Pretendard', marginBottom: 16 }}>{ai}</span>
+                                  <span style={{ color: '#7E50D1', fontWeight: 600, fontSize: 14, fontFamily: 'Pretendard', marginBottom: 15 }}>{ai}</span>
                                   <div
                                     className="flex items-center justify-center bg-white"
                                     style={{
@@ -501,14 +539,17 @@ const RoleListPage: React.FC = () => {
               const visibleTools = tools.slice(startIndex, startIndex + toolsPerSlide);
               
               return (
-                <div key={`situation-${situationData.category}-${situationData.id}-${situationIdx}`} className="mb-16">
-                  <div className="flex items-center mb-2" style={{ justifyContent: 'flex-start' }}>
+                <div key={`situation-${situationData.category}-${situationData.id}-${situationIdx}`} style={{ marginBottom: situationIdx === filteredSituations.length - 1 ? 64 : 100 }}>
+                  <div className="flex items-center" style={{ justifyContent: 'flex-start', marginBottom: 4 }}>
                     <span className="font-semibold" style={{ fontFamily: 'Pretendard', color: '#000000', fontSize: 24, fontWeight: 500 }}>
                       {title}
                     </span>
                   </div>
                   {description && (
-                    <div className="mb-6 text-left" style={{ color: '#000000', fontSize: '14px', fontWeight: 300, fontFamily: 'Pretendard' }}>
+                    <div
+                      className="text-left"
+                      style={{ color: '#000000', fontSize: '14px', fontWeight: 300, fontFamily: 'Pretendard', marginBottom: 24 }}
+                    >
                       {description}
                     </div>
                   )}
