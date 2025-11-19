@@ -6,6 +6,7 @@ import { apiService } from '../services';
 import type { AIToolDetail, ReviewListResponse } from '../types';
 import { handleImageError } from '../utils/imageMapping';
 
+const PAGE_HORIZONTAL_PADDING = 200;
 
 const ToolDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -190,7 +191,13 @@ const ToolDetailPage: React.FC = () => {
   if (error || !toolDetail) {
     return (
       <div className="min-h-screen bg-white">
-        <Header tabs={[]} activeTab="" onTabChange={() => {}} />
+        <Header
+          tabs={[]}
+          activeTab=""
+          onTabChange={() => {}}
+          horizontalPadding={PAGE_HORIZONTAL_PADDING}
+          fullWidth
+        />
         <div className="flex items-center justify-center pt-20">
           <div className="text-center max-w-md">
             <div className="text-6xl mb-4">😵</div>
@@ -243,19 +250,30 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
 
   return (
     <div className="min-h-screen bg-white" style={{ fontFamily: 'Pretendard' }}>
-      <Header tabs={[]} activeTab="" onTabChange={() => {}} />
+      <Header
+        tabs={[]}
+        activeTab=""
+        onTabChange={() => {}}
+        horizontalPadding={PAGE_HORIZONTAL_PADDING}
+        fullWidth
+      />
       
-      <main>
+      <main style={{ paddingLeft: PAGE_HORIZONTAL_PADDING, paddingRight: PAGE_HORIZONTAL_PADDING }}>
         {/* 헤더 섹션 */}
-        <div className="relative pt-[30px] pb-[64px] mb-3 " style={{ backgroundColor: '#F2EEFB' }}>
-          <div className="max-w-6xl mx-auto px-4">
+        <div className="relative pt-[30px] pb-[64px] mb-3" style={{ backgroundColor: '#F2EEFB', marginLeft: -PAGE_HORIZONTAL_PADDING, marginRight: -PAGE_HORIZONTAL_PADDING }}>
+          <div
+            style={{
+              paddingLeft: PAGE_HORIZONTAL_PADDING,
+              paddingRight: PAGE_HORIZONTAL_PADDING
+            }}
+          >
             <div className="-mb-2">
               <Breadcrumb items={breadcrumbItems} />
             </div>
           </div>
         </div>
         
-        <div className="max-w-6xl mx-auto px-4 pt-6 pb-48 bg-white">
+        <div className="pt-6 pb-48 bg-white">
         
         {/* 메인 히어로 섹션 */}
         <div className="flex items-start justify-between gap-20 mb-12">
