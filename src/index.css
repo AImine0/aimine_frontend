@@ -13,6 +13,28 @@
   
   body {
     @apply bg-gray-50 text-gray-900;
+    zoom: 0.85;
+  }
+
+  @media (max-width: 1024px) {
+    body {
+      zoom: 1;
+    }
+  }
+
+  @supports not (zoom: 1) {
+    body {
+      transform: scale(0.85);
+      transform-origin: top center;
+      width: calc(100% / 0.85);
+    }
+
+    @media (max-width: 1024px) {
+      body {
+        transform: none;
+        width: 100%;
+      }
+    }
   }
 }
 

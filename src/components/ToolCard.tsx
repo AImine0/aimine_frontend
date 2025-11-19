@@ -1,7 +1,7 @@
 // [AI 툴 카드 컴포넌트] 개별 AI 도구 정보 표시 - 이름, 설명, BEST 뱃지, 북마크, 평점, 링크 버튼
 
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import type { AITool } from '../types';
 import { handleImageError } from '../utils/imageMapping';
 import { apiService } from '../services';
@@ -220,11 +220,6 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
     return tool.categoryLabel || 'AI 도구';
   };
 
-  const handleCardClick = () => {
-    if (!tool.id) return;
-    navigate(`/tool/${tool.id}`);
-  };
-
   return (
     <div className={`bg-white rounded-xl group ${className || ''}`} 
          style={{ 
@@ -235,9 +230,11 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
            cursor: 'pointer' 
          }}
          onClick={handleCardNavigation}
-         onMouseEnter={(e) => {
-           e.currentTarget.style.backgroundColor = '#F2EEFB';
-           e.currentTarget.style.border = 'none';
+        onMouseEnter={(e) => {
+          e.currentTarget.style.backgroundColor = '#F2EEFB';
+          e.currentTarget.style.border = '1px solid #DBCBF9';
+          e.currentTarget.style.outline = '1px solid #F2EEFB';
+          e.currentTarget.style.outlineOffset = '-1px';
            // tags 컴포넌트 hover 효과
            const tagsElement = e.currentTarget.querySelector('[data-tags]');
            if (tagsElement) {
@@ -258,9 +255,10 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
              (bestBadge as HTMLElement).style.backgroundColor = '#E9DFFB';
            }
          }}
-         onMouseLeave={(e) => {
-           e.currentTarget.style.backgroundColor = '#FFFFFF';
-           e.currentTarget.style.border = '1px solid #DBCBF9';
+        onMouseLeave={(e) => {
+          e.currentTarget.style.backgroundColor = '#FFFFFF';
+          e.currentTarget.style.border = '1px solid #DBCBF9';
+          e.currentTarget.style.outline = 'none';
            // tags 컴포넌트 원래 색상으로 복원
            const tagsElement = e.currentTarget.querySelector('[data-tags]');
            if (tagsElement) {
