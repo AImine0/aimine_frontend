@@ -546,7 +546,7 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
               </form>
               
               {/* 리뷰 목록 */}
-              <div className="border-t border-gray-200">
+              <div >
                 <div className="py-4 border-b border-gray-200">
                   <h4 className="font-medium">{serviceReviews.length > 0 ? `${serviceReviews.length}개의 리뷰` : '리뷰'}</h4>
                 </div>
