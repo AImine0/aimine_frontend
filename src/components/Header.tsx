@@ -282,7 +282,7 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange, horizonta
   const containerClassName = [
     fullWidth ? 'w-full' : 'max-w-7xl mx-auto',
     horizontalPadding !== undefined 
-      ? 'px-4 sm:px-6 md:px-8 lg:px-16' 
+      ? 'px-4 sm:px-6 md:px-8 lg:px-16 xl:px-[200px]' 
       : 'px-4 sm:px-6 lg:px-8'
   ]
     .join(' ')
