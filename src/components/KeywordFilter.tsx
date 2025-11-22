@@ -219,17 +219,7 @@ const KeywordFilter: React.FC<KeywordFilterProps> = ({
               <button
                 key={typeof item === 'string' ? item : item.id}
                 onClick={() => onKeywordToggle(keyword)}
-                className={`px-4 py-2 rounded-full transition-all duration-200 flex items-center gap-1.5 hover:shadow-sm ${typographyClass}`}
-                onMouseEnter={(e) => {
-                  if (!isActive) {
-                    e.currentTarget.style.backgroundColor = '#E9DFFB';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!isActive) {
-                    e.currentTarget.style.backgroundColor = '#F2EEFB';
-                  }
-                }}
+                className={`px-4 py-2 rounded-full transition-all duration-200 flex items-center gap-1.5 hover:shadow-sm hover:underline hover:bg-[#E9DFFB] focus:bg-[#E9DFFB] ${typographyClass}`}
                 style={{ 
                   backgroundColor: isActive ? '#ffffff' : '#F2EEFB',
                   border: '1px solid #A987E8',
@@ -238,9 +228,30 @@ const KeywordFilter: React.FC<KeywordFilterProps> = ({
                   fontFamily: 'Pretendard'
                 }}
               >
-                {isActive && (
-                  <img src="/images/Icon/Check/20.svg" alt="선택됨" width={20} height={20} />
-                )}
+                <span
+                  aria-hidden="true"
+                  style={{
+                    width: isActive ? 20 : 0,
+                    height: 20,
+                    overflow: 'hidden',
+                    transition: 'width 200ms ease',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  <img
+                    src="/images/Icon/Check/20.svg"
+                    alt=""
+                    width={20}
+                    height={20}
+                    style={{
+                      opacity: isActive ? 1 : 0,
+                      transform: isActive ? 'scale(1)' : 'scale(0.8)',
+                      transition: 'opacity 200ms ease, transform 200ms ease'
+                    }}
+                  />
+                </span>
                 
                 <span>{keyword}</span>
                 

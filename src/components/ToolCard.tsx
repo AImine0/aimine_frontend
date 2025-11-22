@@ -230,8 +230,8 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
            cursor: 'pointer' 
          }}
          onClick={handleCardNavigation}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.backgroundColor = '#F2EEFB';
+         onMouseEnter={(e) => {
+           e.currentTarget.style.backgroundColor = '#F2EEFB';
           e.currentTarget.style.border = '1px solid #DBCBF9';
           e.currentTarget.style.outline = '1px solid #F2EEFB';
           e.currentTarget.style.outlineOffset = '-1px';
@@ -255,9 +255,9 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
              (bestBadge as HTMLElement).style.backgroundColor = '#E9DFFB';
            }
          }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.backgroundColor = '#FFFFFF';
-          e.currentTarget.style.border = '1px solid #DBCBF9';
+         onMouseLeave={(e) => {
+           e.currentTarget.style.backgroundColor = '#FFFFFF';
+           e.currentTarget.style.border = '1px solid #DBCBF9';
           e.currentTarget.style.outline = 'none';
            // tags 컴포넌트 원래 색상으로 복원
            const tagsElement = e.currentTarget.querySelector('[data-tags]');
@@ -354,7 +354,7 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
           {/* 바로가기 버튼 - 외부 URL로 이동 */}
           <button
             onClick={handleExternalLink}
-            className="flex items-center justify-center"
+            className="flex items-center justify-center" 
             data-visit-button
             style={{ 
               backgroundColor: '#E9DFFB', 
@@ -372,11 +372,11 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
       {/* 중간: 제목과 설명 */}
       <div className="mb-4 text-left">
         <h3 className="text-title0 mb-2 line-clamp-1 text-left text-black">
-          {tool.name}
-        </h3>
+            {tool.name}
+          </h3>
         <p className="text-body2 line-clamp-2 text-left"
           style={{ 
-            color: '#202020',
+            color: '#202020', 
             height: '48px'
           }}>
           {tool.description}

@@ -77,4 +77,27 @@
     font-weight: 500;
     letter-spacing: -0.01em;
   }
+
+  /* 그리드 시스템: 1440px 기준, Column 12, Margin 200, Gutter 32 */
+  .container-grid {
+    max-width: 1440px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 200px;
+    padding-right: 200px;
+  }
+
+  @media (max-width: 1440px) {
+    .container-grid {
+      padding-left: clamp(16px, 8vw, 200px);
+      padding-right: clamp(16px, 8vw, 200px);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .container-grid {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+  }
 }
