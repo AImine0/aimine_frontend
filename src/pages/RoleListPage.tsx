@@ -54,12 +54,12 @@ const RoleListPage: React.FC = () => {
   const [situationSlides, setSituationSlides] = useState<Record<number, number>>({});
   const activeRoleName = roleTabs.find(tab => tab.id === activeRole)?.name || '';
   const roleSubDescriptions: Record<string, string> = {
-    it: 'IT/기술',
+    it: '개발자와 기술자를 위한 AI 서비스들을 상황별로 추천해드려요',
     edu: '교육자와 연구자를 위한 AI 서비스들을 상황별로 추천해드려요',
-    art: '아트/디자인',
+    art: '예술가와 디자이너를 위한 AI 서비스들을 상황별로 추천해드려요',
     media: '영상, 사운드, 마케팅까지. 콘텐츠 제작자들을 위한 AI 서비스들을 추천해드려요',
-    plan: '기획/마케팅',
-    manage: '경영/운영'
+    plan: '기획자와 마케터를 위한 AI 서비스들을 상황별로 추천해드려요',
+    manage: '비즈니스 운영진과 HR 매니저를 위한 AI 서비스들을 상황별로 추천해드려요'
   };
   const activeRoleDescription = roleSubDescriptions[activeRole] || activeRoleName;
   const toolIdMap: Record<string, string> = {
