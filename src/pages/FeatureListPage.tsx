@@ -186,10 +186,14 @@ const FeatureListPage: React.FC = () => {
     const updatePadding = () => {
       if (window.innerWidth >= 1440) {
         setHorizontalPadding(200);
+      } else if (window.innerWidth >= 1024) {
+        setHorizontalPadding(64); // lg:px-16 고정
       } else if (window.innerWidth >= 768) {
-        setHorizontalPadding(Math.max(16, window.innerWidth * 0.08));
+        setHorizontalPadding(32); // md:px-8 고정
+      } else if (window.innerWidth >= 640) {
+        setHorizontalPadding(24); // sm:px-6 고정
       } else {
-        setHorizontalPadding(16);
+        setHorizontalPadding(16); // 모바일
       }
     };
     
@@ -455,8 +459,13 @@ const FeatureListPage: React.FC = () => {
         fullWidth
       />
       <main
-        className="w-full max-w-[1440px] mx-auto py-6 sm:py-8 px-4 sm:px-6 md:px-8 lg:px-16"
+        className="w-full max-w-[1440px] py-6 sm:py-8"
+        style={{
+          marginLeft: horizontalPadding >= 200 ? '200px' : 'auto',
+          marginRight: horizontalPadding >= 200 ? '200px' : 'auto'
+        }}
       >
+        <div className={horizontalPadding >= 200 ? 'px-0' : 'px-4 sm:px-6 md:px-8 lg:px-16'}>
           <Breadcrumb items={breadcrumbItems} />
 
           <div className="mb-6 sm:mb-8">
@@ -544,6 +553,7 @@ const FeatureListPage: React.FC = () => {
               )}
             </>
           )}
+        </div>
       </main>
     </div>
   );
