@@ -175,10 +175,28 @@ const PRICING_TYPE_MAP: Record<FilterType, string | undefined> = {
   freemium: 'FREEMIUM'
 };
 
-const PAGE_HORIZONTAL_PADDING = 200;
-
 const FeatureListPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams(); // 추가
+  
+  // 반응형 패딩 상태
+  const [horizontalPadding, setHorizontalPadding] = useState(200);
+  
+  // 화면 크기 변경 시 패딩 업데이트
+  useEffect(() => {
+    const updatePadding = () => {
+      if (window.innerWidth >= 1440) {
+        setHorizontalPadding(200);
+      } else if (window.innerWidth >= 768) {
+        setHorizontalPadding(Math.max(16, window.innerWidth * 0.08));
+      } else {
+        setHorizontalPadding(16);
+      }
+    };
+    
+    updatePadding();
+    window.addEventListener('resize', updatePadding);
+    return () => window.removeEventListener('resize', updatePadding);
+  }, []);
   
   // URL에서 tab 파라미터 읽어서 초기값 설정 (한글/영문/슬러그 모두 허용)
   const normalizeTab = (value: string | null): string => {
@@ -417,11 +435,11 @@ const FeatureListPage: React.FC = () => {
           tabs={featureTabs}
           activeTab={activeTab}
           onTabChange={handleTabChange}
-          horizontalPadding={PAGE_HORIZONTAL_PADDING}
+          horizontalPadding={horizontalPadding}
           fullWidth
         />
-        <div className="flex items-center justify-center pt-20">
-          <div className="text-lg text-gray-600">AI 서비스를 불러오는 중...</div>
+        <div className="flex items-center justify-center pt-20 px-4">
+          <div className="text-base sm:text-lg text-gray-600">AI 서비스를 불러오는 중...</div>
         </div>
       </div>
     );
@@ -433,100 +451,101 @@ const FeatureListPage: React.FC = () => {
         tabs={featureTabs}
         activeTab={activeTab}
         onTabChange={handleTabChange}
-        horizontalPadding={PAGE_HORIZONTAL_PADDING}
+        horizontalPadding={horizontalPadding}
         fullWidth
       />
       <main
-        className="mx-auto py-8"
-        style={{ paddingLeft: PAGE_HORIZONTAL_PADDING, paddingRight: PAGE_HORIZONTAL_PADDING }}
+        className="w-full max-w-[1440px] mx-auto py-6 sm:py-8 px-0 sm:px-6 md:px-8 lg:px-16 xl:px-[200px]"
       >
-        <Breadcrumb items={breadcrumbItems} />
+        <div className="px-4 sm:px-0">
+          <Breadcrumb items={breadcrumbItems} />
 
-        <div className="mb-8">
-          <h1 className="font-semibold mb-2" style={{ color: '#000000', fontSize: '32px', fontFamily: 'Pretendard' }}>
-            {getTabTitle(activeTab)}
-          </h1>
-        </div>
+          <div className="mb-6 sm:mb-8">
+            <h1 className="font-semibold mb-2 text-2xl sm:text-3xl lg:text-[32px]" style={{ color: '#000000', fontFamily: 'Pretendard' }}>
+              {getTabTitle(activeTab)}
+            </h1>
+          </div>
 
-        {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-            <div className="flex">
-              <div className="flex-shrink-0">
-                <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                </svg>
-              </div>
-              <div className="ml-3">
-                <h3 className="text-sm font-medium text-red-800">오류 발생</h3>
-                <div className="mt-2 text-sm text-red-700">
-                  <p>{error}</p>
+          {error && (
+            <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-red-50 border border-red-200 rounded-lg">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <svg className="h-4 w-4 sm:h-5 sm:w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  </svg>
                 </div>
-                <div className="mt-3">
-                  <button
-                    onClick={() => window.location.reload()}
-                    className="bg-red-100 hover:bg-red-200 text-red-800 text-sm font-medium px-3 py-1 rounded-md transition-colors"
-                  >
-                    다시 시도
-                  </button>
+                <div className="ml-3">
+                  <h3 className="text-xs sm:text-sm font-medium text-red-800">오류 발생</h3>
+                  <div className="mt-2 text-xs sm:text-sm text-red-700">
+                    <p>{error}</p>
+                  </div>
+                  <div className="mt-3">
+                    <button
+                      onClick={() => window.location.reload()}
+                      className="bg-red-100 hover:bg-red-200 text-red-800 text-xs sm:text-sm font-medium px-3 py-1 rounded-md transition-colors"
+                    >
+                      다시 시도
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        <KeywordFilter
-          keywords={CATEGORY_KEYWORDS[activeTab] || keywords}
-          activeKeywords={activeKeywords}
-          onKeywordToggle={handleKeywordToggle}
-          onReset={handleKeywordReset}
-          category={activeTab}
-        />
+          <KeywordFilter
+            keywords={CATEGORY_KEYWORDS[activeTab] || keywords}
+            activeKeywords={activeKeywords}
+            onKeywordToggle={handleKeywordToggle}
+            onReset={handleKeywordReset}
+            category={activeTab}
+          />
 
-        <FilterBar
-          totalCount={baseTools.length}
-          freeCount={filteredFreeCount}
-          paidCount={filteredPaidCount}
-          freemiumCount={filteredFreemiumCount}
-          activeFilter={activeFilter}
-          onFilterChange={(filter) => {
-            setActiveFilter(prev => (prev === filter ? 'all' : filter));
-          }}
-          sortType={sortType}
-          onSortChange={setSortType}
-        />
+          <FilterBar
+            totalCount={baseTools.length}
+            freeCount={filteredFreeCount}
+            paidCount={filteredPaidCount}
+            freemiumCount={filteredFreemiumCount}
+            activeFilter={activeFilter}
+            onFilterChange={(filter) => {
+              setActiveFilter(prev => (prev === filter ? 'all' : filter));
+            }}
+            sortType={sortType}
+            onSortChange={setSortType}
+          />
 
-        {tools.length === 0 && !loading && !error && (
-          <div className="text-center py-12">
-            <div className="text-gray-500 text-lg mb-2">검색 결과가 없습니다</div>
-            <div className="text-gray-400 text-sm">
-              다른 키워드나 필터를 시도해보세요.
-            </div>
-          </div>
-        )}
-
-        {tools.length > 0 && (
-          <>
-            {/* BEST 1,2,3 */}
-            <section className="mb-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" style={{ alignItems: 'start' }}>
-                {featuredTools.map((tool, index) => (
-                  <ToolCard key={tool.id} tool={tool} rank={index + 1} />
-                ))}
+          {tools.length === 0 && !loading && !error && (
+            <div className="text-center py-8 sm:py-12 px-4">
+              <div className="text-gray-500 text-base sm:text-lg mb-2">검색 결과가 없습니다</div>
+              <div className="text-gray-400 text-sm">
+                다른 키워드나 필터를 시도해보세요.
               </div>
-            </section>
+            </div>
+          )}
 
-            {/* 전체 리스트 */}
-            {restTools.length > 0 && (
-              <section>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" style={{ alignItems: 'start' }}>
-                  {restTools.map((tool) => (
-                    <ToolCard key={tool.id} tool={tool} />
+          {tools.length > 0 && (
+            <>
+              {/* BEST 1,2,3 */}
+              <section className="mb-4 sm:mb-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6" style={{ alignItems: 'start' }}>
+                  {featuredTools.map((tool, index) => (
+                    <ToolCard key={tool.id} tool={tool} rank={index + 1} />
                   ))}
                 </div>
               </section>
-            )}
-          </>
-        )}
+
+              {/* 전체 리스트 */}
+              {restTools.length > 0 && (
+                <section>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6" style={{ alignItems: 'start' }}>
+                    {restTools.map((tool) => (
+                      <ToolCard key={tool.id} tool={tool} />
+                    ))}
+                  </div>
+                </section>
+              )}
+            </>
+          )}
+        </div>
       </main>
     </div>
   );
