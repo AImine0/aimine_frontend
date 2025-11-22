@@ -317,14 +317,14 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
             backgroundColor: '#F2EEFB'
           }}
         >
-          <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8 lg:px-16 xl:px-[200px]">
+          <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8 lg:px-16">
             <div className="-mb-2">
               <Breadcrumb items={breadcrumbItems} />
             </div>
           </div>
         </div>
         
-        <div className="w-full max-w-[1440px] mx-auto pt-4 sm:pt-6 pb-24 sm:pb-48 bg-white px-4 sm:px-6 md:px-8 lg:px-16 xl:px-[50px]">
+        <div className="w-full max-w-[1440px] mx-auto pt-4 sm:pt-6 pb-24 sm:pb-48 bg-white px-4 sm:px-6 md:px-8 lg:px-16">
         
         {/* 메인 히어로 섹션 */}
         <div className="flex flex-col lg:flex-row items-start justify-between gap-6 sm:gap-8 lg:gap-20 mb-8 sm:mb-12">

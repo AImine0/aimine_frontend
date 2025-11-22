@@ -282,7 +282,7 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange, horizonta
   const containerClassName = [
     fullWidth ? 'w-full' : 'max-w-7xl mx-auto',
     horizontalPadding !== undefined 
-      ? 'px-0 sm:px-6 md:px-8 lg:px-16 xl:px-[200px]' 
+      ? 'px-4 sm:px-6 md:px-8 lg:px-16' 
       : 'px-4 sm:px-6 lg:px-8'
   ]
     .join(' ')
@@ -291,7 +291,7 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange, horizonta
   return (
     <header className="bg-white sticky top-0 z-40" style={{ fontFamily: 'Pretendard', borderBottom: '1px solid #ECECEC' }}>
       <div className={containerClassName}>
-        <div className={`flex items-center justify-between h-16 ${horizontalPadding !== undefined ? 'px-4 sm:px-0' : ''}`}>
+        <div className="flex items-center justify-between h-16">
           
           {/* 왼쪽: 로고 + 네비게이션 */}
           <div className="flex items-center">
@@ -706,7 +706,7 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange, horizonta
       {/* 탭바 */}
       {tabs.length > 0 && (
         <div style={{ position: 'relative' }}>
-          <div className={containerClassName} style={containerStyle}>
+          <div className={containerClassName}>
             <div className="flex space-x-8 overflow-x-auto">
               {tabs.map((tab) => (
                 <button
@@ -744,7 +744,6 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange, horizonta
           <div
             className={containerClassName}
             style={{
-              ...containerStyle,
               height: '0px',
               background: 'transparent',
               marginTop: '0'
