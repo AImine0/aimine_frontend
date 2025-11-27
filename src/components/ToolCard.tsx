@@ -191,7 +191,7 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
               color: '#7E50D1',
               width: '66px',
               height: '32px',
-              borderRadius: '3.26px',
+              borderRadius: '8px',
               justifyContent: 'center',
               fontSize: '14px',
               fontFamily: 'Pretendard'

@@ -18,7 +18,11 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ items }) => {
       <ol className="flex items-center space-x-0.5">
         <li>
           <div className="flex items-center">
-            <Link to="/" className="text-sm font-medium" style={{ color: '#9B9B9B', fontFamily: 'Pretendard' }}>
+            <Link
+              to="/"
+              className="text-sm font-medium"
+              style={{ color: '#9B9B9B', fontFamily: 'Pretendard', fontSize: '12px', fontWeight: 500 }}
+            >
               홈
             </Link>
           </div>
@@ -43,12 +47,15 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ items }) => {
                 <Link
                   to={item.href}
                   className="text-sm font-medium hover:text-gray-700"
-                  style={{ color: '#9B9B9B', fontFamily: 'Pretendard' }}
+                  style={{ color: '#9B9B9B', fontFamily: 'Pretendard', fontSize: '12px', fontWeight: 500 }}
                 >
                   {item.label}
                 </Link>
               ) : (
-                <span className="text-sm font-medium" style={{ color: '#9B9B9B', fontFamily: 'Pretendard' }}>
+                <span
+                  className="text-sm font-medium"
+                  style={{ color: '#9B9B9B', fontFamily: 'Pretendard', fontSize: '12px', fontWeight: 500 }}
+                >
                   {item.label}
                 </span>
               )}

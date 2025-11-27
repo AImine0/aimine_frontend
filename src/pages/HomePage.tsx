@@ -21,9 +21,33 @@ const HomePage: React.FC = () => {
       <Header tabs={[]} activeTab="" onTabChange={() => {}} />
       <main className="mx-auto px-4 sm:px-6 lg:px-8" style={{ maxWidth: '1280px' }}>
         <section className="text-center" style={{ paddingTop: '56px', paddingBottom: '32px' }}>
-          <div className="text-gray-900" style={{ color: '#202020', fontSize: '32px', lineHeight: '40px', fontWeight: 600 }}>나에게 꼭 맞는 AI,</div>
-          <div className="text-gray-900" style={{ color: '#202020', fontSize: '36px', lineHeight: '44px', marginTop: '8px', fontWeight: 600 }}>AIMine에서 찾아보세요</div>
-          <div className="text-gray-500" style={{ color: '#424242', fontSize: '18px', lineHeight: '28px', marginTop: '12px', fontWeight: 400 }}>
+          <div
+            className="text-gray-900"
+            style={{
+              color: '#202020',
+              fontSize: '36px',
+              lineHeight: '130%',
+              fontWeight: 500,
+              letterSpacing: '-0.003em',
+              textAlign: 'center'
+            }}
+          >
+            나에게 꼭 맞는 AI,
+            <br />
+            AIMine에서 찾아보세요
+          </div>
+          <div
+            className="text-gray-500"
+            style={{
+              color: '#424242',
+              fontSize: '18px',
+              lineHeight: '130%',
+              marginTop: '8px',
+              fontWeight: 300,
+              letterSpacing: '-0.003em',
+              textAlign: 'center'
+            }}
+          >
             기능별, 직업별로 정리된 AI 서비스 큐레이션으로
             <br />
             당신에게 필요한 도구만 골라보세요!

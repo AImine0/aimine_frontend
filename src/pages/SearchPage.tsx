@@ -329,23 +329,25 @@ const SearchPage: React.FC = () => {
             {!loading && searchQuery && searchResults.length === 0 && !error && (
               <div className="text-center py-12 mt-32">
                 <h3 
-                  className="mb-2"
+                  className=""
                   style={{ 
                     color: '#202020', 
                     fontWeight: 600, 
                     fontSize: '18px',
-                    fontFamily: 'Pretendard'
+                    fontFamily: 'Pretendard',
+                    marginBottom: '0px'
                   }}
                 >
                   '{searchQuery}'에 대한 검색 결과가 없습니다.
                 </h3>
                 <p 
-                  className="mb-12"
+                  className=""
                   style={{ 
                     color: '#202020', 
                     fontWeight: 400, 
                     fontSize: '16px',
-                    fontFamily: 'Pretendard'
+                    fontFamily: 'Pretendard',
+                    marginTop: '4px'
                   }}
                 >
                   검색어를 다시 한 번 확인해주세요.
@@ -357,7 +359,8 @@ const SearchPage: React.FC = () => {
                   style={{
                     backgroundColor: '#F2EEFB',
                     borderRadius: '12px',
-                    padding: '16px'
+                    padding: '16px',
+                    marginTop: '65px'
                   }}
                 >
                   <p 
@@ -387,7 +390,7 @@ const SearchPage: React.FC = () => {
                       <button
                         key={index}
                         onClick={() => handleNewSearch(keyword)}
-                        className="flex items-center gap-2 rounded-full text-xs font-medium transition-colors whitespace-nowrap"
+                        className="flex items-center rounded-full text-xs font-medium transition-colors whitespace-nowrap"
                         style={{
                           backgroundColor: '#FFFFFF',
                           borderRadius: '20px',
@@ -400,7 +403,8 @@ const SearchPage: React.FC = () => {
                           fontSize: '12px',
                           fontFamily: 'Pretendard',
                           width: 'fit-content',
-                          border: '1px solid #E5E7EB'
+                          columnGap: '2px'
+                          // border 제거 (stroke 효과 제거)
                         }}
                         onMouseEnter={(e) => {
                           e.currentTarget.style.backgroundColor = '#DBCBF9';

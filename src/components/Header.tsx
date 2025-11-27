@@ -35,6 +35,7 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange, horizonta
   const [searchSuggestions, setSearchSuggestions] = useState<string[]>([]);
   const [showSearchSuggestions, setShowSearchSuggestions] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [loginModalMode, setLoginModalMode] = useState<'login' | 'signup'>('login');
   const [showRecommendedKeywords, setShowRecommendedKeywords] = useState(false);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [suggestions, setSuggestions] = useState<SearchSuggestion[]>([]);
@@ -219,6 +220,7 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange, horizonta
 
   // 로그인 처리
   const handleLogin = () => {
+    setLoginModalMode('login');
     setShowLoginModal(true);
   };
 
@@ -388,10 +390,10 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange, horizonta
                     onBlur={handleSearchBlur}
                     onKeyPress={handleKeyPress}
                     placeholder="원하는 AI 서비스를 검색해보세요."
-                    className="w-full pl-4 pr-4 py-2 border focus:outline-none focus:ring-0 focus:border-[#BCBCBC] text-sm placeholder:font-normal placeholder-[#9B9B9B]"
+                    className="w-full pl-4 pr-4 py-2 border focus:outline-none focus:ring-0 focus:border-[#9B9B9B] text-sm placeholder:font-normal placeholder-[#9B9B9B]"
                     style={{ 
                       fontFamily: 'Pretendard', 
-                      borderColor: '#8C8C8C',
+                      borderColor: '#9B9B9B',
                       borderRadius: showRecommendedKeywords || showSearchSuggestions || showSuggestions ? '20px 20px 0 0' : '20px'
                     }}
                   />
@@ -601,19 +603,42 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange, horizonta
               </div>
             ) : (
               /* 로그인 안된 상태 */
-              <button
-                onClick={handleLogin}
-                className="px-4 py-2 text-white rounded-lg text-sm font-medium transition-colors"
-                style={{ fontFamily: 'Pretendard', backgroundColor: '#7E50D1' }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#6238AE';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = '#7E50D1';
-                }}
-              >
-                로그인
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleLogin}
+                  className="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                  style={{
+                    fontFamily: 'Pretendard',
+                    backgroundColor: '#FFFFFF',
+                    color: '#7E50D1',
+                    border: '1px solid #7E50D1'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#E9DFFB';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = '#FFFFFF';
+                  }}
+                >
+                  로그인
+                </button>
+                <button
+                  onClick={() => {
+                    setLoginModalMode('signup');
+                    setShowLoginModal(true);
+                  }}
+                  className="px-4 py-2 text-white rounded-lg text-sm font-medium transition-colors"
+                  style={{ fontFamily: 'Pretendard', backgroundColor: '#7E50D1' }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#6238AE';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = '#7E50D1';
+                  }}
+                >
+                  회원가입
+                </button>
+              </div>
             )}
 
             {/* 모바일 메뉴 버튼 */}
@@ -759,7 +784,7 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange, horizonta
       )}
 
       {/* 로그인 모달 */}
-      <LoginModal open={showLoginModal} onClose={() => setShowLoginModal(false)} />
+      <LoginModal open={showLoginModal} onClose={() => setShowLoginModal(false)} mode={loginModalMode} />
     </header>
   );
 };
