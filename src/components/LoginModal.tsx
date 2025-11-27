@@ -5,9 +5,10 @@ import GoogleLogin from './GoogleLogin';
 interface LoginModalProps {
   open: boolean;
   onClose: () => void;
+  mode?: 'login' | 'signup';
 }
 
-const LoginModal: React.FC<LoginModalProps> = ({ open, onClose }) => {
+const LoginModal: React.FC<LoginModalProps> = ({ open, onClose, mode = 'login' }) => {
   if (!open) return null;
 
   return (
@@ -33,7 +34,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose }) => {
 
         {/* 타이틀 */}
         <h2 className="text-center -mt-2 mb-4" style={{ fontWeight: 600, color: '#202020', fontSize: '16px' }}>
-          다음 계정으로 로그인
+          {mode === 'signup' ? '다음 계정으로 회원가입' : '다음 계정으로 로그인'}
         </h2>
 
         {/* 구글 로그인 버튼 */}
@@ -43,7 +44,9 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose }) => {
           >
             <span className="flex items-center gap-4">
               {/* 버튼 내부 기본 아이콘은 컴포넌트에서 렌더링됨 */}
-              <span className="text-[18px]" style={{ fontWeight: 400, color: '#202020' }}>구글로 로그인</span>
+              <span className="text-[18px]" style={{ fontWeight: 400, color: '#202020' }}>
+                {mode === 'signup' ? '구글로 시작하기' : '구글로 로그인'}
+              </span>
             </span>
           </GoogleLogin>
         </div>
