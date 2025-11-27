@@ -348,18 +348,32 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
                 <button 
                   onClick={handleBookmarkToggle}
                   disabled={bookmarkLoading}
-                  className={`w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center transition-colors ${bookmarkLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-                  style={{ border: '1px solid #7E50D1', borderRadius: 8, background: 'transparent', margin: 0 }}
+                  className={`flex items-center justify-center transition-colors ${bookmarkLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  style={{
+                    border: '1px solid #7E50D1',
+                    borderRadius: 8,
+                    background: 'transparent',
+                    margin: 0,
+                    padding: '6px'
+                  }}
                   onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = '#E9DFFB'; }}
                   onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; }}
                 >
                   {bookmarkLoading ? (
-                    <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                    <div className="w-6 h-6 border-2 border-current border-t-transparent rounded-full animate-spin" />
                   ) : (
                     isBookmarked ? (
-                      <img src="/images/Icon/Save/Filled/32/Purple_Filled.svg" alt="북마크됨" className="w-5 h-5 sm:w-6 sm:h-6" />
+                      <img
+                        src="/images/Icon/Save/Filled/32/Purple_Filled.svg"
+                        alt="북마크됨"
+                        className="w-6 h-6"
+                      />
                     ) : (
-                      <img src="/images/Icon/Save/24/Purple_Empty.svg" alt="북마크" className="w-5 h-5 sm:w-6 sm:h-6" />
+                      <img
+                        src="/images/Icon/Save/24/Purple_Empty.svg"
+                        alt="북마크"
+                        className="w-6 h-6"
+                      />
                     )
                   )}
                 </button>
@@ -368,12 +382,25 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="flex items-center text-sm sm:text-base whitespace-nowrap"
-                  style={{ backgroundColor: '#7E50D1', color: '#FFFFFF', borderRadius: 8, padding: '6px 10px', margin: 0 }}
+                  style={{ backgroundColor: '#7E50D1', color: '#FFFFFF', borderRadius: 8, padding: '6px 14px 6px 10px', margin: 0 }}
                   onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#6238AE'; }}
                   onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#7E50D1'; }}
                 >
-                  <img src="/images/Icon/Visit/24/White.svg" alt="바로가기" className="w-4 h-4 sm:w-5 sm:h-5 sm:w-6 sm:h-6" style={{ marginRight: 4 }} />
-                  <span style={{ fontWeight: 500 }}>바로가기</span>
+                  <img
+                    src="/images/Icon/Visit/24/White.svg"
+                    alt="바로가기"
+                    className="w-6 h-6"
+                    style={{ marginRight: 2 }}
+                  />
+                  <span
+                    style={{
+                      fontWeight: 400,
+                      lineHeight: '150%',
+                      letterSpacing: '-0.003em'
+                    }}
+                  >
+                    바로가기
+                  </span>
                 </a>
               </div>
             </div>
@@ -476,16 +503,29 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="flex items-center text-sm sm:text-base whitespace-nowrap"
-                style={{ backgroundColor: '#7E50D1', color: '#FFFFFF', borderRadius: 8, padding: '6px 10px', margin: 0 }}
+                style={{ backgroundColor: '#7E50D1', color: '#FFFFFF', borderRadius: 8, padding: '6px 14px 6px 10px', margin: 0 }}
                 onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#6238AE'; }}
                 onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#7E50D1'; }}
               >
-                <img src="/images/Icon/Visit/24/White.svg" alt="바로가기" className="w-4 h-4 sm:w-5 sm:h-5" style={{ marginRight: 4 }} />
-                <span style={{ fontWeight: 500 }}>바로가기</span>
+                <img
+                  src="/images/Icon/Visit/24/White.svg"
+                  alt="바로가기"
+                  className="w-6 h-6"
+                  style={{ marginRight: 2 }}
+                />
+                <span
+                  style={{
+                    fontWeight: 400,
+                    lineHeight: '150%',
+                    letterSpacing: '-0.003em'
+                  }}
+                >
+                  바로가기
+                </span>
               </a>
             </div>
             
-             <p className="mb-4 sm:mb-6 text-xs sm:text-sm" style={{ color: '#9B9B9B', fontWeight: 600, lineHeight: 1.6 }}>
+            <p className="mb-4 sm:mb-6 text-xs sm:text-sm" style={{ color: '#9B9B9B', fontWeight: 500, lineHeight: 1.6 }}>
               본 정보는 게시 시점을 기준으로 제공되며, 실제 가격은 변동될 수 있습니다. 최신 내용은 공식 홈페이지에서 확인해 주세요.
             </p>
             
@@ -509,7 +549,12 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
         
         {/* 서비스 리뷰 섹션: 항상 표시 (리뷰 탭에서는 가격 섹션만 숨김) */}
         <section id="reviews" className="mb-20 sm:mb-36">
-            <h2 className="text-xs sm:text-sm mb-2" style={{ color: '#4B5563', fontWeight: 600 }}>서비스 리뷰</h2>
+            <h2
+              className="mb-2"
+              style={{ color: '#202020', fontWeight: 500, fontSize: '18px' }}
+            >
+              서비스 리뷰
+            </h2>
 
             <div className="bg-white">
               {/* 리뷰 헤더: 서비스명 + 보라 별 + 평점 */}
@@ -521,7 +566,7 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
                       src={getRatingIconPath(reviews?.average_rating)} 
                       alt="평균 평점" 
                       className="w-4 h-4 sm:w-5 sm:h-5"
-                      onError={(e) => handleImageError(e, '/images/Icon/Star/18/0.svg')}
+                      onError={(e) => handleImageError(e, '/images/Icon/Star/24/0.svg')}
                     />
                     <span className="font-bold text-base sm:text-lg">{(reviews?.average_rating || 0).toFixed(1)}</span>
                   </div>
@@ -591,7 +636,7 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
                         {[1,2,3,4,5].map((i) => (
                           <img
                             key={i}
-                            src={i <= rounded ? '/images/Icon/Star/24/5.svg' : '/images/Icon/Star/24/0.svg'}
+                            src={i <= rounded ? '/images/Icon/Star/24/5.svg' : '/images/Icon/Star/18/0.svg'}
                             alt={i <= rounded ? '채워진 별' : '빈 별'}
                             className="w-4 h-4 sm:w-5 sm:h-5"
                             onError={(e) => handleImageError(e, '/images/Icon/Star/24/0.svg')}
