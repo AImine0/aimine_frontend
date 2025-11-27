@@ -307,6 +307,12 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange, horizonta
                 style={{ 
                   color: location.pathname.startsWith('/features') ? '#7E50D1' : '#202020' 
                 }}
+                onClick={() => {
+                  // 기능별 페이지에 있을 때 상단 탭바를 항상 '챗봇'으로 리셋
+                  if (location.pathname.startsWith('/features')) {
+                    onTabChange('chatbot');
+                  }
+                }}
                 onMouseEnter={(e) => {
                   if (!location.pathname.startsWith('/features')) {
                     e.currentTarget.style.color = '#A987E8';
