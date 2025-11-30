@@ -458,14 +458,15 @@ const FeatureListPage: React.FC = () => {
         horizontalPadding={horizontalPadding}
         fullWidth
       />
-      <main
-        className="w-full max-w-[1440px] py-6 sm:py-8"
-        style={{
-          marginLeft: horizontalPadding >= 200 ? '200px' : 'auto',
-          marginRight: horizontalPadding >= 200 ? '200px' : 'auto'
-        }}
-      >
-        <div className={horizontalPadding >= 200 ? 'px-0' : 'px-4 sm:px-6 md:px-8 lg:px-16'}>
+      <main className="w-full py-6 sm:py-8">
+        <div 
+          className="max-w-[1440px] mx-auto"
+          style={{
+            marginLeft: horizontalPadding >= 200 ? '200px' : 'auto',
+            marginRight: horizontalPadding >= 200 ? '200px' : 'auto'
+          }}
+        >
+          <div className={horizontalPadding >= 200 ? 'px-0' : 'px-4 sm:px-6 md:px-8 lg:px-16'}>
           <Breadcrumb items={breadcrumbItems} />
 
           <div className="mb-6 sm:mb-8">
@@ -553,6 +554,7 @@ const FeatureListPage: React.FC = () => {
               )}
             </>
           )}
+          </div>
         </div>
       </main>
     </div>
