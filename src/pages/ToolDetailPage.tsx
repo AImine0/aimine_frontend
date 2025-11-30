@@ -203,10 +203,10 @@ const ToolDetailPage: React.FC = () => {
 
   // 평점을 0.5 단위로 반올림하여 해당하는 별 아이콘 경로를 반환하는 함수
   const getRatingIconPath = (rating?: number | null): string => {
-    if (!Number.isFinite(rating as number)) return '/images/Icon/Star/18/0.svg';
+    if (!Number.isFinite(rating as number)) return '/images/Icon/Star/24/0.svg';
     
     const roundedRating = Math.round((rating as number) * 2) / 2; // 0.5 단위로 반올림
-    return `/images/Icon/Star/18/${roundedRating}.svg`;
+    return `/images/Icon/Star/24/${roundedRating}.svg`;
   };
 
   // 날짜 포맷터: YYYY.MM.DD
@@ -550,8 +550,15 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
         {/* 서비스 리뷰 섹션: 항상 표시 (리뷰 탭에서는 가격 섹션만 숨김) */}
         <section id="reviews" className="mb-20 sm:mb-36">
             <h2
-              className="mb-2"
-              style={{ color: '#202020', fontWeight: 500, fontSize: '18px' }}
+              style={{
+                color: '#202020',
+                fontWeight: 500,
+                fontSize: '18px',
+                lineHeight: '130%',
+                letterSpacing: '-0.003em',
+                marginBottom: '20px',
+                marginTop: 0
+              }}
             >
               서비스 리뷰
             </h2>
@@ -559,16 +566,35 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
             <div className="bg-white">
               {/* 리뷰 헤더: 서비스명 + 보라 별 + 평점 */}
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-4">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
-                  <h3 className="text-lg sm:text-xl md:text-2xl font-semibold break-words">{toolDetail.serviceName}</h3>
-                  <div className="flex items-center gap-1">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center" style={{ gap: '27px' }}>
+                  <h3
+                    className="break-words"
+                    style={{
+                      fontWeight: 500,
+                      fontSize: '24px',
+                      lineHeight: '130%',
+                      letterSpacing: '-0.003em'
+                    }}
+                  >
+                    {toolDetail.serviceName}
+                  </h3>
+                  <div className="flex items-center" style={{ gap: '10.67px' }}>
                     <img 
                       src={getRatingIconPath(reviews?.average_rating)} 
                       alt="평균 평점" 
-                      className="w-4 h-4 sm:w-5 sm:h-5"
+                      className="w-6 h-6"
                       onError={(e) => handleImageError(e, '/images/Icon/Star/24/0.svg')}
                     />
-                    <span className="font-bold text-base sm:text-lg">{(reviews?.average_rating || 0).toFixed(1)}</span>
+                    <span
+                      style={{
+                        fontWeight: 500,
+                        fontSize: '24px',
+                        lineHeight: '130%',
+                        letterSpacing: '-0.003em'
+                      }}
+                    >
+                      {(reviews?.average_rating || 0).toFixed(1)}
+                    </span>
                   </div>
                 </div>
               </div>
