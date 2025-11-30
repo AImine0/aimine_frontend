@@ -36,7 +36,6 @@ const getCategorySlug = (categoryName: string): string => {
   return categoryMap[categoryName] || 'chatbot';
 };
 
-const PAGE_HORIZONTAL_PADDING = 200;
 const BANNER_ARROW_SCREEN_GAP = 120;
 const BANNER_ARROW_WIDTH = 40;
 const BANNER_CONTENT_ARROW_GAP = 40;
@@ -52,6 +51,30 @@ const RoleListPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [situationSlides, setSituationSlides] = useState<Record<number, number>>({});
+  
+  // 반응형 패딩 상태
+  const [horizontalPadding, setHorizontalPadding] = useState(200);
+  
+  // 화면 크기 변경 시 패딩 업데이트
+  useEffect(() => {
+    const updatePadding = () => {
+      if (window.innerWidth >= 1440) {
+        setHorizontalPadding(200);
+      } else if (window.innerWidth >= 1024) {
+        setHorizontalPadding(64); // lg:px-16 고정
+      } else if (window.innerWidth >= 768) {
+        setHorizontalPadding(32); // md:px-8 고정
+      } else if (window.innerWidth >= 640) {
+        setHorizontalPadding(24); // sm:px-6 고정
+      } else {
+        setHorizontalPadding(16); // 모바일
+      }
+    };
+    
+    updatePadding();
+    window.addEventListener('resize', updatePadding);
+    return () => window.removeEventListener('resize', updatePadding);
+  }, []);
   const activeRoleName = roleTabs.find(tab => tab.id === activeRole)?.name || '';
   const roleSubDescriptions: Record<string, string> = {
     it: '개발자와 기술자를 위한 AI 서비스들을 상황별로 추천해드려요',
@@ -153,7 +176,7 @@ const RoleListPage: React.FC = () => {
           tabs={roleTabs}
           activeTab={activeRole}
           onTabChange={setActiveRole}
-          horizontalPadding={PAGE_HORIZONTAL_PADDING}
+          horizontalPadding={horizontalPadding}
           fullWidth
         />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -185,17 +208,17 @@ const RoleListPage: React.FC = () => {
   });
 
   return (
-    <div className="min-h-screen bg-white">
-      <Header
-        tabs={roleTabs}
-        activeTab={activeRole}
-        onTabChange={setActiveRole}
-        horizontalPadding={PAGE_HORIZONTAL_PADDING}
-        fullWidth
-      />
+      <div className="min-h-screen bg-white">
+        <Header
+          tabs={roleTabs}
+          activeTab={activeRole}
+          onTabChange={setActiveRole}
+          horizontalPadding={horizontalPadding}
+          fullWidth
+        />
       <main
         className="mx-auto py-8"
-        style={{ paddingLeft: PAGE_HORIZONTAL_PADDING, paddingRight: PAGE_HORIZONTAL_PADDING }}
+        style={{ paddingLeft: horizontalPadding, paddingRight: horizontalPadding }}
       >
         <div style={{ marginBottom: 10 }}>
           <Breadcrumb items={breadcrumbItems} />
@@ -521,10 +544,17 @@ const RoleListPage: React.FC = () => {
                 });
               }
               
-              const showArrows = tools.length > 3;
+              // 반응형: 화면 크기에 따라 표시할 카드 개수 결정
+              const getToolsPerSlide = () => {
+                if (window.innerWidth >= 1024) return 3; // lg 이상: 3개 (기존 디자인 유지)
+                if (window.innerWidth >= 640) return 2;  // sm 이상: 2개
+                return 1; // 모바일: 1개
+              };
+              
+              const toolsPerSlide = getToolsPerSlide();
+              const showArrows = tools.length > toolsPerSlide;
               const currentSlide = situationSlides[situationData.id] || 0;
-              const toolsPerSlide = 3;
-              // 슬라이드 시작 인덱스 계산: 3개씩 끊되, 나머지가 있으면 마지막 슬라이드는 겹쳐서 항상 3개 표시
+              // 슬라이드 시작 인덱스 계산: toolsPerSlide개씩 끊되, 나머지가 있으면 마지막 슬라이드는 겹쳐서 항상 toolsPerSlide개 표시
               const fullGroups = Math.floor(tools.length / toolsPerSlide);
               const hasRemainder = tools.length % toolsPerSlide !== 0;
               const slideStartIndices: number[] = [];
@@ -561,7 +591,7 @@ const RoleListPage: React.FC = () => {
                       <p className="text-sm text-gray-500 mt-1">곧 업데이트될 예정입니다!</p>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-3 gap-6 w-full">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
                       {visibleTools.map((tool, idx) => {
                         const startIdx = currentSlide * toolsPerSlide;
                         const globalToolIdx = startIdx + idx;
@@ -648,8 +678,8 @@ const RoleListPage: React.FC = () => {
                           </div>
                         );
                       })}
-                      {/* 3개 미만일 때 빈 칸 채우기 */}
-                      {Array.from({ length: 3 - visibleTools.length }).map((_, i) => (
+                      {/* toolsPerSlide개 미만일 때 빈 칸 채우기 */}
+                      {Array.from({ length: Math.max(0, toolsPerSlide - visibleTools.length) }).map((_, i) => (
                         <div key={`situation-${situationData.id}-empty-${currentSlide}-${i}`} />
                       ))}
                     </div>
