@@ -9,6 +9,21 @@ import ToolCard from '../components/ToolCard';
 import { apiService } from '../services';
 import type { FilterType, AITool } from '../types';
 
+// 반응형 패딩 계산 함수
+const getHorizontalPadding = (): number => {
+  if (window.innerWidth >= 1440) {
+    return 200;
+  } else if (window.innerWidth >= 1024) {
+    return 64; // lg:px-16
+  } else if (window.innerWidth >= 768) {
+    return 32; // md:px-8
+  } else if (window.innerWidth >= 640) {
+    return 24; // sm:px-6
+  } else {
+    return 16; // 모바일
+  }
+};
+
 // SearchParams 인터페이스를 직접 정의
 interface SearchApiParams {
   q?: string;
@@ -43,6 +58,20 @@ const SearchPage: React.FC = () => {
     paid: 0,
     freemium: 0
   });
+  
+  // 반응형 패딩 상태
+  const [horizontalPadding, setHorizontalPadding] = useState(getHorizontalPadding());
+  
+  // 화면 크기 변경 시 패딩 업데이트
+  useEffect(() => {
+    const updatePadding = () => {
+      setHorizontalPadding(getHorizontalPadding());
+    };
+    
+    updatePadding();
+    window.addEventListener('resize', updatePadding);
+    return () => window.removeEventListener('resize', updatePadding);
+  }, []);
 
   // URL 파라미터에서 초기값 설정
   useEffect(() => {
@@ -208,8 +237,15 @@ const SearchPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <Header tabs={[]} activeTab="" onTabChange={() => {}} />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <Header tabs={[]} activeTab="" onTabChange={() => {}} horizontalPadding={horizontalPadding} fullWidth />
+      <main 
+        className="mx-auto py-8"
+        style={{ 
+          maxWidth: '1440px',
+          paddingLeft: horizontalPadding >= 200 ? `${horizontalPadding}px` : `${horizontalPadding}px`,
+          paddingRight: horizontalPadding >= 200 ? `${horizontalPadding}px` : `${horizontalPadding}px`
+        }}
+      >
         {/* 검색어가 없을 때만 브레드크럼 표시 */}
         {!searchQuery && <Breadcrumb items={breadcrumbItems} />}
 

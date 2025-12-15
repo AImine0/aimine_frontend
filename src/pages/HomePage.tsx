@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 
@@ -15,12 +15,43 @@ const CATEGORY_ITEMS: Array<{ id: string; title: string; img: string; to: string
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
+  
+  // 반응형 패딩 상태
+  const [horizontalPadding, setHorizontalPadding] = useState(200);
+  
+  // 화면 크기 변경 시 패딩 업데이트
+  useEffect(() => {
+    const updatePadding = () => {
+      if (window.innerWidth >= 1440) {
+        setHorizontalPadding(200);
+      } else if (window.innerWidth >= 1024) {
+        setHorizontalPadding(64); // lg:px-16 고정
+      } else if (window.innerWidth >= 768) {
+        setHorizontalPadding(32); // md:px-8 고정
+      } else if (window.innerWidth >= 640) {
+        setHorizontalPadding(24); // sm:px-6 고정
+      } else {
+        setHorizontalPadding(16); // 모바일
+      }
+    };
+    
+    updatePadding();
+    window.addEventListener('resize', updatePadding);
+    return () => window.removeEventListener('resize', updatePadding);
+  }, []);
 
   return (
     <div className="min-h-screen bg-white" style={{ fontFamily: 'Pretendard' }}>
-      <Header tabs={[]} activeTab="" onTabChange={() => {}} />
-      <main className="mx-auto px-4 sm:px-6 lg:px-8" style={{ maxWidth: '1280px' }}>
-        <section className="text-center" style={{ paddingTop: '56px', paddingBottom: '32px' }}>
+      <Header tabs={[]} activeTab="" onTabChange={() => {}} horizontalPadding={horizontalPadding} fullWidth />
+      <main 
+        className="mx-auto"
+        style={{ 
+          maxWidth: '1440px',
+          paddingLeft: horizontalPadding >= 200 ? `${horizontalPadding}px` : `${horizontalPadding}px`,
+          paddingRight: horizontalPadding >= 200 ? `${horizontalPadding}px` : `${horizontalPadding}px`
+        }}
+      >
+        <section className="text-center" style={{ paddingTop: '56px', paddingBottom: '32px', paddingLeft: '0', paddingRight: '0' }}>
           <div
             className="text-gray-900"
             style={{
@@ -54,7 +85,7 @@ const HomePage: React.FC = () => {
           </div>
         </section>
 
-        <section style={{ paddingBottom: '64px' }}>
+        <section style={{ paddingBottom: '64px', paddingLeft: '0', paddingRight: '0' }}>
           <div className="grid gap-7" style={{ gridTemplateColumns: 'repeat(4, minmax(0, 1fr))' }}>
             {CATEGORY_ITEMS.map((item) => (
               <button

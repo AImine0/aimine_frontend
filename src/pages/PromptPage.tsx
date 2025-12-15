@@ -1,23 +1,55 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 
-const PAGE_HORIZONTAL_PADDING = 200;
+// 반응형 패딩 계산 함수
+const getHorizontalPadding = (): number => {
+  if (window.innerWidth >= 1440) {
+    return 200;
+  } else if (window.innerWidth >= 1024) {
+    return 64; // lg:px-16
+  } else if (window.innerWidth >= 768) {
+    return 32; // md:px-8
+  } else if (window.innerWidth >= 640) {
+    return 24; // sm:px-6
+  } else {
+    return 16; // 모바일
+  }
+};
 
 const PromptPage: React.FC = () => {
   const navigate = useNavigate();
+  
+  // 반응형 패딩 상태
+  const [horizontalPadding, setHorizontalPadding] = useState(getHorizontalPadding());
+  
+  // 화면 크기 변경 시 패딩 업데이트
+  useEffect(() => {
+    const updatePadding = () => {
+      setHorizontalPadding(getHorizontalPadding());
+    };
+    
+    updatePadding();
+    window.addEventListener('resize', updatePadding);
+    return () => window.removeEventListener('resize', updatePadding);
+  }, []);
+  
   return (
     <div className="min-h-screen bg-white" style={{ fontFamily: 'Pretendard' }}>
       <Header
         tabs={[]}
         activeTab=""
         onTabChange={() => {}}
-        horizontalPadding={PAGE_HORIZONTAL_PADDING}
+        horizontalPadding={horizontalPadding}
         fullWidth
       />
       <main
         className="mx-auto py-20"
-        style={{ paddingLeft: PAGE_HORIZONTAL_PADDING, paddingRight: PAGE_HORIZONTAL_PADDING }}
+        style={{ 
+          maxWidth: '1440px',
+          paddingLeft: horizontalPadding >= 200 ? `${horizontalPadding}px` : `${horizontalPadding}px`,
+          paddingRight: horizontalPadding >= 200 ? `${horizontalPadding}px` : `${horizontalPadding}px`
+        }}
       >
         <div className="flex flex-col items-center text-center">
           <img src="/images/GlassMorphism/Prompt_Sandglass.png" alt="준비중" style={{ width: 120, height: 120 }} />

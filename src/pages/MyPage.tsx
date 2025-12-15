@@ -7,6 +7,21 @@ import ToolCard from '../components/ToolCard';
 import { apiService } from '../services';
 import type { AITool } from '../types';
 
+// 반응형 패딩 계산 함수
+const getHorizontalPadding = (): number => {
+  if (window.innerWidth >= 1440) {
+    return 200;
+  } else if (window.innerWidth >= 1024) {
+    return 64; // lg:px-16
+  } else if (window.innerWidth >= 768) {
+    return 32; // md:px-8
+  } else if (window.innerWidth >= 640) {
+    return 24; // sm:px-6
+  } else {
+    return 16; // 모바일
+  }
+};
+
 // ✅ 백엔드 BookmarkListResponse와 정확히 일치하도록 수정
 interface BookmarkedTool {
   id: number;
@@ -29,6 +44,20 @@ const MyPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState<string>('all');
+  
+  // 반응형 패딩 상태
+  const [horizontalPadding, setHorizontalPadding] = useState(getHorizontalPadding());
+  
+  // 화면 크기 변경 시 패딩 업데이트
+  useEffect(() => {
+    const updatePadding = () => {
+      setHorizontalPadding(getHorizontalPadding());
+    };
+    
+    updatePadding();
+    window.addEventListener('resize', updatePadding);
+    return () => window.removeEventListener('resize', updatePadding);
+  }, []);
 
   // 북마크 데이터를 ToolCard에서 사용할 수 있는 AITool 형태로 변환하는 함수
   const convertBookmarkToAITool = (bookmark: BookmarkedTool): AITool => {
@@ -144,7 +173,7 @@ const MyPage: React.FC = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-white">
-        <Header tabs={[]} activeTab="" onTabChange={() => {}} />
+        <Header tabs={[]} activeTab="" onTabChange={() => {}} horizontalPadding={horizontalPadding} fullWidth />
         <div className="flex items-center justify-center pt-20">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
@@ -160,8 +189,15 @@ const MyPage: React.FC = () => {
   if (error) {
     return (
       <div className="min-h-screen bg-white">
-        <Header tabs={[]} activeTab="" onTabChange={() => {}} />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <Header tabs={[]} activeTab="" onTabChange={() => {}} horizontalPadding={horizontalPadding} fullWidth />
+        <div 
+          className="mx-auto py-8"
+          style={{ 
+            maxWidth: '1440px',
+            paddingLeft: horizontalPadding >= 200 ? `${horizontalPadding}px` : `${horizontalPadding}px`,
+            paddingRight: horizontalPadding >= 200 ? `${horizontalPadding}px` : `${horizontalPadding}px`
+          }}
+        >
           <div className="text-center py-12">
             <div className="text-6xl mb-4">😵</div>
             <h1 className="text-2xl font-bold text-gray-800 mb-4">페이지를 불러올 수 없습니다</h1>
@@ -180,8 +216,15 @@ const MyPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <Header tabs={[]} activeTab="" onTabChange={() => {}} />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <Header tabs={[]} activeTab="" onTabChange={() => {}} horizontalPadding={horizontalPadding} fullWidth />
+      <main 
+        className="mx-auto py-4"
+        style={{ 
+          maxWidth: '1440px',
+          paddingLeft: horizontalPadding >= 200 ? `${horizontalPadding}px` : `${horizontalPadding}px`,
+          paddingRight: horizontalPadding >= 200 ? `${horizontalPadding}px` : `${horizontalPadding}px`
+        }}
+      >
         {/* 상단바와 저장한 AI 사이 텍스트 제거 - 간격 최소화 */}
         <div className="mt-6 mb-6">
           <h1
