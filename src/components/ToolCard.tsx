@@ -189,11 +189,11 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
             style={{ 
               backgroundColor: '#F2EEFB', 
               color: '#7E50D1',
-              width: '66px',
-              height: '32px',
+              width: '80px',
+              height: '38px',
               borderRadius: '8px',
               justifyContent: 'center',
-              fontSize: '14px',
+              fontSize: '16px',
               fontFamily: 'Pretendard'
             }}>
         BEST {rank}
@@ -225,9 +225,11 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
          style={{ 
            border: '1px solid #DBCBF9', 
            fontFamily: 'Pretendard', 
-           padding: '20px', 
-           minHeight: '240px',
-           cursor: 'pointer' 
+           padding: '24px 24px 24px 24px', 
+           aspectRatio: '162 / 121',
+           cursor: 'pointer',
+           display: 'flex',
+           flexDirection: 'column'
          }}
          onClick={handleCardNavigation}
          onMouseEnter={(e) => {
@@ -281,11 +283,11 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
          }}>
       
       {/* 상단: 로고, 카테고리, BEST 뱃지 */}
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex flex-col gap-2 items-start">
+      <div className="flex items-start justify-between" style={{ marginBottom: '24px' }}>
+        <div className="flex flex-col gap-3 items-start">
           {/* 로고 */}
           <div className="flex-shrink-0">
-            <div className="w-16 h-16 flex items-center justify-start overflow-hidden">
+            <div className="w-20 h-20 flex items-center justify-start overflow-hidden">
               {tool.logoUrl ? (
                 <img 
                   src={tool.logoUrl} 
@@ -294,13 +296,13 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
                   onError={(e) => handleImageError(e, '/images/Logo/Logo_FINAL.svg')}
                 />
               ) : (
-                <span className="text-3xl">🤖</span>
+                <span className="text-4xl">🤖</span>
               )}
             </div>
           </div>
           
           {/* DB tags 컬럼 내용 표시 */}
-          <span className="inline-flex items-center px-3 py-1 text-body4 font-medium" 
+          <span className="inline-flex items-center px-4 py-1.5 text-body3 font-medium" 
                 data-tags
                 style={{ 
                   backgroundColor: '#E9DFFB',
@@ -313,7 +315,7 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
         </div>
 
         {/* 오른쪽: BEST 뱃지, 북마크 버튼 (MyPage에서만), 바로가기 버튼 */}
-        <div className="flex items-start gap-2 flex-shrink-0">
+        <div className="flex items-start gap-3 flex-shrink-0">
           {/* BEST 뱃지 */}
           {rank && rank <= 3 && getBestBadge(rank)}
 
@@ -327,8 +329,8 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
               }`}
               style={{ 
                 backgroundColor: isBookmarked ? '#E9DFFB' : '#F3F4F6', 
-                width: '32px', 
-                height: '32px',
+                width: '40px', 
+                height: '40px',
                 borderRadius: '3.56px'
               }}
               title={isBookmarked ? '북마크 해제' : '북마크 추가'}
@@ -344,9 +346,9 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
               }}
             >
               {bookmarkLoading ? (
-                <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
               ) : (
-                <img src="/images/Icon/Save/Filled/32/Purple_Filled.svg" alt="북마크" width={20} height={20} />
+                <img src="/images/Icon/Save/Filled/32/Purple_Filled.svg" alt="북마크" width={24} height={24} />
               )}
             </button>
           )}
@@ -358,26 +360,29 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
             data-visit-button
             style={{ 
               backgroundColor: '#E9DFFB', 
-              width: '32px', 
-              height: '32px',
+              width: '40px', 
+              height: '40px',
               borderRadius: '8px'
             }}
             title={`${tool.name} 공식 사이트로 이동`}
           >
-            <img src="/images/Icon/Visit/32/Black.svg" alt="바로가기" width={32} height={32} />
+            <img src="/images/Icon/Visit/32/Black.svg" alt="바로가기" width={40} height={40} />
           </button>
         </div>
       </div>
 
       {/* 중간: 제목과 설명 */}
-      <div className="mb-4 text-left">
-        <h3 className="text-title0 mb-2 line-clamp-1 text-left text-black">
+      <div className="text-left">
+        <h3 className="text-title0 mb-2 line-clamp-1 text-left text-black" style={{ fontSize: '26px', lineHeight: '34px' }}>
             {tool.name}
           </h3>
-        <p className="text-body2 line-clamp-2 text-left"
+        <p className="line-clamp-2 text-left"
           style={{ 
             color: '#202020', 
-            height: '48px'
+            fontSize: '18px',
+            lineHeight: '28px',
+            fontWeight: 500,
+            letterSpacing: '-0.01em'
           }}>
           {tool.description}
         </p>
