@@ -535,7 +535,7 @@ const FeatureListPage: React.FC = () => {
             <>
               {/* BEST 1,2,3 */}
               <section className="mb-4 sm:mb-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6" style={{ alignItems: 'start' }}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6" style={{ gridAutoRows: '1fr' }}>
                   {featuredTools.map((tool, index) => (
                     <ToolCard key={tool.id} tool={tool} rank={index + 1} />
                   ))}
@@ -545,7 +545,7 @@ const FeatureListPage: React.FC = () => {
               {/* 전체 리스트 */}
               {restTools.length > 0 && (
                 <section>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6" style={{ alignItems: 'start' }}>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6" style={{ gridAutoRows: '1fr' }}>
                     {restTools.map((tool) => (
                       <ToolCard key={tool.id} tool={tool} />
                     ))}

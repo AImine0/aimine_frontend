@@ -226,10 +226,12 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
            border: '1px solid #DBCBF9', 
            fontFamily: 'Pretendard', 
            padding: '24px 24px 24px 24px', 
-           aspectRatio: '162 / 121',
+           height: '100%',
+           minHeight: '280px',
            cursor: 'pointer',
            display: 'flex',
-           flexDirection: 'column'
+           flexDirection: 'column',
+           overflow: 'hidden'
          }}
          onClick={handleCardNavigation}
          onMouseEnter={(e) => {
@@ -372,7 +374,7 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
       </div>
 
       {/* 중간: 제목과 설명 */}
-      <div className="text-left">
+      <div className="text-left flex-1 flex flex-col justify-end">
         <h3 className="text-title0 mb-2 line-clamp-1 text-left text-black" style={{ fontSize: '26px', lineHeight: '34px' }}>
             {tool.name}
           </h3>
