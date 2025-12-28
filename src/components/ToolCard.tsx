@@ -1,6 +1,6 @@
 // [AI 툴 카드 컴포넌트] 개별 AI 도구 정보 표시 - 이름, 설명, BEST 뱃지, 북마크, 평점, 링크 버튼
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import type { AITool } from '../types';
 import { handleImageError } from '../utils/imageMapping';
@@ -17,8 +17,11 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
   const [bookmarkLoading, setBookmarkLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [statusCheckAttempts, setStatusCheckAttempts] = useState(0);
+  const [scaleFactor, setScaleFactor] = useState(1);
+  const cardRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const navigate = useNavigate();
+  
   const handleCardNavigation = () => {
     if (tool.id) {
       navigate(`/tool/${tool.id}`);
@@ -27,6 +30,31 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
 
   // MyPage인지 확인
   const isMyPage = location.pathname === '/mypage';
+
+  // 카드 너비 측정 및 scale factor 계산
+  useEffect(() => {
+    const updateScale = () => {
+      if (cardRef.current) {
+        const width = cardRef.current.offsetWidth;
+        const baseWidth = 326; // 기준 너비
+        setScaleFactor(width / baseWidth);
+      }
+    };
+
+    updateScale();
+    window.addEventListener('resize', updateScale);
+    
+    // ResizeObserver로 카드 자체 크기 변화 감지
+    const resizeObserver = new ResizeObserver(updateScale);
+    if (cardRef.current) {
+      resizeObserver.observe(cardRef.current);
+    }
+
+    return () => {
+      window.removeEventListener('resize', updateScale);
+      resizeObserver.disconnect();
+    };
+  }, []);
 
   // 인증 상태 및 북마크 상태 확인 (페이지 변경 시마다 실행)
   useEffect(() => {
@@ -181,6 +209,9 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
     }
   };
 
+  // scale 함수: 기준값 * scale factor
+  const scale = (baseValue: number) => `${baseValue * scaleFactor}px`;
+
   // BEST 뱃지
   const getBestBadge = (rank: number) => {
     return (
@@ -189,14 +220,14 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
             style={{ 
               backgroundColor: '#F2EEFB', 
               color: '#7E50D1',
-              borderRadius: '8px',
+              borderRadius: scale(8),
               justifyContent: 'center',
-              paddingTop: '5.5px',
-              paddingBottom: '5.5px',
-              paddingLeft: '10px',
-              paddingRight: '10px',
+              paddingTop: scale(5.5),
+              paddingBottom: scale(5.5),
+              paddingLeft: scale(10),
+              paddingRight: scale(10),
               fontWeight: 600,
-              fontSize: '14px',
+              fontSize: scale(14),
               lineHeight: '150%',
               letterSpacing: '0.007em',
               fontFamily: 'Pretendard'
@@ -212,7 +243,7 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
     if (Array.isArray(tool.tags) && tool.tags.length > 0) {
       const firstTag = tool.tags[0];
       if (firstTag && firstTag !== '') {
-        return firstTag; // "AI 챗봇" 같은 전체 텍스트를 그대로 사용
+        return firstTag;
       }
     }
     
@@ -226,11 +257,13 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
   };
 
   return (
-    <div className={`bg-white rounded-xl group ${className || ''}`} 
+    <div 
+         ref={cardRef}
+         className={`bg-white rounded-xl group ${className || ''}`} 
          style={{ 
            border: '1px solid #DBCBF9', 
            fontFamily: 'Pretendard', 
-           padding: '20px', 
+           padding: scale(20),
            aspectRatio: '326 / 245',
            cursor: 'pointer',
            display: 'flex',
@@ -244,12 +277,10 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
           e.currentTarget.style.border = '1px solid #DBCBF9';
           e.currentTarget.style.outline = '1px solid #F2EEFB';
           e.currentTarget.style.outlineOffset = '-1px';
-           // tags 컴포넌트 hover 효과
            const tagsElement = e.currentTarget.querySelector('[data-tags]');
            if (tagsElement) {
              (tagsElement as HTMLElement).style.backgroundColor = '#DBCBF9';
            }
-           // 바로가기 버튼 hover 효과
            const visitButton = e.currentTarget.querySelector('[data-visit-button]');
            if (visitButton) {
              (visitButton as HTMLElement).style.backgroundColor = '#7E50D1';
@@ -258,7 +289,6 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
                (visitIcon as HTMLImageElement).src = '/images/Icon/Visit/32/White.svg';
              }
            }
-           // BEST 태그 hover 효과
            const bestBadge = e.currentTarget.querySelector('[data-best-badge]');
            if (bestBadge) {
              (bestBadge as HTMLElement).style.backgroundColor = '#E9DFFB';
@@ -268,12 +298,10 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
            e.currentTarget.style.backgroundColor = '#FFFFFF';
            e.currentTarget.style.border = '1px solid #DBCBF9';
           e.currentTarget.style.outline = 'none';
-           // tags 컴포넌트 원래 색상으로 복원
            const tagsElement = e.currentTarget.querySelector('[data-tags]');
            if (tagsElement) {
              (tagsElement as HTMLElement).style.backgroundColor = '#E9DFFB';
            }
-           // 바로가기 버튼 원래 색상으로 복원
            const visitButton = e.currentTarget.querySelector('[data-visit-button]');
            if (visitButton) {
              (visitButton as HTMLElement).style.backgroundColor = '#E9DFFB';
@@ -282,7 +310,6 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
                (visitIcon as HTMLImageElement).src = '/images/Icon/Visit/32/Black.svg';
              }
            }
-           // BEST 태그 원래 색상으로 복원
            const bestBadge = e.currentTarget.querySelector('[data-best-badge]');
            if (bestBadge) {
              (bestBadge as HTMLElement).style.backgroundColor = '#F2EEFB';
@@ -292,21 +319,38 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
       {/* 1번째 줄: 로고, BEST 뱃지, 바로가기 아이콘 */}
       <div className="flex items-start justify-between" style={{ margin: 0, padding: 0 }}>
         {/* 로고 */}
-        <div className="flex-shrink-0 flex items-center justify-center" style={{ width: '70px', height: '70px', margin: 0, padding: 0 }}>
+        <div className="flex-shrink-0 flex items-center justify-center" 
+             style={{ 
+               width: scale(70),
+               height: scale(70),
+               margin: 0, 
+               padding: 0 
+             }}>
           {tool.logoUrl ? (
             <img 
               src={tool.logoUrl} 
               alt={`${tool.name} 로고`}
-              style={{ width: 'auto', height: 'auto', maxWidth: '70px', maxHeight: '70px', objectFit: 'contain' }}
+              style={{ 
+                width: 'auto', 
+                height: 'auto', 
+                maxWidth: scale(70),
+                maxHeight: scale(70),
+                objectFit: 'contain' 
+              }}
               onError={(e) => handleImageError(e, '/images/Logo/Logo_FINAL.svg')}
             />
           ) : (
-            <span className="text-4xl">🤖</span>
+            <span style={{ fontSize: scale(40) }}>🤖</span>
           )}
         </div>
 
         {/* 오른쪽: BEST 뱃지, 북마크 버튼 (MyPage에서만), 바로가기 버튼 */}
-        <div className="flex items-start flex-shrink-0" style={{ gap: '10px', margin: 0, padding: 0 }}>
+        <div className="flex items-start flex-shrink-0" 
+             style={{ 
+               gap: scale(10),
+               margin: 0, 
+               padding: 0 
+             }}>
           {/* BEST 뱃지 */}
           {rank && rank <= 3 && getBestBadge(rank)}
 
@@ -320,9 +364,9 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
               }`}
               style={{ 
                 backgroundColor: isBookmarked ? '#E9DFFB' : '#F3F4F6', 
-                width: '40px', 
-                height: '40px',
-                borderRadius: '3.56px',
+                width: scale(40),
+                height: scale(40),
+                borderRadius: scale(3.56),
                 margin: 0,
                 padding: 0
               }}
@@ -339,9 +383,12 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
               }}
             >
               {bookmarkLoading ? (
-                <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                <div className="border-2 border-current border-t-transparent rounded-full animate-spin" 
+                     style={{ width: scale(20), height: scale(20) }} />
               ) : (
-                <img src="/images/Icon/Save/Filled/32/Purple_Filled.svg" alt="북마크" width={24} height={24} />
+                <img src="/images/Icon/Save/Filled/32/Purple_Filled.svg" 
+                     alt="북마크" 
+                     style={{ width: scale(24), height: scale(24) }} />
               )}
             </button>
           )}
@@ -353,33 +400,39 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
             data-visit-button
             style={{ 
               backgroundColor: '#E9DFFB', 
-              width: '32px', 
-              height: '32px',
-              borderRadius: '8px',
+              width: scale(32),
+              height: scale(32),
+              borderRadius: scale(8),
               padding: 0,
               margin: 0
             }}
             title={`${tool.name} 공식 사이트로 이동`}
           >
-            <img src="/images/Icon/Visit/32/Black.svg" alt="바로가기" style={{ width: '32px', height: '32px' }} />
+            <img src="/images/Icon/Visit/32/Black.svg" 
+                 alt="바로가기" 
+                 style={{ width: scale(32), height: scale(32) }} />
           </button>
         </div>
       </div>
 
       {/* 2번째 줄: 카테고리 뱃지 */}
-      <div style={{ marginTop: '8px', marginBottom: 0, padding: 0 }}>
+      <div style={{ 
+        marginTop: scale(8),
+        marginBottom: 0, 
+        padding: 0 
+      }}>
         <span className="inline-flex items-center" 
               data-tags
               style={{ 
                 backgroundColor: '#E9DFFB',
-                borderRadius: '100px',
+                borderRadius: scale(100),
                 color: '#202020',
-                paddingTop: '2px',
-                paddingBottom: '2px',
-                paddingLeft: '10px',
-                paddingRight: '10px',
+                paddingTop: scale(2),
+                paddingBottom: scale(2),
+                paddingLeft: scale(10),
+                paddingRight: scale(10),
                 fontWeight: 400,
-                fontSize: '14px',
+                fontSize: scale(14),
                 lineHeight: '150%',
                 letterSpacing: '0.007em',
                 width: 'fit-content',
@@ -390,10 +443,14 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
       </div>
 
       {/* 3번째 줄: AI명 */}
-      <div style={{ marginTop: '12px', marginBottom: 0, padding: 0 }}>
+      <div style={{ 
+        marginTop: scale(12),
+        marginBottom: 0, 
+        padding: 0 
+      }}>
         <h3 style={{ 
               fontWeight: 500,
-              fontSize: '24px',
+              fontSize: scale(24),
               lineHeight: '150%',
               letterSpacing: '0.007em',
               margin: 0,
@@ -408,12 +465,18 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
       </div>
 
       {/* 4번째 줄: AI 설명 */}
-      <div style={{ marginTop: '6px', marginBottom: 0, padding: 0, height: '48px', overflow: 'hidden' }}>
+      <div style={{ 
+        marginTop: scale(6),
+        marginBottom: 0, 
+        padding: 0, 
+        height: scale(48),
+        overflow: 'hidden' 
+      }}>
         <p style={{ 
             color: '#202020',
             fontWeight: 500,
-            fontSize: '16px',
-            lineHeight: '24px',
+            fontSize: scale(16),
+            lineHeight: scale(24),
             letterSpacing: '0.007em',
             margin: 0,
             padding: 0,
