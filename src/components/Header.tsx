@@ -743,7 +743,9 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange, horizonta
       )}
       
       {/* 구분선 */}
-      <div style={{ borderBottomWidth: '1px', borderBottomColor: '#ECECEC' }}></div>
+      {tabs.length > 0 && (
+        <div style={{ borderBottom: '1px solid #ECECEC' }}></div>
+      )}
       
       {/* 탭바 */}
       {tabs.length > 0 && (
