@@ -32,6 +32,7 @@ import type {
   AiCombinationListResponse,
   AiCombinationDetailResponse
 } from '../types/api'; // api.ts에서 임포트
+import { getImageMapping } from '../utils/imageMapping';
 
 const API_BASE_URL = 'https://aimine.up.railway.app';
 
@@ -121,7 +122,30 @@ const getCategorySlug = (categoryName: string): string => {
     'creativity': 'creativity'
   };
 
-  return aliasMap[key] || 'chat';
+  if (aliasMap[key]) return aliasMap[key];
+
+  const partialMap: Array<{ slug: string; keywords: string[] }> = [
+    { slug: 'chat', keywords: ['챗봇', 'chat', 'assistant', 'assistant', '대화', 'conversation', 'bot'] },
+    { slug: 'image', keywords: ['이미지', 'image', '사진', '그림', '일러스트'] },
+    { slug: 'video', keywords: ['비디오', 'video', '영상', '동영상', 'movie'] },
+    { slug: 'audio', keywords: ['오디오', 'audio', '음성', '보이스', 'voice', 'music', '음악'] },
+    { slug: 'code', keywords: ['코드', 'code', '개발', '프로그래밍', 'developer'] },
+    { slug: 'text', keywords: ['텍스트', 'text', '글쓰기', '문서', 'writing'] },
+    { slug: '3d', keywords: ['3d', '모델링'] },
+    { slug: 'product', keywords: ['제품', 'product'] },
+    { slug: 'productivity', keywords: ['생산성', 'productivity'] },
+    { slug: 'business', keywords: ['비즈니스', 'business'] },
+    { slug: 'education', keywords: ['교육', 'education'] },
+    { slug: 'creativity', keywords: ['창의성', 'creativity'] }
+  ];
+
+  for (const entry of partialMap) {
+    if (entry.keywords.some((token) => key.includes(token))) {
+      return entry.slug;
+    }
+  }
+
+  return 'chat';
 };
 
 class ApiService {
@@ -735,13 +759,14 @@ class ApiService {
       const toolData = serviceDetail.data;
       
       const categorySlug = getCategorySlug(toolData.category?.name || '생산성');
+      const imageMapping = getImageMapping(toolData.serviceName, categorySlug);
       
       const toolDetail: AIToolDetail = {
         id: toolData.id,
         serviceName: toolData.serviceName,
         description: toolData.description || '',
         websiteUrl: toolData.websiteUrl || '',
-        logoUrl: toolData.logoUrl || '/images/Logo/Logo_FINAL.svg',
+        logoUrl: toolData.logoUrl || imageMapping.logo,
         launchDate: toolData.launchDate || '',
         category: {
           id: toolData.category?.id || 1,
@@ -766,9 +791,9 @@ class ApiService {
           updatedAt: r.createdAt
         })) || [],
         // 백엔드에서 새로 추가된 이미지 필드들 처리
-        serviceImageUrl: toolData.serviceImageUrl || '/images/GlassMorphism/Detailpage/Detailpage_Happy.png',
-        priceImageUrl: toolData.priceImageUrl || '/images/GlassMorphism/Price/Price_Default.png',
-        searchbarLogoUrl: toolData.logoUrl || '/images/SearchbarLogo/Logo_FINAL.svg'
+        serviceImageUrl: toolData.serviceImageUrl || imageMapping.serviceImage,
+        priceImageUrl: toolData.priceImageUrl || imageMapping.priceImage,
+        searchbarLogoUrl: toolData.logoUrl || imageMapping.searchbarLogo
       };
       
       return toolDetail;
