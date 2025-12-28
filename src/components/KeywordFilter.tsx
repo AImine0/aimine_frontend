@@ -213,47 +213,56 @@ const KeywordFilter: React.FC<KeywordFilterProps> = ({
             const isActive = activeKeywords.includes(keyword);
             const toolCount = typeof item === 'string' ? null : item.tool_count;
             const keywordType = typeof item === 'string' ? null : item.type;
-            const typographyClass = isActive ? 'text-body3 font-semibold' : 'text-body4 font-medium';
             
             return (
               <button
                 key={typeof item === 'string' ? item : item.id}
                 onClick={() => onKeywordToggle(keyword)}
-                className={`px-4 py-2 rounded-full transition-all duration-200 flex items-center gap-1.5 hover:shadow-sm hover:underline hover:bg-[#E9DFFB] focus:bg-[#E9DFFB] ${typographyClass}`}
+                className="rounded-full transition-all duration-200 flex items-center hover:shadow-sm hover:bg-[#E9DFFB] focus:bg-[#E9DFFB]"
                 style={{ 
                   backgroundColor: isActive ? '#ffffff' : '#F2EEFB',
                   border: '1px solid #A987E8',
                   borderRadius: '20px',
                   color: '#7242C9',
-                  fontFamily: 'Pretendard'
+                  fontFamily: 'Pretendard',
+                  paddingTop: '8px',
+                  paddingBottom: '8px',
+                  paddingLeft: isActive ? '16px' : '16px',
+                  paddingRight: '16px'
                 }}
               >
-                <span
-                  aria-hidden="true"
-                  style={{
-                    width: isActive ? 20 : 0,
-                    height: 20,
-                    overflow: 'hidden',
-                    transition: 'width 200ms ease',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}
-                >
-                  <img
-                    src="/images/Icon/Check/20.svg"
-                    alt=""
-                    width={20}
-                    height={20}
+                {isActive && (
+                  <span
+                    aria-hidden="true"
                     style={{
-                      opacity: isActive ? 1 : 0,
-                      transform: isActive ? 'scale(1)' : 'scale(0.8)',
-                      transition: 'opacity 200ms ease, transform 200ms ease'
+                      width: 20,
+                      height: 20,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      marginRight: '6px'
                     }}
-                  />
-                </span>
+                  >
+                    <img
+                      src="/images/Icon/Check/20.svg"
+                      alt=""
+                      width={20}
+                      height={20}
+                      style={{
+                        opacity: 1,
+                        transform: 'scale(1)',
+                        transition: 'opacity 200ms ease, transform 200ms ease'
+                      }}
+                    />
+                  </span>
+                )}
                 
-                <span>{keyword}</span>
+                <span style={{
+                  fontSize: '14px',
+                  lineHeight: '150%',
+                  letterSpacing: '0.3%',
+                  fontWeight: isActive ? 600 : 500
+                }}>{keyword}</span>
                 
                 {/* API 키워드인 경우 도구 개수와 타입 표시 */}
                 {toolCount !== null && (
@@ -261,7 +270,8 @@ const KeywordFilter: React.FC<KeywordFilterProps> = ({
                     className="text-xs px-1.5 py-0.5 rounded-full bg-opacity-20"
                     style={{ 
                       backgroundColor: getTypeColor(keywordType || ''),
-                      color: getTypeColor(keywordType || '')
+                      color: getTypeColor(keywordType || ''),
+                      marginLeft: '6px'
                     }}
                   >
                     {toolCount}
