@@ -239,9 +239,11 @@ const FilterBar: React.FC<FilterBarProps> = ({
                   {/* 툴팁 */}
                   {showTooltip && (
                     <div 
-                      className="absolute right-[-13px] bg-white z-[1001]"
+                      className="absolute bg-white z-[1001]"
                       style={{ 
                         top: 'calc(100% + 10px)',
+                        left: '50%',
+                        transform: 'translateX(-50%)',
                         borderRadius: '12px',
                         border: '1px solid #D9D9E1',
                         boxShadow: '0px 12px 32px rgba(31, 35, 41, 0.12)',
@@ -251,12 +253,13 @@ const FilterBar: React.FC<FilterBarProps> = ({
                         padding: '16px 20px'
                       }}
                     >
-                      {/* 말풍선 꼬리 */}
+                      {/* 말풍선 꼬리 - 외부 테두리 */}
                       <div 
                         className="absolute"
                         style={{
                           top: '-12px',
-                          right: '22px',
+                          left: '50%',
+                          transform: 'translateX(-50%)',
                           width: 0,
                           height: 0,
                           borderLeft: '10px solid transparent',
@@ -264,11 +267,13 @@ const FilterBar: React.FC<FilterBarProps> = ({
                           borderBottom: '12px solid #D9D9E1'
                         }}
                       />
+                      {/* 말풍선 꼬리 - 내부 흰색 */}
                       <div
                         className="absolute"
                         style={{
                           top: '-11px',
-                          right: '23px',
+                          left: '50%',
+                          transform: 'translateX(-50%)',
                           width: 0,
                           height: 0,
                           borderLeft: '9px solid transparent',
