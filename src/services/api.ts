@@ -760,15 +760,13 @@ class ApiService {
       
       const categorySlug = getCategorySlug(toolData.category?.name || '생산성');
       const imageMapping = getImageMapping(toolData.serviceName, categorySlug);
-      const shouldUseLocalImages = (url?: string | null) =>
-        Boolean(url && url.includes('aimine.up.railway.app/images/'));
       
       const toolDetail: AIToolDetail = {
         id: toolData.id,
         serviceName: toolData.serviceName,
         description: toolData.description || '',
         websiteUrl: toolData.websiteUrl || '',
-        logoUrl: shouldUseLocalImages(toolData.logoUrl) ? imageMapping.logo : (toolData.logoUrl || imageMapping.logo),
+        logoUrl: toolData.logoUrl || imageMapping.logo,
         launchDate: toolData.launchDate || '',
         category: {
           id: toolData.category?.id || 1,
@@ -793,8 +791,8 @@ class ApiService {
           updatedAt: r.createdAt
         })) || [],
         // 백엔드에서 새로 추가된 이미지 필드들 처리
-        serviceImageUrl: shouldUseLocalImages(toolData.serviceImageUrl) ? imageMapping.serviceImage : (toolData.serviceImageUrl || imageMapping.serviceImage),
-        priceImageUrl: shouldUseLocalImages(toolData.priceImageUrl) ? imageMapping.priceImage : (toolData.priceImageUrl || imageMapping.priceImage),
+        serviceImageUrl: toolData.serviceImageUrl || imageMapping.serviceImage,
+        priceImageUrl: toolData.priceImageUrl || imageMapping.priceImage,
         searchbarLogoUrl: toolData.logoUrl || imageMapping.searchbarLogo
       };
       
