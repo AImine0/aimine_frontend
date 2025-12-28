@@ -198,7 +198,7 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
               fontWeight: 600,
               fontSize: '14px',
               lineHeight: '150%',
-              letterSpacing: '0.007em',
+              letterSpacing: '0.07em',
               fontFamily: 'Pretendard'
             }}>
         BEST {rank}
@@ -290,9 +290,9 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
          }}>
       
       {/* 1번째 줄: 로고, BEST 뱃지, 바로가기 아이콘 */}
-      <div className="flex items-start justify-between" style={{ marginBottom: 0 }}>
+      <div className="flex items-start justify-between" style={{ margin: 0, padding: 0 }}>
         {/* 로고 */}
-        <div className="flex-shrink-0 flex items-center justify-center" style={{ width: '70px', height: '70px' }}>
+        <div className="flex-shrink-0 flex items-center justify-center" style={{ width: '70px', height: '70px', margin: 0, padding: 0 }}>
           {tool.logoUrl ? (
             <img 
               src={tool.logoUrl} 
@@ -306,7 +306,7 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
         </div>
 
         {/* 오른쪽: BEST 뱃지, 북마크 버튼 (MyPage에서만), 바로가기 버튼 */}
-        <div className="flex items-start flex-shrink-0" style={{ gap: '10px' }}>
+        <div className="flex items-start flex-shrink-0" style={{ gap: '10px', margin: 0, padding: 0 }}>
           {/* BEST 뱃지 */}
           {rank && rank <= 3 && getBestBadge(rank)}
 
@@ -322,7 +322,9 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
                 backgroundColor: isBookmarked ? '#E9DFFB' : '#F3F4F6', 
                 width: '40px', 
                 height: '40px',
-                borderRadius: '3.56px'
+                borderRadius: '3.56px',
+                margin: 0,
+                padding: 0
               }}
               title={isBookmarked ? '북마크 해제' : '북마크 추가'}
               onMouseEnter={(e) => {
@@ -354,7 +356,8 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
               width: '32px', 
               height: '32px',
               borderRadius: '8px',
-              padding: '0'
+              padding: 0,
+              margin: 0
             }}
             title={`${tool.name} 공식 사이트로 이동`}
           >
@@ -364,7 +367,7 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
       </div>
 
       {/* 2번째 줄: 카테고리 뱃지 */}
-      <div style={{ marginTop: '8px', marginBottom: 0 }}>
+      <div style={{ marginTop: '8px', marginBottom: 0, padding: 0 }}>
         <span className="inline-flex items-center" 
               data-tags
               style={{ 
@@ -378,42 +381,50 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
                 fontWeight: 400,
                 fontSize: '14px',
                 lineHeight: '150%',
-                letterSpacing: '0.007em',
-                width: 'fit-content'
+                letterSpacing: '0.07em',
+                width: 'fit-content',
+                margin: 0
               }}>
           {getDisplayTag()}
         </span>
       </div>
 
       {/* 3번째 줄: AI명 */}
-      <div className="text-left" style={{ marginTop: '12px', marginBottom: 0 }}>
-        <h3 className="line-clamp-1 text-left text-black" 
-            style={{ 
+      <div style={{ marginTop: '12px', marginBottom: 0, padding: 0 }}>
+        <h3 style={{ 
               fontWeight: 500,
               fontSize: '24px',
               lineHeight: '150%',
-              letterSpacing: '0.007em',
-              margin: 0
+              letterSpacing: '0.07em',
+              margin: 0,
+              padding: 0,
+              color: '#000000',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap'
             }}>
           {tool.name}
         </h3>
       </div>
 
       {/* 4번째 줄: AI 설명 */}
-      <div className="text-left" style={{ marginTop: '6px', marginBottom: 0 }}>
-        <div style={{ width: '100%', height: '48px', overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', marginBottom: 0 }}>
-          <p className="line-clamp-2 text-left"
-            style={{ 
-              color: '#202020',
-              fontWeight: 500,
-              fontSize: '16px',
-              lineHeight: '150%',
-              letterSpacing: '0.007em',
-              margin: 0
-            }}>
-            {tool.description}
-          </p>
-        </div>
+      <div style={{ marginTop: '6px', marginBottom: 0, padding: 0, height: '48px', overflow: 'hidden' }}>
+        <p style={{ 
+            color: '#202020',
+            fontWeight: 500,
+            fontSize: '16px',
+            lineHeight: '24px',
+            letterSpacing: '0.07em',
+            margin: 0,
+            padding: 0,
+            display: '-webkit-box',
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis'
+          }}>
+          {tool.description}
+        </p>
       </div>
     </div>
   );
