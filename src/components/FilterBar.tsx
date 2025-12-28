@@ -125,7 +125,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
       );
     }
     return (
-      <span className="text-xs opacity-75 ml-1">
+      <span className="opacity-75 ml-1" style={{ fontSize: '14px' }}>
         ({count.toLocaleString()})
       </span>
     );
@@ -147,10 +147,11 @@ const FilterBar: React.FC<FilterBarProps> = ({
                 <button
                   onClick={() => onFilterChange(filter.key)}
                   disabled={!hasCount && !loading}
-                  className={`text-sm transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed`}
+                  className="transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
                   style={{
                     color: isActive ? '#7248BD' : '#6F6E6E',
                     fontWeight: isActive ? 600 : 400,
+                    fontSize: '16px',
                     fontFamily: 'Pretendard'
                   }}
                   onMouseEnter={(e) => {
@@ -181,14 +182,13 @@ const FilterBar: React.FC<FilterBarProps> = ({
       <div className="relative w-32" ref={dropdownRef}>
         <button
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          className={`flex items-center w-full px-4 py-2 bg-white transition-none ${
-            isDropdownOpen ? 'rounded-t-xl' : 'rounded-xl'
-          }`}
+          className="flex items-center w-full px-4 py-2 bg-white transition-none"
           style={{
             borderTop: '1px solid #DBCBF9',
             borderLeft: '1px solid #DBCBF9',
             borderRight: '1px solid #DBCBF9',
             borderBottom: isDropdownOpen ? 'none' : '1px solid #DBCBF9',
+            borderRadius: isDropdownOpen ? '12px 12px 0 0' : '12px',
             height: '40px',
             fontFamily: 'Pretendard',
             outline: 'none',
@@ -301,13 +301,14 @@ const FilterBar: React.FC<FilterBarProps> = ({
         {/* 드롭다운 메뉴 */}
         {isDropdownOpen && (
           <div 
-            className="absolute left-0 right-0 bg-white rounded-b-xl shadow-lg overflow-hidden"
+            className="absolute left-0 right-0 bg-white shadow-lg overflow-hidden"
             role="listbox"
             style={{ 
               top: '40px',
               borderLeft: '1px solid #DBCBF9',
               borderRight: '1px solid #DBCBF9',
               borderBottom: '1px solid #DBCBF9',
+              borderRadius: '0 0 12px 12px',
               zIndex: 1000,
               boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
             }}
