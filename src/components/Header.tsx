@@ -571,8 +571,19 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange, horizonta
               <div className="relative" ref={userMenuRef}>
                 <button
                   onClick={() => setShowUserMenu(!showUserMenu)}
-                  className="flex items-center gap-2 p-1 rounded-full hover:bg-gray-100 transition-colors"
+                  className="flex items-center justify-center rounded-full transition-colors"
+                  style={{
+                    width: `${36 + 8.67 * 2}px`,  // 53.34px
+                    height: `${36 + 8.67 * 2}px`, // 53.34px
+                    padding: '8.67px'
+                  }}
                   aria-label="사용자 메뉴 열기"
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#D8D8D8';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                  }}
                 >
                   <img src="/images/Icon/Login/36.svg" alt="사용자" width={36} height={36} />
                 </button>
