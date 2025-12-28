@@ -4,7 +4,7 @@ import Header from '../components/Header';
 import Breadcrumb from '../components/Breadcrumb';
 import { apiService } from '../services';
 import type { AIToolDetail, ReviewListResponse } from '../types';
-import { handleImageError } from '../utils/imageMapping';
+import { getImageMapping, handleImageError } from '../utils/imageMapping';
 
 
 const ToolDetailPage: React.FC = () => {
@@ -228,6 +228,26 @@ const ToolDetailPage: React.FC = () => {
   };
 
   const containerPaddingClass = 'px-4 sm:px-6 md:px-8 lg:px-16 xl:px-[200px]';
+
+  const handleImageFallback = (
+    event: React.SyntheticEvent<HTMLImageElement, Event>,
+    localSrc: string,
+    placeholderSrc: string
+  ) => {
+    const img = event.currentTarget;
+    const step = img.dataset.fallbackStep || '0';
+
+    if (step === '0') {
+      img.dataset.fallbackStep = '1';
+      img.src = localSrc;
+      return;
+    }
+
+    if (step === '1') {
+      img.dataset.fallbackStep = '2';
+      img.src = placeholderSrc;
+    }
+  };
   
 
   if (loading) {
@@ -267,6 +287,11 @@ const ToolDetailPage: React.FC = () => {
       </div>
     );
   }
+
+  const detailImageMapping = getImageMapping(
+    toolDetail.serviceName,
+    toolDetail.category.slug || toolDetail.category.name || 'chat'
+  );
 
   // 이미지 매핑 가져오기
   // 카테고리 한글 라벨 매핑
@@ -467,11 +492,17 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
           
           {/* 오른쪽: 이미지 갤러리 */}
           <div className="w-full lg:w-[28rem] flex-shrink-0 rounded-lg sm:rounded-xl p-3 sm:p-4 mt-0 sm:mt-2 lg:mt-2 min-h-[250px] flex items-center justify-center overflow-visible" style={{ backgroundColor: '#F2EEFB', border: '1px solid #E4E0F3' }}>
-            <img 
-              src={toolDetail.serviceImageUrl}
-              alt={`${toolDetail.serviceName} 서비스 이미지`}
+              <img 
+                src={toolDetail.serviceImageUrl}
+                alt={`${toolDetail.serviceName} 서비스 이미지`}
               className="w-full h-auto object-contain"
-              onError={(e) => handleImageError(e, '/images/GlassMorphism/Detailpage/Detailpage_Happy.png')}
+              onError={(e) =>
+                handleImageFallback(
+                  e,
+                  detailImageMapping.serviceImage,
+                  '/images/GlassMorphism/Detailpage/Detailpage_Happy.png'
+                )
+              }
             />
           </div>
         </div>
@@ -554,7 +585,13 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
                   objectFit: 'contain',
                   display: 'block'
                 }}
-                onError={(e) => handleImageError(e, '/images/GlassMorphism/Detailpage/Detailpage_Happy.png')}
+                onError={(e) =>
+                  handleImageFallback(
+                    e,
+                    detailImageMapping.priceImage,
+                    '/images/GlassMorphism/Detailpage/Detailpage_Happy.png'
+                  )
+                }
               />
             </div>
           </section>
