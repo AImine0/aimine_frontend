@@ -445,12 +445,18 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
             {/* 주요 기능 */}
             <div className="mb-6 sm:mb-8">
               <h3 className="mb-2 sm:mb-3 text-sm sm:text-base" style={{ color: '#202020', fontWeight: 700 }}>주요 기능</h3>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 w-full max-w-[504px] lg:w-[504px] lg:min-h-[102px]">
                 {toolDetail.keywords.map((keyword, index) => (
                   <span
                     key={index}
-                    className="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-body3 font-semibold"
-                    style={{ backgroundColor: '#F2EEFB', color: '#6238AE' }}
+                    className="inline-flex items-center justify-center rounded-full text-body3 font-semibold"
+                    style={{
+                      backgroundColor: '#F2EEFB',
+                      color: '#6238AE',
+                      minWidth: '90px',
+                      height: '30px',
+                      padding: '0 12px'
+                    }}
                   >
                     {keyword}
                   </span>
@@ -460,7 +466,7 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
           </div>
           
           {/* 오른쪽: 이미지 갤러리 */}
-          <div className="w-full lg:w-[28rem] flex-shrink-0 rounded-lg sm:rounded-xl p-3 sm:p-4 mt-0 sm:mt-2 lg:mt-2 h-[250px]" style={{ backgroundColor: '#F2EEFB', border: '1px solid #E4E0F3' }}>
+          <div className="w-full lg:w-[28rem] flex-shrink-0 rounded-lg sm:rounded-xl p-3 sm:p-4 mt-0 sm:mt-2 lg:mt-2 min-h-[250px] flex items-center justify-center overflow-visible" style={{ backgroundColor: '#F2EEFB', border: '1px solid #E4E0F3' }}>
             <img 
               src={toolDetail.serviceImageUrl}
               alt={`${toolDetail.serviceName} 서비스 이미지`}
