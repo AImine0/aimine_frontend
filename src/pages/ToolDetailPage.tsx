@@ -449,7 +449,7 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
                 {toolDetail.keywords.map((keyword, index) => (
                   <span
                     key={index}
-                    className="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-body4 font-semibold"
+                    className="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-body3 font-semibold"
                     style={{ backgroundColor: '#F2EEFB', color: '#6238AE' }}
                   >
                     {keyword}
