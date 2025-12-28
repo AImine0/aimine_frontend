@@ -17,7 +17,7 @@ const ToolDetailPage: React.FC = () => {
   const [bookmarkLoading, setBookmarkLoading] = useState(false);
   
   // 리뷰 작성 상태
-  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewRating, setReviewRating] = useState(0);
   const [reviewContent, setReviewContent] = useState('');
   const [reviewSubmitting, setReviewSubmitting] = useState(false);
   
@@ -131,6 +131,11 @@ const ToolDetailPage: React.FC = () => {
     e.preventDefault();
     
     if (!id || !reviewContent.trim()) return;
+
+    if (reviewRating === 0) {
+      alert('평점을 선택해주세요.');
+      return;
+    }
     
     if (!apiService.isAuthenticated()) {
       alert('리뷰 작성은 로그인이 필요합니다.');
@@ -221,6 +226,8 @@ const ToolDetailPage: React.FC = () => {
       return iso;
     }
   };
+
+  const containerPaddingClass = 'px-4 sm:px-6 md:px-8 lg:px-16 xl:px-[200px]';
   
 
   if (loading) {
@@ -317,17 +324,17 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
             backgroundColor: '#F2EEFB'
           }}
         >
-          <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8 lg:px-16">
+          <div className={`w-full ${containerPaddingClass}`}>
             <div className="-mb-2">
               <Breadcrumb items={breadcrumbItems} />
             </div>
           </div>
         </div>
         
-        <div className="w-full max-w-[1440px] mx-auto pt-4 sm:pt-6 pb-24 sm:pb-48 bg-white px-4 sm:px-6 md:px-8 lg:px-16">
+        <div className={`w-full pt-4 sm:pt-6 pb-24 sm:pb-48 bg-white ${containerPaddingClass}`}>
         
         {/* 메인 히어로 섹션 */}
-        <div className="flex flex-col lg:flex-row items-start justify-between gap-6 sm:gap-8 lg:gap-20 mb-8 sm:mb-12">
+        <div className="flex flex-col lg:flex-row items-start justify-between gap-2 sm:gap-4 lg:gap-[90px] mb-8 sm:mb-12">
           {/* 왼쪽: 도구 정보 */}
           <div className="flex-1 w-full lg:max-w-2xl">
             {/* 로고: 배너와 본문 경계에 반쯤 겹치게 */}
@@ -453,7 +460,7 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
           </div>
           
           {/* 오른쪽: 이미지 갤러리 */}
-          <div className="w-full lg:w-96 flex-shrink-0 rounded-lg sm:rounded-xl p-2 mt-4 sm:mt-6 lg:mt-6" style={{ backgroundColor: '#F2EEFB', border: '1px solid #E4E0F3' }}>
+          <div className="w-full lg:w-[28rem] flex-shrink-0 rounded-lg sm:rounded-xl p-3 sm:p-4 mt-0 sm:mt-2 lg:mt-2 h-[250px]" style={{ backgroundColor: '#F2EEFB', border: '1px solid #E4E0F3' }}>
             <img 
               src={toolDetail.serviceImageUrl}
               alt={`${toolDetail.serviceName} 서비스 이미지`}
@@ -464,7 +471,7 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
         </div>
         
         {/* 탭 네비게이션 */}
-        <div className="mb-8 sm:mb-12 overflow-x-auto" style={{ borderBottomWidth: '1px', borderBottomColor: '#E5E7EB', borderBottomStyle: 'solid' }}>
+        <div className="mb-8 sm:mb-12" style={{ borderBottomWidth: '1px', borderBottomColor: '#E5E7EB', borderBottomStyle: 'solid' }}>
           <nav className="flex gap-4 sm:gap-8 min-w-max">
             <button
               onClick={() => handleTabClick('pricing')}
@@ -530,7 +537,7 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
             </p>
             
             {/* 가격 플랜 이미지 */}
-            <div className="bg-white rounded-lg border border-gray-200 p-3 sm:p-4 md:p-6 overflow-x-auto">
+            <div className="bg-white rounded-lg border border-gray-200 p-3 sm:p-4 md:p-6">
               <img 
                 src={toolDetail.priceImageUrl}
                 alt={`${toolDetail.serviceName} 가격 정보`}
@@ -593,14 +600,14 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
                         letterSpacing: '-0.003em'
                       }}
                     >
-                      {(reviews?.average_rating || 0).toFixed(1)}
+                      {formatRating(reviews?.average_rating)}
                     </span>
                   </div>
                 </div>
               </div>
               
               {/* 리뷰 작성 폼 */}
-              <form onSubmit={handleReviewSubmit} className="border border-gray-200 rounded-xl sm:rounded-2xl p-3 sm:p-4 mb-4 sm:mb-6">
+              <form onSubmit={handleReviewSubmit} className="border border-gray-200 rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-4 sm:mb-6">
                 {/* 상단 좌측: 회색 별점 (선택 시 보라색) */}
                 <div className="flex items-center gap-1 mb-2">
                   {[1, 2, 3, 4, 5].map(star => (
@@ -656,7 +663,7 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
                         borderBottom: index === serviceReviews.length - 1 ? '1px solid #D1D5DB' : '1px solid #D1D5DB'
                       }}
                     >
-                      <div className="px-4 sm:px-6">
+                      <div className="px-6 sm:px-8">
                       {/* 별점 (보라색 5개) */}
                       <div className="flex items-center gap-1 mb-3 sm:mb-4">
                         {[1,2,3,4,5].map((i) => (
