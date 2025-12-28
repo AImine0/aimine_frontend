@@ -388,6 +388,11 @@ const DEFAULT_IMAGES = {
  * @param categorySlug - 카테고리 슬러그 (예: 'chat', 'image')
  * @returns ImageMapping 객체
  */
+const normalizeServiceName = (value: string): string =>
+  value
+    .toLowerCase()
+    .replace(/[^a-z0-9가-힣]/g, '');
+
 export function getImageMapping(serviceName: string, categorySlug: string): ImageMapping {
   const normalizedCategory = categorySlug.toLowerCase() as keyof typeof CATEGORY_IMAGE_PATHS;
   const categoryPaths = CATEGORY_IMAGE_PATHS[normalizedCategory];
@@ -398,13 +403,45 @@ export function getImageMapping(serviceName: string, categorySlug: string): Imag
     return DEFAULT_IMAGES;
   }
 
+  const normalizedServiceName = (serviceName || '').trim();
+  if (!normalizedServiceName) {
+    console.warn('서비스명이 비어있습니다. 기본 이미지를 사용합니다.');
+    return DEFAULT_IMAGES;
+  }
+
   // 서비스명으로 파일명 찾기
-  let imageFileName = SERVICE_IMAGE_MAPPING[serviceName];
+  let imageFileName = SERVICE_IMAGE_MAPPING[normalizedServiceName];
+
+  if (!imageFileName) {
+    const normalizedTarget = normalizeServiceName(normalizedServiceName);
+    let bestMatch: string | null = null;
+    let bestLength = 0;
+
+    for (const [key, fileName] of Object.entries(SERVICE_IMAGE_MAPPING)) {
+      const normalizedKey = normalizeServiceName(key);
+      if (!normalizedKey) continue;
+      if (normalizedKey === normalizedTarget) {
+        imageFileName = fileName;
+        break;
+      }
+
+      if (normalizedTarget.includes(normalizedKey) || normalizedKey.includes(normalizedTarget)) {
+        if (normalizedKey.length > bestLength) {
+          bestMatch = fileName;
+          bestLength = normalizedKey.length;
+        }
+      }
+    }
+
+    if (!imageFileName && bestMatch) {
+      imageFileName = bestMatch;
+    }
+  }
   
   // 매핑에 없으면 서비스명으로 파일명 생성 (공백과 특수문자를 언더스코어로 변경)
   if (!imageFileName) {
-    console.warn(`서비스 '${serviceName}'의 이미지 매핑을 찾을 수 없습니다. 서비스명을 파일명으로 사용합니다.`);
-    imageFileName = `${serviceName.replace(/[\/\\:*?"<>|\s\.]/g, '_')}.png`;
+    console.warn(`서비스 '${normalizedServiceName}'의 이미지 매핑을 찾을 수 없습니다. 서비스명을 파일명으로 사용합니다.`);
+    imageFileName = `${normalizedServiceName.replace(/[\/\\:*?"<>|\s\.]/g, '_')}.png`;
   }
   
   return {
