@@ -472,7 +472,7 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
         
         {/* 탭 네비게이션 */}
         <div className="mb-8 sm:mb-12" style={{ borderBottomWidth: '1px', borderBottomColor: '#E5E7EB', borderBottomStyle: 'solid' }}>
-          <nav className="flex gap-4 sm:gap-8 min-w-max">
+          <nav className="flex gap-4 sm:gap-8 min-w-max pl-4 sm:pl-6">
             <button
               onClick={() => handleTabClick('pricing')}
               className="pb-3 sm:pb-4 text-sm sm:text-base whitespace-nowrap"
@@ -502,7 +502,7 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
         
         {/* 가격 정보 섹션: 리뷰 탭일 때는 숨김 */}
         {activeTabKey !== 'reviews' && (
-        <section id="pricing" className="mb-12 sm:mb-16">
+        <section id="pricing" className="mb-12 sm:mb-16 pl-4 sm:pl-6">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-0" style={{ marginBottom: '1px' }}>
               <h2 className="text-lg sm:text-xl md:text-2xl" style={{ color: '#000000', fontWeight: 700, fontSize: '18px' }}>가격 정보</h2>
               <a 
@@ -537,11 +537,11 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
             </p>
             
             {/* 가격 플랜 이미지 */}
-            <div className="bg-white rounded-lg border border-gray-200 p-3 sm:p-4 md:p-6">
+            <div className="bg-white rounded-lg border border-gray-200">
               <img 
                 src={toolDetail.priceImageUrl}
                 alt={`${toolDetail.serviceName} 가격 정보`}
-                className="w-full max-w-full sm:max-w-4xl mx-auto"
+                className="w-full"
                 style={{ 
                   backgroundColor: '#f8f9fa', 
                   minHeight: '200px',
@@ -555,13 +555,13 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
         )}
         
         {/* 서비스 리뷰 섹션: 항상 표시 (리뷰 탭에서는 가격 섹션만 숨김) */}
-        <section id="reviews" className="mb-20 sm:mb-36">
+        <section id="reviews" className="mb-20 sm:mb-36 pl-4 sm:pl-6">
             <h2
               style={{
                 color: '#202020',
                 fontWeight: 500,
                 fontSize: '18px',
-                lineHeight: '130%',
+                lineHeight: '27px',
                 letterSpacing: '-0.003em',
                 marginBottom: '20px',
                 marginTop: 0
@@ -573,13 +573,13 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
             <div className="bg-white">
               {/* 리뷰 헤더: 서비스명 + 보라 별 + 평점 */}
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-4">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center" style={{ gap: '27px' }}>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center" style={{ gap: '27px' }}>
                   <h3
                     className="break-words"
                     style={{
                       fontWeight: 500,
                       fontSize: '24px',
-                      lineHeight: '130%',
+                      lineHeight: '39px',
                       letterSpacing: '-0.003em'
                     }}
                   >
@@ -596,7 +596,7 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
                       style={{
                         fontWeight: 500,
                         fontSize: '24px',
-                        lineHeight: '130%',
+                        lineHeight: '39px',
                         letterSpacing: '-0.003em'
                       }}
                     >
