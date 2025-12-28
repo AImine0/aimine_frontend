@@ -198,7 +198,7 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
               fontWeight: 600,
               fontSize: '14px',
               lineHeight: '150%',
-              letterSpacing: '0.07em',
+              letterSpacing: '0.007em',
               fontFamily: 'Pretendard'
             }}>
         BEST {rank}
@@ -381,7 +381,7 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
                 fontWeight: 400,
                 fontSize: '14px',
                 lineHeight: '150%',
-                letterSpacing: '0.07em',
+                letterSpacing: '0.007em',
                 width: 'fit-content',
                 margin: 0
               }}>
@@ -395,7 +395,7 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
               fontWeight: 500,
               fontSize: '24px',
               lineHeight: '150%',
-              letterSpacing: '0.07em',
+              letterSpacing: '0.007em',
               margin: 0,
               padding: 0,
               color: '#000000',
@@ -414,7 +414,7 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
             fontWeight: 500,
             fontSize: '16px',
             lineHeight: '24px',
-            letterSpacing: '0.07em',
+            letterSpacing: '0.007em',
             margin: 0,
             padding: 0,
             display: '-webkit-box',
