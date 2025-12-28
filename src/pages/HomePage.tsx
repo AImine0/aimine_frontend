@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 
@@ -15,9 +15,35 @@ const CATEGORY_ITEMS: Array<{ id: string; title: string; img: string; to: string
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [scaleFactor, setScaleFactor] = useState(1);
   
   // 반응형 패딩 상태
   const [horizontalPadding, setHorizontalPadding] = useState(200);
+  
+  // 버튼 컨테이너 너비 측정 및 scale factor 계산
+  useEffect(() => {
+    const updateScale = () => {
+      if (containerRef.current) {
+        const containerWidth = containerRef.current.offsetWidth;
+        const baseWidth = 1040; // 236*4 + 32*3
+        setScaleFactor(containerWidth / baseWidth);
+      }
+    };
+
+    updateScale();
+    window.addEventListener('resize', updateScale);
+    
+    const resizeObserver = new ResizeObserver(updateScale);
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current);
+    }
+
+    return () => {
+      window.removeEventListener('resize', updateScale);
+      resizeObserver.disconnect();
+    };
+  }, []);
   
   // 화면 크기 변경 시 패딩 업데이트
   useEffect(() => {
@@ -25,13 +51,13 @@ const HomePage: React.FC = () => {
       if (window.innerWidth >= 1440) {
         setHorizontalPadding(200);
       } else if (window.innerWidth >= 1024) {
-        setHorizontalPadding(64); // lg:px-16 고정
+        setHorizontalPadding(64);
       } else if (window.innerWidth >= 768) {
-        setHorizontalPadding(32); // md:px-8 고정
+        setHorizontalPadding(32);
       } else if (window.innerWidth >= 640) {
-        setHorizontalPadding(24); // sm:px-6 고정
+        setHorizontalPadding(24);
       } else {
-        setHorizontalPadding(16); // 모바일
+        setHorizontalPadding(16);
       }
     };
     
@@ -40,6 +66,9 @@ const HomePage: React.FC = () => {
     return () => window.removeEventListener('resize', updatePadding);
   }, []);
 
+  // scale 함수: 기준값 * scale factor
+  const scale = (baseValue: number) => baseValue * scaleFactor;
+
   return (
     <div className="min-h-screen bg-white" style={{ fontFamily: 'Pretendard' }}>
       <Header tabs={[]} activeTab="" onTabChange={() => {}} horizontalPadding={horizontalPadding} fullWidth />
@@ -47,16 +76,16 @@ const HomePage: React.FC = () => {
         className="mx-auto"
         style={{ 
           maxWidth: '1440px',
-          paddingLeft: horizontalPadding >= 200 ? `${horizontalPadding}px` : `${horizontalPadding}px`,
-          paddingRight: horizontalPadding >= 200 ? `${horizontalPadding}px` : `${horizontalPadding}px`
+          paddingLeft: `${horizontalPadding}px`,
+          paddingRight: `${horizontalPadding}px`
         }}
       >
-        <section className="text-center" style={{ paddingTop: '56px', paddingBottom: '32px', paddingLeft: '0', paddingRight: '0' }}>
+        {/* 첫 번째 텍스트 박스 */}
+        <section className="text-center" style={{ paddingTop: `${scale(91)}px`, paddingBottom: 0 }}>
           <div
-            className="text-gray-900"
             style={{
               color: '#202020',
-              fontSize: '36px',
+              fontSize: `${scale(36)}px`,
               lineHeight: '130%',
               fontWeight: 500,
               letterSpacing: '-0.003em',
@@ -67,13 +96,14 @@ const HomePage: React.FC = () => {
             <br />
             AIMine에서 찾아보세요
           </div>
+          
+          {/* 두 번째 텍스트 박스 */}
           <div
-            className="text-gray-500"
             style={{
               color: '#424242',
-              fontSize: '18px',
+              fontSize: `${scale(18)}px`,
               lineHeight: '130%',
-              marginTop: '8px',
+              marginTop: `${scale(8)}px`,
               fontWeight: 300,
               letterSpacing: '-0.003em',
               textAlign: 'center'
@@ -85,18 +115,30 @@ const HomePage: React.FC = () => {
           </div>
         </section>
 
-        <section style={{ paddingBottom: '64px', paddingLeft: '0', paddingRight: '0' }}>
-          <div className="grid gap-7" style={{ gridTemplateColumns: 'repeat(4, minmax(0, 1fr))' }}>
+        {/* 버튼 컴포넌트 영역 */}
+        <section style={{ paddingTop: `${scale(39)}px`, paddingBottom: `${scale(64)}px` }}>
+          <div 
+            ref={containerRef}
+            className="grid" 
+            style={{ 
+              gridTemplateColumns: 'repeat(4, 1fr)',
+              gap: `${scale(32)}px`
+            }}
+          >
             {CATEGORY_ITEMS.map((item) => (
               <button
                 key={item.id}
                 onClick={() => navigate(item.to)}
                 className="rounded-2xl transition-all duration-200 text-left"
                 style={{ 
-                  backgroundColor: '#F2EEFB', 
-                  padding: '18px', 
-                  height: '144px', 
-                  overflow: 'hidden' 
+                  backgroundColor: '#F2EEFB',
+                  borderRadius: `${scale(20)}px`,
+                  padding: 0,
+                  height: `${scale(112)}px`,
+                  overflow: 'hidden',
+                  border: 'none',
+                  cursor: 'pointer',
+                  position: 'relative'
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = '#E9DFFB';
@@ -105,9 +147,39 @@ const HomePage: React.FC = () => {
                   e.currentTarget.style.backgroundColor = '#F2EEFB';
                 }}
               >
-                <div style={{ color: '#202020', fontSize: '22px', fontWeight: 600, marginTop: '12px', marginLeft: '12px' }}>{item.title}</div>
-                <div className="w-full flex items-end justify-end" style={{ height: '98px', overflow: 'hidden' }}>
-                  <img src={item.img} alt={item.title} style={{ width: '120px', height: '120px', objectFit: 'contain', transform: 'translateY(14px)' }} />
+                {/* 텍스트 */}
+                <div 
+                  style={{ 
+                    color: '#202020',
+                    fontSize: `${scale(20)}px`,
+                    fontWeight: 500,
+                    marginTop: `${scale(18)}px`,
+                    marginLeft: `${scale(24)}px`,
+                    lineHeight: '130%',
+                    letterSpacing: '-0.003em'
+                  }}
+                >
+                  {item.title}
+                </div>
+
+                {/* 이미지 영역 - 기존 방식 복원 + 높이만 조정 */}
+                <div 
+                  className="w-full flex items-end justify-end" 
+                  style={{ 
+                    height: `${scale(100)}px`,  // 106px로 설정 (120 - 14 = 106)
+                    overflow: 'hidden'
+                  }}
+                >
+                  <img 
+                    src={item.img} 
+                    alt={item.title}
+                    style={{ 
+                      width: `${scale(120)}px`,
+                      height: `${scale(120)}px`,
+                      objectFit: 'contain',
+                      transform: `translateY(${scale(0)}px)`  // 약간만 잘리게
+                    }} 
+                  />
                 </div>
               </button>
             ))}
@@ -119,5 +191,3 @@ const HomePage: React.FC = () => {
 };
 
 export default HomePage;
-
-
