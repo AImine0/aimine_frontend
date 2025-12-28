@@ -184,16 +184,21 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
   // BEST 뱃지
   const getBestBadge = (rank: number) => {
     return (
-      <span className="inline-flex items-center px-2 py-1 font-bold"
+      <span className="inline-flex items-center"
             data-best-badge
             style={{ 
               backgroundColor: '#F2EEFB', 
               color: '#7E50D1',
-              width: '80px',
-              height: '38px',
               borderRadius: '8px',
               justifyContent: 'center',
-              fontSize: '16px',
+              paddingTop: '5.5px',
+              paddingBottom: '5.5px',
+              paddingLeft: '10px',
+              paddingRight: '10px',
+              fontWeight: 600,
+              fontSize: '14px',
+              lineHeight: '150%',
+              letterSpacing: '0.007em',
               fontFamily: 'Pretendard'
             }}>
         BEST {rank}
@@ -225,9 +230,8 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
          style={{ 
            border: '1px solid #DBCBF9', 
            fontFamily: 'Pretendard', 
-           padding: '24px 24px 24px 24px', 
-           height: '100%',
-           minHeight: '280px',
+           padding: '20px', 
+           aspectRatio: '326 / 245',
            cursor: 'pointer',
            display: 'flex',
            flexDirection: 'column',
@@ -284,40 +288,24 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
            }
          }}>
       
-      {/* 상단: 로고, 카테고리, BEST 뱃지 */}
-      <div className="flex items-start justify-between" style={{ marginBottom: '24px' }}>
-        <div className="flex flex-col gap-3 items-start">
-          {/* 로고 */}
-          <div className="flex-shrink-0">
-            <div className="w-20 h-20 flex items-center justify-start overflow-hidden">
-              {tool.logoUrl ? (
-                <img 
-                  src={tool.logoUrl} 
-                  alt={`${tool.name} 로고`}
-                  className="w-full h-full object-contain"
-                  onError={(e) => handleImageError(e, '/images/Logo/Logo_FINAL.svg')}
-                />
-              ) : (
-                <span className="text-4xl">🤖</span>
-              )}
-            </div>
-          </div>
-          
-          {/* DB tags 컬럼 내용 표시 */}
-          <span className="inline-flex items-center px-4 py-1.5 text-body3 font-medium" 
-                data-tags
-                style={{ 
-                  backgroundColor: '#E9DFFB',
-                  borderRadius: '100px',
-                  color: '#6238AE',
-                  width: 'fit-content'
-                }}>
-            {getDisplayTag()}
-          </span>
+      {/* 1번째 줄: 로고, BEST 뱃지, 바로가기 아이콘 */}
+      <div className="flex items-start justify-between" style={{ marginBottom: 0 }}>
+        {/* 로고 */}
+        <div className="flex-shrink-0 flex items-center justify-center" style={{ width: '70px', height: '70px' }}>
+          {tool.logoUrl ? (
+            <img 
+              src={tool.logoUrl} 
+              alt={`${tool.name} 로고`}
+              style={{ width: 'auto', height: 'auto', maxWidth: '70px', maxHeight: '70px', objectFit: 'contain' }}
+              onError={(e) => handleImageError(e, '/images/Logo/Logo_FINAL.svg')}
+            />
+          ) : (
+            <span className="text-4xl">🤖</span>
+          )}
         </div>
 
         {/* 오른쪽: BEST 뱃지, 북마크 버튼 (MyPage에서만), 바로가기 버튼 */}
-        <div className="flex items-start gap-3 flex-shrink-0">
+        <div className="flex items-start flex-shrink-0" style={{ gap: '10px' }}>
           {/* BEST 뱃지 */}
           {rank && rank <= 3 && getBestBadge(rank)}
 
@@ -362,32 +350,69 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
             data-visit-button
             style={{ 
               backgroundColor: '#E9DFFB', 
-              width: '40px', 
-              height: '40px',
-              borderRadius: '8px'
+              width: '32px', 
+              height: '32px',
+              borderRadius: '8px',
+              padding: '0'
             }}
             title={`${tool.name} 공식 사이트로 이동`}
           >
-            <img src="/images/Icon/Visit/32/Black.svg" alt="바로가기" width={40} height={40} />
+            <img src="/images/Icon/Visit/32/Black.svg" alt="바로가기" style={{ width: '32px', height: '32px' }} />
           </button>
         </div>
       </div>
 
-      {/* 중간: 제목과 설명 */}
-      <div className="text-left flex-1 flex flex-col justify-end">
-        <h3 className="text-title0 mb-2 line-clamp-1 text-left text-black" style={{ fontSize: '26px', lineHeight: '34px' }}>
-            {tool.name}
-          </h3>
-        <p className="line-clamp-2 text-left"
-          style={{ 
-            color: '#202020', 
-            fontSize: '18px',
-            lineHeight: '28px',
-            fontWeight: 500,
-            letterSpacing: '-0.01em'
-          }}>
-          {tool.description}
-        </p>
+      {/* 2번째 줄: 카테고리 뱃지 */}
+      <div style={{ marginTop: '8px', marginBottom: 0 }}>
+        <span className="inline-flex items-center" 
+              data-tags
+              style={{ 
+                backgroundColor: '#E9DFFB',
+                borderRadius: '100px',
+                color: '#202020',
+                paddingTop: '2px',
+                paddingBottom: '2px',
+                paddingLeft: '10px',
+                paddingRight: '10px',
+                fontWeight: 400,
+                fontSize: '14px',
+                lineHeight: '150%',
+                letterSpacing: '0.007em',
+                width: 'fit-content'
+              }}>
+          {getDisplayTag()}
+        </span>
+      </div>
+
+      {/* 3번째 줄: AI명 */}
+      <div className="text-left" style={{ marginTop: '12px', marginBottom: 0 }}>
+        <h3 className="line-clamp-1 text-left text-black" 
+            style={{ 
+              fontWeight: 500,
+              fontSize: '24px',
+              lineHeight: '150%',
+              letterSpacing: '0.007em',
+              margin: 0
+            }}>
+          {tool.name}
+        </h3>
+      </div>
+
+      {/* 4번째 줄: AI 설명 */}
+      <div className="text-left" style={{ marginTop: '6px', marginBottom: 0 }}>
+        <div style={{ width: '100%', height: '48px', overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', marginBottom: 0 }}>
+          <p className="line-clamp-2 text-left"
+            style={{ 
+              color: '#202020',
+              fontWeight: 500,
+              fontSize: '16px',
+              lineHeight: '150%',
+              letterSpacing: '0.007em',
+              margin: 0
+            }}>
+            {tool.description}
+          </p>
+        </div>
       </div>
     </div>
   );
