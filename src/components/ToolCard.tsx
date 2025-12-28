@@ -235,7 +235,8 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, rank, className }) => {
            cursor: 'pointer',
            display: 'flex',
            flexDirection: 'column',
-           overflow: 'hidden'
+           overflow: 'hidden',
+           width: '100%'
          }}
          onClick={handleCardNavigation}
          onMouseEnter={(e) => {
