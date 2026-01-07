@@ -275,6 +275,7 @@ const RoleListPage: React.FC = () => {
             className="w-screen relative left-1/2 -translate-x-1/2 mb-[72px]"
             style={{ background: '#F6F0FF', borderRadius: 0, height: BANNER_FIXED_HEIGHT, padding: 0, boxSizing: 'border-box' }}
           >
+            <div className="mx-auto" style={{ maxWidth: '1440px', height: '100%', position: 'relative', paddingLeft: '200px', paddingRight: '200px' }}>
             {/* 왼쪽 화살표 */}
             {combos.length > 1 && (
               <button
@@ -282,7 +283,7 @@ const RoleListPage: React.FC = () => {
                 className="absolute"
                 style={{
                   top: '50%',
-                  left: `${BANNER_ARROW_SCREEN_GAP}px`,
+                  left: '0px',
                   transform: 'translateY(-50%)',
                   zIndex: 50,
                   width: 40,
@@ -301,10 +302,7 @@ const RoleListPage: React.FC = () => {
             )}
 
             <div
-              className="mx-auto"
               style={{
-                paddingLeft: BANNER_CONTENT_SIDE_PADDING,
-                paddingRight: BANNER_CONTENT_SIDE_PADDING,
                 paddingTop: BANNER_CONTENT_VERTICAL_PADDING,
                 paddingBottom: BANNER_CONTENT_VERTICAL_PADDING,
                 height: '100%',
@@ -453,7 +451,7 @@ const RoleListPage: React.FC = () => {
                 className="absolute"
                 style={{
                   top: '50%',
-                  right: `${BANNER_ARROW_SCREEN_GAP}px`,
+                  right: `-0px`,
                   transform: 'translateY(-50%)',
                   zIndex: 50,
                   width: 40,
@@ -470,6 +468,7 @@ const RoleListPage: React.FC = () => {
                 <img src="/images/Icon/Arrow/Right40x90.svg" alt="다음" width={40} height={90} />
               </button>
             )}
+            </div>
           </div>
         )}
 
@@ -652,7 +651,7 @@ const RoleListPage: React.FC = () => {
                                 }}
                                 style={{
                                   position: 'absolute',
-                                  right: '-20px',
+                                  right: '-40px',
                                   top: '50%',
                                   transform: 'translateY(-50%)',
                                   width: 40,
