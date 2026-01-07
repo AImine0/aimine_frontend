@@ -303,10 +303,10 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange, horizonta
               </Link>
               
               {/* 데스크톱 네비게이션 */}
-              <nav className="hidden md:flex items-center space-x-6 ml-8">
+              <nav className="hidden lg:flex items-center space-x-6 ml-8 flex-shrink-0">
                 <Link 
                   to="/features" 
-                  className={`px-3 py-2 text-base font-semibold transition-colors`}
+                  className={`px-3 py-2 text-base font-semibold transition-colors whitespace-nowrap`}
                   style={{ 
                     color: location.pathname.startsWith('/features') ? '#7E50D1' : '#202020' 
                   }}
@@ -331,7 +331,7 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange, horizonta
                 </Link>
                 <Link 
                   to="/role" 
-                  className={`px-3 py-2 text-base font-semibold transition-colors`}
+                  className={`px-3 py-2 text-base font-semibold transition-colors whitespace-nowrap`}
                   style={{ 
                     color: location.pathname === '/role' ? '#7E50D1' : '#202020' 
                   }}
@@ -350,7 +350,7 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange, horizonta
                 </Link>
                 <Link 
                   to="/prompt" 
-                  className={`px-3 py-2 text-base font-semibold transition-colors`}
+                  className={`px-3 py-2 text-base font-semibold transition-colors whitespace-nowrap`}
                   style={{ 
                     color: location.pathname === '/prompt' ? '#7E50D1' : '#202020' 
                   }}
@@ -373,7 +373,7 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange, horizonta
             {/* 오른쪽: 검색 + 사용자 메뉴 */}
             <div className="flex items-center gap-4">
               {/* 데스크톱 검색바 */}
-              <div className="hidden md:flex" style={{ width: '359px' }} ref={searchRef}>
+              <div className="hidden lg:flex" style={{ width: '359px' }} ref={searchRef}>
                 <div className="relative w-full">
                   <div className="relative">
                     <input
@@ -560,7 +560,7 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange, horizonta
               {/* 모바일 검색 버튼 */}
               <Link 
                 to="/search"
-                className="md:hidden p-2 text-purple-600 hover:text-purple-700"
+                className="lg:hidden p-2 text-purple-600 hover:text-purple-700"
               >
                 <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -656,7 +656,7 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange, horizonta
               {/* 모바일 메뉴 버튼 */}
               <button
                 onClick={() => setShowMobileMenu(!showMobileMenu)}
-                className="md:hidden p-2 text-gray-600 hover:text-gray-900"
+                className="lg:hidden p-2 text-gray-600 hover:text-gray-900"
               >
                 <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -669,7 +669,7 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange, horizonta
 
       {/* 모바일 메뉴 */}
       {showMobileMenu && (
-        <div className="md:hidden border-t border-gray-200">
+        <div className="lg:hidden border-t border-gray-200">
           <div className="px-4 py-4 space-y-2">
             <Link
               to="/features"
