@@ -119,10 +119,11 @@ const HomePage: React.FC = () => {
         <section style={{ paddingTop: '100px', paddingBottom: `${scale(64)}px` }}>
           <div 
             ref={containerRef}
-            className="grid" 
+            className="grid justify-center" 
             style={{ 
-              gridTemplateColumns: 'repeat(4, 1fr)',
-              gap: '32px'
+              gridTemplateColumns: 'repeat(auto-fit, minmax(236px, 236px))',
+              gap: '32px',
+              maxWidth: '100%'
             }}
           >
             {CATEGORY_ITEMS.map((item) => (
@@ -134,11 +135,13 @@ const HomePage: React.FC = () => {
                   backgroundColor: '#F2EEFB',
                   borderRadius: '20px',
                   padding: 0,
+                  width: '236px',
                   height: '112px',
                   overflow: 'hidden',
                   border: 'none',
                   cursor: 'pointer',
-                  position: 'relative'
+                  position: 'relative',
+                  flexShrink: 0
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = '#E9DFFB';

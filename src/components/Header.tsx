@@ -569,7 +569,7 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange, horizonta
 
               {isAuthenticated ? (
                 /* 로그인된 상태 */
-                <div className="relative" ref={userMenuRef}>
+                <div className="relative hidden lg:block" ref={userMenuRef}>
                   <button
                     onClick={() => setShowUserMenu(!showUserMenu)}
                     className="flex items-center justify-center rounded-full transition-colors"
@@ -615,10 +615,10 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange, horizonta
                 </div>
               ) : (
                 /* 로그인 안된 상태 */
-                <div className="flex items-center gap-2">
+                <div className="hidden lg:flex items-center gap-2">
                   <button
                     onClick={handleLogin}
-                    className="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                    className="px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap"
                     style={{
                       fontFamily: 'Pretendard',
                       backgroundColor: '#FFFFFF',
@@ -639,7 +639,7 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange, horizonta
                       setLoginModalMode('signup');
                       setShowLoginModal(true);
                     }}
-                    className="px-4 py-2 text-white rounded-lg text-sm font-medium transition-colors"
+                    className="px-4 py-2 text-white rounded-lg text-sm font-medium transition-colors whitespace-nowrap"
                     style={{ fontFamily: 'Pretendard', backgroundColor: '#7E50D1' }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.backgroundColor = '#6238AE';
@@ -731,14 +731,47 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange, horizonta
             >
               프롬프트
             </Link>
-            {isAuthenticated && (
-              <Link
-                to="/mypage"
-                className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-purple-600"
-                onClick={() => setShowMobileMenu(false)}
-              >
-                마이페이지
-              </Link>
+            {isAuthenticated ? (
+              <>
+                <Link
+                  to="/mypage"
+                  className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-purple-600"
+                  onClick={() => setShowMobileMenu(false)}
+                >
+                  마이페이지
+                </Link>
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    setShowMobileMenu(false);
+                  }}
+                  className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-purple-600"
+                >
+                  로그아웃
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => {
+                    handleLogin();
+                    setShowMobileMenu(false);
+                  }}
+                  className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-purple-600"
+                >
+                  로그인
+                </button>
+                <button
+                  onClick={() => {
+                    setLoginModalMode('signup');
+                    setShowLoginModal(true);
+                    setShowMobileMenu(false);
+                  }}
+                  className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-purple-600"
+                >
+                  회원가입
+                </button>
+              </>
             )}
           </div>
         </div>
