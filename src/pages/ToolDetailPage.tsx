@@ -515,7 +515,7 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
           
           {/* 탭 네비게이션 */}
           <div className="mb-8 sm:mb-12" style={{ borderBottomWidth: '1px', borderBottomColor: '#E5E7EB', borderBottomStyle: 'solid' }}>
-            <nav className="flex gap-4 sm:gap-8 min-w-max pl-4 sm:pl-6">
+            <nav className="flex gap-4 sm:gap-8 min-w-max" style={{ paddingLeft: '8px' }}>
               <button
                 onClick={() => handleTabClick('pricing')}
                 className="pb-3 sm:pb-4 text-sm sm:text-base whitespace-nowrap"
@@ -545,8 +545,8 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
           
           {/* 가격 정보 섹션: 리뷰 탭일 때는 숨김 */}
           {activeTabKey !== 'reviews' && (
-          <section id="pricing" className="mb-12 sm:mb-16 pl-4 sm:pl-6">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-0" style={{ marginBottom: '1px' }}>
+          <section id="pricing" className="mb-12 sm:mb-16">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-0" style={{ marginBottom: '1px', paddingLeft: '8px' }}>
                 <h2 className="text-lg sm:text-xl md:text-2xl" style={{ color: '#000000', fontWeight: 700, fontSize: '18px' }}>가격 정보</h2>
                 <a 
                   href={toolDetail.websiteUrl} 
@@ -575,12 +575,12 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
                 </a>
               </div>
               
-              <p className="mb-4 sm:mb-6 text-xs sm:text-sm" style={{ color: '#9B9B9B', fontWeight: 500, lineHeight: 1.6 }}>
+              <p className="mb-4 sm:mb-6 text-xs sm:text-sm" style={{ color: '#9B9B9B', fontWeight: 500, lineHeight: 1.6, paddingLeft: '8px' }}>
                 본 정보는 게시 시점을 기준으로 제공되며, 실제 가격은 변동될 수 있습니다. 최신 내용은 공식 홈페이지에서 확인해 주세요.
               </p>
               
               {/* 가격 플랜 이미지 */}
-              <div className="bg-white rounded-lg border border-gray-200">
+              <div className="bg-white border border-gray-200" style={{ borderRadius: '24px', overflow: 'hidden' }}>
                 <img 
                   src={toolDetail.priceImageUrl}
                   alt={`${toolDetail.serviceName} 가격 정보`}
@@ -604,7 +604,7 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
           )}
           
           {/* 서비스 리뷰 섹션: 항상 표시 (리뷰 탭에서는 가격 섹션만 숨김) */}
-          <section id="reviews" className="mb-20 sm:mb-36 pl-4 sm:pl-6">
+          <section id="reviews" className="mb-20 sm:mb-36">
               <h2
                 style={{
                   color: '#202020',
@@ -613,7 +613,8 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
                   lineHeight: '27px',
                   letterSpacing: '-0.003em',
                   marginBottom: '20px',
-                  marginTop: 0
+                  marginTop: 0,
+                  paddingLeft: '8px'
                 }}
               >
                 서비스 리뷰
@@ -621,7 +622,7 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
 
               <div className="bg-white">
                 {/* 리뷰 헤더: 서비스명 + 보라 별 + 평점 */}
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-4">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-4" style={{ paddingLeft: '8px' }}>
                 <div className="flex flex-col sm:flex-row items-start sm:items-center" style={{ gap: '27px' }}>
                     <h3
                       className="break-words"
