@@ -122,7 +122,7 @@ const HomePage: React.FC = () => {
             className="grid" 
             style={{ 
               gridTemplateColumns: 'repeat(4, 1fr)',
-              gap: `${scale(32)}px`
+              gap: '32px'
             }}
           >
             {CATEGORY_ITEMS.map((item) => (
@@ -132,9 +132,9 @@ const HomePage: React.FC = () => {
                 className="rounded-2xl transition-all duration-200 text-left"
                 style={{ 
                   backgroundColor: '#F2EEFB',
-                  borderRadius: `${scale(20)}px`,
+                  borderRadius: '20px',
                   padding: 0,
-                  height: `${scale(112)}px`,
+                  height: '112px',
                   overflow: 'hidden',
                   border: 'none',
                   cursor: 'pointer',
@@ -153,8 +153,8 @@ const HomePage: React.FC = () => {
                     color: '#202020',
                     fontSize: '20px',
                     fontWeight: 500,
-                    marginTop: `${scale(18)}px`,
-                    marginLeft: `${scale(24)}px`,
+                    marginTop: '18px',
+                    marginLeft: '24px',
                     lineHeight: '130%',
                     letterSpacing: '-0.003em'
                   }}
@@ -166,7 +166,7 @@ const HomePage: React.FC = () => {
                 <div 
                   className="w-full flex items-end justify-end" 
                   style={{ 
-                    height: `${scale(100)}px`,  // 106px로 설정 (120 - 14 = 106)
+                    height: '100px',
                     overflow: 'hidden'
                   }}
                 >
@@ -174,10 +174,10 @@ const HomePage: React.FC = () => {
                     src={item.img} 
                     alt={item.title}
                     style={{ 
-                      width: `${scale(120)}px`,
-                      height: `${scale(120)}px`,
+                      width: '120px',
+                      height: '120px',
                       objectFit: 'contain',
-                      transform: `translateY(${scale(0)}px)`  // 약간만 잘리게
+                      transform: 'translateY(0px)'
                     }} 
                   />
                 </div>
