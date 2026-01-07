@@ -151,7 +151,7 @@ const HomePage: React.FC = () => {
                 <div 
                   style={{ 
                     color: '#202020',
-                    fontSize: `${scale(20)}px`,
+                    fontSize: '20px',
                     fontWeight: 500,
                     marginTop: `${scale(18)}px`,
                     marginLeft: `${scale(24)}px`,
