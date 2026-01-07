@@ -218,7 +218,7 @@ const RoleListPage: React.FC = () => {
         />
       <main
         className="mx-auto py-8"
-        style={{ paddingLeft: horizontalPadding, paddingRight: horizontalPadding }}
+        style={{ maxWidth: '1440px', paddingLeft: horizontalPadding, paddingRight: horizontalPadding }}
       >
         <div style={{ marginBottom: 10 }}>
           <Breadcrumb items={breadcrumbItems} />
