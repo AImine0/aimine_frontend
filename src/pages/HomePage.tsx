@@ -81,7 +81,7 @@ const HomePage: React.FC = () => {
         }}
       >
         {/* 첫 번째 텍스트 박스 */}
-        <section className="text-center" style={{ paddingTop: `${scale(91)}px`, paddingBottom: 0 }}>
+        <section className="text-center" style={{ paddingTop: `${scale(120)}px`, paddingBottom: 0 }}>
           <div
             style={{
               color: '#202020',
@@ -116,7 +116,7 @@ const HomePage: React.FC = () => {
         </section>
 
         {/* 버튼 컴포넌트 영역 */}
-        <section style={{ paddingTop: `${scale(39)}px`, paddingBottom: `${scale(64)}px` }}>
+        <section style={{ paddingTop: '100px', paddingBottom: `${scale(64)}px` }}>
           <div 
             ref={containerRef}
             className="grid" 
