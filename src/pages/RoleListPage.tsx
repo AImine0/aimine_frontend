@@ -283,7 +283,7 @@ const RoleListPage: React.FC = () => {
                 className="absolute"
                 style={{
                   top: '50%',
-                  left: '0px',
+                  left: '80px',
                   transform: 'translateY(-50%)',
                   zIndex: 50,
                   width: 40,
@@ -451,7 +451,7 @@ const RoleListPage: React.FC = () => {
                 className="absolute"
                 style={{
                   top: '50%',
-                  right: `-0px`,
+                  right: `80px`,
                   transform: 'translateY(-50%)',
                   zIndex: 50,
                   width: 40,
