@@ -241,9 +241,8 @@ const FilterBar: React.FC<FilterBarProps> = ({
                     <div 
                       className="absolute bg-white z-[1001]"
                       style={{ 
-                        top: 'calc(100% + 10px)',
-                        left: '50%',
-                        transform: 'translateX(-50%)',
+                        top: 'calc(100% + 16px)',
+                        right: '-44px',
                         borderRadius: '12px',
                         border: '1px solid #D9D9E1',
                         boxShadow: '0px 12px 32px rgba(31, 35, 41, 0.12)',
@@ -253,35 +252,37 @@ const FilterBar: React.FC<FilterBarProps> = ({
                         padding: '16px 20px'
                       }}
                     >
-                      {/* 말풍선 꼬리 - 외부 테두리 */}
-                      <div 
+                      {/* SVG 화살표 - 완벽한 테두리 */}
+                      <svg
                         className="absolute"
                         style={{
-                          top: '-12px',
-                          left: '50%',
-                          transform: 'translateX(-50%)',
-                          width: 0,
-                          height: 0,
-                          borderLeft: '10px solid transparent',
-                          borderRight: '10px solid transparent',
-                          borderBottom: '12px solid #D9D9E1'
+                          top: '-15px',
+                          right: '44px',
+                          width: '18px',
+                          height: '16px'
                         }}
-                      />
-                      {/* 말풍선 꼬리 - 내부 흰색 */}
-                      <div
-                        className="absolute"
-                        style={{
-                          top: '-11px',
-                          left: '50%',
-                          transform: 'translateX(-50%)',
-                          width: 0,
-                          height: 0,
-                          borderLeft: '9px solid transparent',
-                          borderRight: '9px solid transparent',
-                          borderBottom: '11px solid #FFFFFF',
-                          boxShadow: '-1px -1px 6px rgba(31, 35, 41, 0.06)'
-                        }}
-                      />
+                        viewBox="0 0 18 16"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        {/* 테두리가 있는 삼각형 */}
+                        <path
+                          d="M 1 15 L 9 1 L 17 15"
+                          fill="#FFFFFF"
+                          stroke="#D9D9E1"
+                          strokeWidth="1"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        {/* 하단 흰색 사각형 - 툴팁 상단 선 덮기 */}
+                        <rect
+                          x="0"
+                          y="15"
+                          width="18"
+                          height="2"
+                          fill="#FFFFFF"
+                        />
+                      </svg>
                       
                       <p className="text-body3 leading-relaxed text-left" style={{ color: '#202020', lineHeight: '22px' }}>
                         추천순은 AI의 <span className="text-title6" style={{ color: '#202020', fontWeight: 700 }}>사용성</span>(쉽고 직관적으로 사용할 수 있는가), <span className="text-title6" style={{ color: '#202020', fontWeight: 700 }}>유용성</span>(실제 문제 해결에 도움이 되는가), <span className="text-title6" style={{ color: '#202020', fontWeight: 700 }}>감성</span>(사용자에게 긍정적인 인상을 주는가) 측면에 대해 ChatGPT, Gemini, Claude가 평가한 점수를 기반으로 산정되었으며, 해당 점수는 각 서비스의 상세 페이지에서 AI 평점으로 확인하실 수 있습니다.
