@@ -547,7 +547,7 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
           {activeTabKey !== 'reviews' && (
           <section id="pricing" className="mb-12 sm:mb-16">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-0" style={{ marginBottom: '1px', paddingLeft: '8px' }}>
-                <h2 className="text-lg sm:text-xl md:text-2xl" style={{ color: '#000000', fontWeight: 700, fontSize: '18px' }}>가격 정보</h2>
+                <h2 className="text-lg sm:text-xl md:text-2xl" style={{ color: '#000000', fontWeight: 600, fontSize: '18px' }}>가격 정보</h2>
                 <a 
                   href={toolDetail.websiteUrl} 
                   target="_blank" 
