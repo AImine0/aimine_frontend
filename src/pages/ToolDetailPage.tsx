@@ -471,27 +471,48 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
               </div>
               
               {/* 주요 기능 */}
-              <div className="mb-6 sm:mb-8">
-                <h3 className="mb-2 sm:mb-3 text-sm sm:text-base" style={{ color: '#202020', fontWeight: 700 }}>주요 기능</h3>
-                <div className="flex flex-wrap gap-2 w-full max-w-[504px] lg:w-[504px] lg:min-h-[102px]">
-                {toolDetail.keywords.map((keyword, index) => (
-                  <span
-                    key={index}
-                    className="inline-flex items-center justify-center rounded-full text-body3 font-semibold"
-                    style={{
-                      backgroundColor: '#F2EEFB',
-                      color: '#6238AE',
-                      height: '29px',
-                      padding: '0 12px',
-                      fontWeight: 500,
-                      fontSize: '14px',
-                      lineHeight: '150%',
-                      letterSpacing: '-0.003em'
-                    }}
-                  >
-                    {keyword}
-                  </span>
-                ))}
+              <div style={{ marginBottom: '48px' }}>
+                <h3 style={{ 
+                  color: '#202020', 
+                  fontWeight: 700,
+                  fontSize: '14px',  
+                  marginBottom: '12px'
+                }}>주요 기능</h3>
+                
+                <div 
+                  style={{ 
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    rowGap: '8px',
+                    columnGap: '8px',
+                    maxWidth: '504px',
+                    padding: '0',
+                    margin: '0'
+                  }}
+                >
+                  {toolDetail.keywords.map((keyword, index) => (
+                    <span
+                      key={index}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: '#F2EEFB',
+                        color: '#6238AE',
+                        height: '29px',  
+                        padding: '4px 12px',
+                        fontWeight: 500,
+                        fontSize: '14px',
+                        lineHeight: '14px',  
+                        letterSpacing: '-0.003em',
+                        borderRadius: '9999px',
+                        margin: '0',
+                        boxSizing: 'border-box'
+                      }}
+                    >
+                      {keyword}
+                    </span>
+                  ))}
                 </div>
               </div>
             </div>
@@ -580,7 +601,11 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
               </p>
               
               {/* 가격 플랜 이미지 */}
-              <div className="bg-white border border-gray-200" style={{ borderRadius: '24px', overflow: 'hidden' }}>
+              <div className="bg-white" style={{ 
+                borderRadius: '20px',  
+                padding: '12px',       
+                border: '1px solid #BCBCBC'  
+              }}>
                 <img 
                   src={toolDetail.priceImageUrl}
                   alt={`${toolDetail.serviceName} 가격 정보`}
@@ -589,7 +614,8 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
                     backgroundColor: '#f8f9fa', 
                     minHeight: '200px',
                     objectFit: 'contain',
-                    display: 'block'
+                    display: 'block',
+                    borderRadius: '20px'  
                   }}
                   onError={(e) =>
                     handleImageFallback(
@@ -657,7 +683,9 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
                 </div>
                 
                 {/* 리뷰 작성 폼 */}
-                <form onSubmit={handleReviewSubmit} className="border border-gray-200 rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-4 sm:mb-6">
+                <form onSubmit={handleReviewSubmit} className="rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-4 sm:mb-6" style={{ 
+                  border: '1px solid #BCBCBC'  
+                }}>
                   {/* 상단 좌측: 회색 별점 (선택 시 보라색) */}
                   <div className="flex items-center gap-1 mb-2">
                     {[1, 2, 3, 4, 5].map(star => (
@@ -699,7 +727,7 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
                 
                 {/* 리뷰 목록 */}
                 <div>
-                  <div className="py-3 sm:py-4 border-b border-gray-300">
+                <div className="py-3 sm:py-4" style={{ borderBottom: '1px solid #BCBCBC' }}>
                     <h4 className="font-medium text-sm sm:text-base">{serviceReviews.length > 0 ? `${serviceReviews.length}개의 리뷰` : '리뷰'}</h4>
                   </div>
 
@@ -710,7 +738,7 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
                         key={review.id}
                         className="py-4 sm:py-6"
                         style={{
-                          borderBottom: index === serviceReviews.length - 1 ? '1px solid #D1D5DB' : '1px solid #D1D5DB'
+                          borderBottom: '1px solid #BCBCBC'
                         }}
                       >
                         <div className="px-6 sm:px-8">
