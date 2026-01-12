@@ -3,14 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 
 const CATEGORY_ITEMS: Array<{ id: string; title: string; img: string; to: string }> = [
-  { id: 'chatbot', title: '챗봇', img: '/images/GlassMorphism/HomeBtn/HomeBtn_Chatbot.png', to: '/features?tab=chatbot' },
-  { id: 'writing', title: '텍스트', img: '/images/GlassMorphism/HomeBtn/HomeBtn_Text.png', to: '/features?tab=writing' },
-  { id: 'image', title: '이미지', img: '/images/GlassMorphism/HomeBtn/HomeBtn_Image.png', to: '/features?tab=image' },
-  { id: 'video', title: '비디오', img: '/images/GlassMorphism/HomeBtn/HomeBtn_Video.png', to: '/features?tab=video' },
-  { id: 'audio', title: '오디오/음악', img: '/images/GlassMorphism/HomeBtn/HomeBtn_Audio.png', to: '/features?tab=audio' },
-  { id: 'code', title: '코드', img: '/images/GlassMorphism/HomeBtn/HomeBtn_Code.png', to: '/features?tab=code' },
-  { id: '3d', title: '3D', img: '/images/GlassMorphism/HomeBtn/HomeBtn_3D.png', to: '/features?tab=3d' },
-  { id: 'productivity', title: '생산성', img: '/images/GlassMorphism/HomeBtn/HomeBtn_Productivity.png', to: '/features?tab=productivity' }
+  { id: 'chatbot', title: '챗봇', img: '/images/GlassMorphism/HomeBtn/Chatbot.png', to: '/features?tab=chatbot' },
+  { id: 'writing', title: '텍스트', img: '/images/GlassMorphism/HomeBtn/Text.png', to: '/features?tab=writing' },
+  { id: 'image', title: '이미지', img: '/images/GlassMorphism/HomeBtn/Image.png', to: '/features?tab=image' },
+  { id: 'video', title: '비디오', img: '/images/GlassMorphism/HomeBtn/Video.png', to: '/features?tab=video' },
+  { id: 'audio', title: '오디오/음악', img: '/images/GlassMorphism/HomeBtn/Audio.png', to: '/features?tab=audio' },
+  { id: 'code', title: '코드', img: '/images/GlassMorphism/HomeBtn/Code.png', to: '/features?tab=code' },
+  { id: '3d', title: '3D', img: '/images/GlassMorphism/HomeBtn/3D.png', to: '/features?tab=3d' },
+  { id: 'productivity', title: '생산성', img: '/images/GlassMorphism/HomeBtn/Productivity.png', to: '/features?tab=productivity' }
 ];
 
 const HomePage: React.FC = () => {
