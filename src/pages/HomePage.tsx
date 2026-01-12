@@ -136,7 +136,7 @@ const HomePage: React.FC = () => {
                   borderRadius: '20px',
                   padding: 0,
                   width: '236px',
-                  height: '112px',
+                  height: '136px',
                   overflow: 'hidden',
                   border: 'none',
                   cursor: 'pointer',
@@ -153,11 +153,12 @@ const HomePage: React.FC = () => {
                 {/* 텍스트 */}
                 <div 
                   style={{ 
+                    position: 'absolute',
+                    top: '18px',
+                    left: '24px',
                     color: '#202020',
                     fontSize: '20px',
                     fontWeight: 500,
-                    marginTop: '18px',
-                    marginLeft: '24px',
                     lineHeight: '130%',
                     letterSpacing: '-0.003em'
                   }}
@@ -165,25 +166,20 @@ const HomePage: React.FC = () => {
                   {item.title}
                 </div>
 
-                {/* 이미지 영역 - 기존 방식 복원 + 높이만 조정 */}
-                <div 
-                  className="w-full flex items-end justify-end" 
+                {/* 이미지 영역 */}
+                <img 
+                  src={item.img} 
+                  alt={item.title}
                   style={{ 
-                    height: '100px',
-                    overflow: 'hidden'
-                  }}
-                >
-                  <img 
-                    src={item.img} 
-                    alt={item.title}
-                    style={{ 
-                      width: '120px',
-                      height: '120px',
-                      objectFit: 'contain',
-                      transform: 'translateY(0px)'
-                    }} 
-                  />
-                </div>
+                    position: 'absolute',
+                    top: '32px',
+                    right: '0px',
+                    left: '96px',
+                    width: '140px',
+                    height: '140px',
+                    objectFit: 'contain'
+                  }} 
+                />
               </button>
             ))}
           </div>

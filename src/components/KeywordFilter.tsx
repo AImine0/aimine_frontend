@@ -31,6 +31,7 @@ const KeywordFilter: React.FC<KeywordFilterProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState<string>('ALL');
   const [showAll, setShowAll] = useState(false);
+  const [hoveredKeyword, setHoveredKeyword] = useState<string | number | null>(null);
 
   // API에서 키워드 데이터 로드
   useEffect(() => {
@@ -210,17 +211,21 @@ const KeywordFilter: React.FC<KeywordFilterProps> = ({
         ) : (
           filteredKeywords.map((item) => {
             const keyword = typeof item === 'string' ? item : item.keyword;
+            const itemKey = typeof item === 'string' ? item : item.id;
             const isActive = activeKeywords.includes(keyword);
             const toolCount = typeof item === 'string' ? null : item.tool_count;
             const keywordType = typeof item === 'string' ? null : item.type;
+            const isHovered = hoveredKeyword === itemKey;
             
             return (
               <button
-                key={typeof item === 'string' ? item : item.id}
+                key={itemKey}
                 onClick={() => onKeywordToggle(keyword)}
-                className="rounded-full transition-all duration-200 flex items-center hover:shadow-sm hover:bg-[#E9DFFB] focus:bg-[#E9DFFB]"
+                onMouseEnter={() => setHoveredKeyword(itemKey)}
+                onMouseLeave={() => setHoveredKeyword(null)}
+                className="rounded-full transition-all duration-200 flex items-center hover:shadow-sm focus:bg-[#E9DFFB]"
                 style={{ 
-                  backgroundColor: isActive ? '#ffffff' : '#F2EEFB',
+                  backgroundColor: isHovered ? '#E9DFFB' : (isActive ? '#ffffff' : '#F2EEFB'),
                   border: '1px solid #A987E8',
                   borderRadius: '20px',
                   color: '#7242C9',
