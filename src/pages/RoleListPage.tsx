@@ -273,7 +273,7 @@ const RoleListPage: React.FC = () => {
         {combos.length > 0 && (
           <div
             className="w-screen relative left-1/2 -translate-x-1/2 mb-[72px]"
-            style={{ background: '#F6F0FF', borderRadius: 0, height: BANNER_FIXED_HEIGHT, padding: 0, boxSizing: 'border-box' }}
+            style={{ background: '#F6F0FF', borderRadius: 0, minHeight: BANNER_FIXED_HEIGHT, padding: 0, boxSizing: 'border-box' }}
           >
             <div className="mx-auto" style={{ maxWidth: '1440px', height: '100%', position: 'relative', paddingLeft: '200px', paddingRight: '200px' }}>
             {/* 왼쪽 화살표 */}
@@ -305,13 +305,13 @@ const RoleListPage: React.FC = () => {
               style={{
                 paddingTop: BANNER_CONTENT_VERTICAL_PADDING,
                 paddingBottom: BANNER_CONTENT_VERTICAL_PADDING,
-                height: '100%',
+                minHeight: BANNER_FIXED_HEIGHT,
                 boxSizing: 'border-box'
               }}
             >
-              <div className="flex flex-row items-start justify-between">
+              <div className="flex flex-col xl:flex-row items-start justify-between gap-8">
                 {/* 왼쪽 텍스트 영역 */}
-                <div className="banner-left-text" style={{ textAlign: 'left' }}>
+                <div className="banner-left-text" style={{ textAlign: 'left', minWidth: '400px', flexShrink: 0 }}>
                   <div className="flex flex-col justify-center items-start">
                     <div className="flex items-center" style={{ justifyContent: 'flex-start', marginBottom: 4 }}>
                       <span
@@ -355,8 +355,8 @@ const RoleListPage: React.FC = () => {
                 </div>
 
                 {/* 오른쪽 AI 도구 indicator */}
-                <div className="ai-indicator-set flex justify-end items-center" style={{ position: 'relative', zIndex: 1, marginTop: '2px' }}>
-                  <div className="flex flex-col items-end justify-center">
+                <div className="ai-indicator-set flex justify-center xl:justify-end items-center w-full xl:w-auto" style={{ position: 'relative', zIndex: 1, marginTop: '2px' }}>
+                  <div className="flex flex-col items-center xl:items-end justify-center" style={{ position: 'relative' }}>
                     {(() => {
                       const dotSize = 15;
                       const gap = 20;
@@ -382,7 +382,7 @@ const RoleListPage: React.FC = () => {
                               <circle key={`combo-circle-${comboIdx}-${idx}`} cx={cx} cy={dotSize / 2} r={dotSize / 2} fill="#7E50D1" />
                             ))}
                           </svg>
-                          <div className="flex justify-end" style={{ gap: `${gap}px`, position: 'relative', zIndex: 1, marginTop: 4 }}>
+                          <div className="flex justify-center xl:justify-end" style={{ gap: `${gap}px`, position: 'relative', zIndex: 1, marginTop: 4 }}>
                             {combos[comboIdx].aiList.map((ai, aiIdx) => {
                               const categoryMap: Record<string, string> = {
                                 'ChatGPT': 'chat', 'Claude': 'chat', 'Gemini': 'chat',
