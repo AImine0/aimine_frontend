@@ -85,10 +85,10 @@ const HomePage: React.FC = () => {
           <div
             style={{
               color: '#202020',
-              fontSize: `${scale(36)}px`,
+              fontSize: '44px',
               lineHeight: '130%',
               fontWeight: 500,
-              letterSpacing: '-0.003em',
+              letterSpacing: '0.6%',
               textAlign: 'center'
             }}
           >
@@ -101,7 +101,7 @@ const HomePage: React.FC = () => {
           <div
             style={{
               color: '#424242',
-              fontSize: `${scale(18)}px`,
+              fontSize: '22px',
               lineHeight: '130%',
               marginTop: `${scale(8)}px`,
               fontWeight: 300,
