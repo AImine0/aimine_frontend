@@ -518,7 +518,7 @@ const aiScore = typeof aiScoreRaw === 'string' ? parseFloat(aiScoreRaw) : aiScor
             </div>
             
             {/* 오른쪽: 이미지 갤러리 */}
-            <div className="w-full lg:w-[28rem] flex-shrink-0 rounded-lg sm:rounded-xl p-3 sm:p-4 mt-0 sm:mt-2 lg:mt-2 min-h-[250px] flex items-center justify-center overflow-visible" style={{ backgroundColor: '#F2EEFB', border: '1px solid #E4E0F3' }}>
+            <div className="w-full lg:w-[28rem] flex-shrink-0 rounded-lg sm:rounded-xl p-3 sm:p-3 mt-0 sm:mt-2 lg:mt-2 min-h-[250px] flex items-center justify-center overflow-visible" style={{ backgroundColor: '#F2EEFB', border: '1px solid #E4E0F3' }}>
                 <img 
                   src={toolDetail.serviceImageUrl}
                   alt={`${toolDetail.serviceName} 서비스 이미지`}
