@@ -32,6 +32,7 @@ const KeywordFilter: React.FC<KeywordFilterProps> = ({
   const [selectedType, setSelectedType] = useState<string>('ALL');
   const [showAll, setShowAll] = useState(false);
   const [hoveredKeyword, setHoveredKeyword] = useState<string | number | null>(null);
+  const [clickedKeyword, setClickedKeyword] = useState<string | number | null>(null);
 
   // API에서 키워드 데이터 로드
   useEffect(() => {
@@ -217,13 +218,19 @@ const KeywordFilter: React.FC<KeywordFilterProps> = ({
             const keywordType = typeof item === 'string' ? null : item.type;
             const isHovered = hoveredKeyword === itemKey;
             
+            const isClicked = clickedKeyword === itemKey;
+            
             return (
               <button
                 key={itemKey}
-                onClick={() => onKeywordToggle(keyword)}
+                onClick={() => {
+                  setClickedKeyword(itemKey);
+                  setTimeout(() => setClickedKeyword(null), 300);
+                  onKeywordToggle(keyword);
+                }}
                 onMouseEnter={() => setHoveredKeyword(itemKey)}
                 onMouseLeave={() => setHoveredKeyword(null)}
-                className="rounded-full transition-all duration-200 flex items-center hover:shadow-sm focus:bg-[#E9DFFB]"
+                className="rounded-full flex items-center hover:shadow-sm focus:bg-[#E9DFFB]"
                 style={{ 
                   backgroundColor: isHovered ? '#E9DFFB' : (isActive ? '#ffffff' : '#F2EEFB'),
                   border: '1px solid #A987E8',
@@ -233,7 +240,9 @@ const KeywordFilter: React.FC<KeywordFilterProps> = ({
                   paddingTop: '8px',
                   paddingBottom: '8px',
                   paddingLeft: isActive ? '16px' : '16px',
-                  paddingRight: '16px'
+                  paddingRight: '16px',
+                  transform: isClicked ? 'scale(1.05)' : 'scale(1)',
+                  transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s ease'
                 }}
               >
                 {isActive && (
