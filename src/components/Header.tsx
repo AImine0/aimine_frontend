@@ -391,19 +391,20 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange, horizonta
                       onBlur={handleSearchBlur}
                       onKeyPress={handleKeyPress}
                       placeholder="원하는 AI 서비스를 검색해보세요."
-                      className="w-full pl-4 pr-4 py-2 border focus:outline-none focus:ring-0 focus:border-[#9B9B9B] text-sm placeholder:font-normal placeholder-[#9B9B9B]"
+                      className="w-full pr-4 py-2 border focus:outline-none focus:ring-0 focus:border-[#9B9B9B] text-sm placeholder:font-normal placeholder-[#9B9B9B]"
                       style={{ 
                         fontFamily: 'Pretendard', 
                         borderColor: '#9B9B9B',
-                        borderRadius: showRecommendedKeywords || showSearchSuggestions || showSuggestions ? '20px 20px 0 0' : '20px'
+                        borderRadius: showRecommendedKeywords || showSearchSuggestions || showSuggestions ? '20px 20px 0 0' : '20px',
+                        paddingLeft: '48px'
                       }}
                     />
-                    <button
-                      onClick={() => handleSearch()}
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    <div
+                      className="absolute inset-y-0 flex items-center pointer-events-none"
+                      style={{ left: '20px' }}
                     >
                       <img src="/images/Icon/Magnifier/20.svg" alt="검색" width={20} height={20} />
-                    </button>
+                    </div>
                   </div>
 
                   {/* 검색 자동완성 */}

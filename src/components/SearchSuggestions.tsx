@@ -22,7 +22,7 @@ const SearchSuggestions: React.FC<SearchSuggestionsProps> = ({
 
   return (
     <div 
-      className="absolute top-full left-0 right-0 bg-white shadow-lg py-4 z-50" 
+      className="absolute top-full left-0 right-0 bg-white shadow-lg z-50" 
       style={{ 
         marginTop: '0px', 
         borderRadius: '0 0 20px 20px', 
