@@ -23,6 +23,9 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange, horizontalPadding, fullWidth = false }) => {
+  const HEADER_MAX_WIDTH = 1440;
+  const HEADER_HEIGHT = 85;
+
   const navigate = useNavigate();
   const location = useLocation();
   const { isAuthenticated, user, logout } = useAuth();
@@ -292,9 +295,9 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange, horizonta
 
   return (
     <header className="bg-white sticky top-0 z-40" style={{ fontFamily: 'Pretendard', borderBottom: '1px solid #ECECEC' }}>
-      <div className="mx-auto" style={{ maxWidth: '1440px' }}>
-        <div className={containerClassName}>
-          <div className="flex items-center justify-between h-16">
+      <div className="mx-auto" style={{ maxWidth: `${HEADER_MAX_WIDTH}px`, height: `${HEADER_HEIGHT}px` }}>
+        <div className={`${containerClassName} h-full`}>
+          <div className="flex items-center justify-between h-full">
             
             {/* 왼쪽: 로고 + 네비게이션 */}
             <div className="flex items-center">
