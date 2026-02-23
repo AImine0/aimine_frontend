@@ -29,6 +29,7 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange, horizonta
   const navigate = useNavigate();
   const location = useLocation();
   const { isAuthenticated, user, logout } = useAuth();
+  const isHomePage = location.pathname === '/';
   
   // 상태 관리
   const [searchQuery, setSearchQuery] = useState('');
@@ -294,8 +295,18 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange, horizonta
     .trim();
 
   return (
-    <header className="bg-white sticky top-0 z-40" style={{ fontFamily: 'Pretendard', borderBottom: '1px solid #ECECEC' }}>
-      <div className="mx-auto" style={{ maxWidth: `${HEADER_MAX_WIDTH}px`, height: `${HEADER_HEIGHT}px` }}>
+    <header
+      className="bg-white sticky top-0 z-40"
+      style={{ fontFamily: 'Pretendard', borderBottom: isHomePage ? 'none' : '1px solid #ECECEC' }}
+    >
+      <div
+        className="mx-auto"
+        style={{
+          maxWidth: `${HEADER_MAX_WIDTH}px`,
+          height: `${HEADER_HEIGHT}px`,
+          borderBottom: isHomePage ? '1px solid #ECECEC' : 'none'
+        }}
+      >
         <div className={`${containerClassName} h-full`}>
           <div className="flex items-center justify-between h-full">
             
@@ -783,12 +794,15 @@ const Header: React.FC<HeaderProps> = ({ tabs, activeTab, onTabChange, horizonta
       
       {/* 구분선 */}
       {tabs.length > 0 && (
-        <div style={{ borderBottom: '1px solid #ECECEC' }}></div>
+        <div
+          className={isHomePage ? 'mx-auto' : ''}
+          style={{ maxWidth: isHomePage ? `${HEADER_MAX_WIDTH}px` : undefined, borderBottom: '1px solid #ECECEC' }}
+        />
       )}
       
       {/* 탭바 */}
       {tabs.length > 0 && (
-        <div className="mx-auto" style={{ maxWidth: '1440px' }}>
+        <div className="mx-auto" style={{ maxWidth: `${HEADER_MAX_WIDTH}px` }}>
           <div style={{ position: 'relative' }}>
             <div className={containerClassName}>
               <div className="flex space-x-8 overflow-x-auto">
